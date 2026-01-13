@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Endlech.lu{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# Hier laden wir CSS/JS via Webpack Encore #}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen font-sans">
+
+{# === HEADER / NAVIGATION === #}
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+
+        {# 1. Logo Bereich #}
+        <a href="{{ path('app_home') }}" class="flex items-center gap-3 hover:opacity-90 transition">
+            {# Logo Bild #}
+            <img src="{{ asset('images/logo.png') }}" alt="Endlech.lu Logo" class="h-12 w-auto object-contain">
+
+            {# Text Logo (optional, falls Bild nicht lädt) #}
+            <span class="hidden md:block text-2xl font-bold text-cyan-600 tracking-tight">
+                        Endlech<span class="text-purple-600">.lu</span>
+                    </span>
+        </a>
+
+        {# 2. Desktop Navigation #}
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="#" class="text-gray-600 font-medium hover:text-cyan-600 transition">
+                Restaurants finden
+            </a>
+            <a href="#" class="text-gray-600 font-medium hover:text-cyan-600 transition">
+                Über uns
+            </a>
+            <a href="#" class="text-gray-600 font-medium hover:text-cyan-600 transition">
+                Community
+            </a>
+        </nav>
+
+        {# 3. Buttons (Login / Register) #}
+        <div class="flex items-center gap-4">
+            <a href="#" class="hidden md:inline-block text-sm font-semibold text-gray-500 hover:text-purple-600">
+                Login
+            </a>
+            <a href="#" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-full font-bold shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                Mitmachen
+            </a>
+        </div>
+    </div>
+</header>
+
+{# === HAUPTINHALT (Hier wird index.html.twig reingeladen) === #}
+<main class="flex-grow">
+    {% block body %}{% endblock %}
+</main>
+
+{# === FOOTER === #}
+<footer class="bg-gray-900 text-gray-300 py-12 mt-12">
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+
+        {# Spalte 1 #}
+        <div>
+            <div class="flex items-center gap-2 mb-4 text-white font-bold text-lg">
+                <span class="text-cyan-400">Endlech</span>.lu
+            </div>
+            <p class="mb-4">
+                Die Plattform für barrierefreie Gastronomie in Luxemburg.
+                Gemeinsam für mehr Inklusion.
+            </p>
+        </div>
+
+        {# Spalte 2 #}
+        <div>
+            <h4 class="text-white font-bold mb-4 uppercase tracking-wider">Links</h4>
+            <ul class="space-y-2">
+                <li><a href="#" class="hover:text-cyan-400 transition">Restaurants suchen</a></li>
+                <li><a href="#" class="hover:text-cyan-400 transition">Kriterien für Barrierefreiheit</a></li>
+                <li><a href="#" class="hover:text-cyan-400 transition">Impressum</a></li>
+            </ul>
+        </div>
+
+        {# Spalte 3 #}
+        <div>
+            <h4 class="text-white font-bold mb-4 uppercase tracking-wider">Kontakt</h4>
+            <p>Helfen Sie uns, besser zu werden.</p>
+            <a href="mailto:info@endlech.lu" class="block mt-2 text-cyan-400 hover:underline">info@endlech.lu</a>
+        </div>
+    </div>
+
+    <div class="border-t border-gray-800 mt-8 pt-8 text-center text-xs text-gray-500">
+        &copy; {{ 'now'|date('Y') }} Endlech.lu - Made with ❤️ in Luxembourg.
+    </div>
+</footer>
+
+</body>
+</html>
