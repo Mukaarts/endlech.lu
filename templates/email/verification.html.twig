@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Mail bestätigen</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" style="width: 100%; border: 0; cellpadding: 0; cellspacing: 0;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <table role="presentation" style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    {# Header #}
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #0891b2, #7c3aed); padding: 32px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700;">
+                                Endlech<span style="color: #e9d5ff;">.lu</span>
+                            </h1>
+                        </td>
+                    </tr>
+
+                    {# Body #}
+                    <tr>
+                        <td style="padding: 32px;">
+                            <h2 style="margin: 0 0 16px; color: #111827; font-size: 20px; font-weight: 700;">
+                                Hallo {{ user.name }}!
+                            </h2>
+
+                            <p style="margin: 0 0 24px; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                                Vielen Dank für deine Registrierung bei Endlech.lu. Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Button klickst:
+                            </p>
+
+                            <table role="presentation" style="width: 100%; border: 0;">
+                                <tr>
+                                    <td style="text-align: center; padding: 8px 0 24px;">
+                                        <a href="{{ verifyUrl }}" style="display: inline-block; background-color: #7c3aed; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;">
+                                            E-Mail bestätigen
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin: 0 0 8px; color: #9ca3af; font-size: 12px;">
+                                Dieser Link ist 24 Stunden gültig. Falls du dich nicht bei Endlech.lu registriert hast, kannst du diese E-Mail ignorieren.
+                            </p>
+
+                            <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                                Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:<br>
+                                <a href="{{ verifyUrl }}" style="color: #7c3aed; word-break: break-all;">{{ verifyUrl }}</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                    {# Footer #}
+                    <tr>
+                        <td style="padding: 24px 32px; border-top: 1px solid #f3f4f6; text-align: center;">
+                            <p style="margin: 0; color: #9ca3af; font-size: 11px;">
+                                &copy; {{ 'now'|date('Y') }} Endlech.lu - Made with love in Luxembourg
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
