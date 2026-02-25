@@ -1,65 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Endlech.lu - Coming Soon{% endblock %}
+{% block title %}Endlech.lu - Barrierefreie Restaurants in Luxemburg{% endblock %}
 
 {% block body %}
-
-    {# ================================================================= #}
-    {# TEIL 1: COMING SOON OVERLAY (Lösche diesen Block, wenn du live gehst) #}
-    {# ================================================================= #}
-    <div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-sm text-white overflow-hidden p-4">
-
-        {# Hintergrunde-Effekte #}
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-30 animate-pulse"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-cyan-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-30"></div>
-        </div>
-
-        {# === DAS HAUPT-PANEL === #}
-        <div class="relative z-10 w-full max-w-xl bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col items-center text-center">
-
-            {# Logo #}
-            <div class="mb-8">
-                <img src="{{ asset('images/logo.png') }}" alt="Endlech.lu Logo" class="h-28 w-auto object-contain drop-shadow-xl">
-            </div>
-
-            {# Headline #}
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">
-                <span class="text-white">Endlich</span>
-                <span class="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-purple-400">barrierefrei.</span>
-            </h1>
-
-            {# Text #}
-            <p class="text-lg text-gray-300 mb-10 leading-relaxed font-light">
-                Wir bauen Luxemburgs erste Plattform <br> für wirklich zugängliche Gastronomie.
-                <br>
-                <br>
-                Schau bald wieder vorbei.
-            </p>
-
-            {# Status Badge #}
-            <div class="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-5 py-2 rounded-full shadow-inner mb-8">
-                <span class="relative flex h-3 w-3">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
-                </span>
-                <span class="text-cyan-100 font-medium tracking-wide text-sm uppercase">Launch demnächst</span>
-            </div>
-
-            {# Divider #}
-            <div class="w-full h-px bg-linear-to-r from-transparent via-gray-700 to-transparent mb-8"></div>
-
-            {# Copyright (statt Social Links) #}
-            <div class="text-sm text-gray-500 font-medium tracking-wide">
-                &copy; 2026 Endlech.lu
-            </div>
-        </div>
-    </div>
-
-
-    {# ================================================================= #}
-    {# TEIL 2: DIE EIGENTLICHE APP (Versteckt unter dem Overlay)         #}
-    {# ================================================================= #}
 
     <div class="min-h-screen bg-gray-50">
         {# --- HERO SECTION --- #}
@@ -122,7 +65,7 @@
                 <main class="w-full lg:w-3/4">
 
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-bold text-gray-800">3 Ergebnisse gefunden</h2>
+                        <h2 class="text-xl font-bold text-gray-800">{{ restaurants|length }} Ergebnisse gefunden</h2>
                         <select class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg px-3 py-2 focus:outline-none">
                             <option>Beste Bewertung</option>
                             <option>Neueste zuerst</option>
@@ -131,78 +74,53 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                        {# CARD 1 #}
-                        <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
-                            <div class="h-40 bg-gray-100 relative flex items-center justify-center text-gray-300 text-5xl">
-                                🍕
-                                <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geöffnet</span>
-                            </div>
-                            <div class="p-5 flex-grow">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700 transition">Pizzeria Bella Vista</h3>
-                                        <p class="text-sm text-gray-500">Luxembourg-Ville • Italienisch</p>
+                        {% for restaurant in restaurants %}
+                            <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
+                                <div class="h-40 bg-gray-100 relative flex items-center justify-center text-gray-300 text-5xl">
+                                    {{ restaurant.emoji }}
+                                    {% if restaurant.isOpen %}
+                                        <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geöffnet</span>
+                                    {% else %}
+                                        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geschlossen</span>
+                                    {% endif %}
+                                </div>
+                                <div class="p-5 flex-grow">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700 transition">{{ restaurant.name }}</h3>
+                                            <p class="text-sm text-gray-500">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
+                                        </div>
+                                        {% if restaurant.rating is not null %}
+                                            <div class="bg-cyan-50 text-cyan-700 px-2 py-1 rounded text-xs font-bold border border-cyan-100">{{ restaurant.rating }}</div>
+                                        {% endif %}
                                     </div>
-                                    <div class="bg-cyan-50 text-cyan-700 px-2 py-1 rounded text-xs font-bold border border-cyan-100">9.8</div>
+                                    {% if restaurant.accessibilityNotes is not empty %}
+                                        <hr class="my-4 border-gray-100">
+                                        <div class="space-y-2">
+                                            {% for note in restaurant.accessibilityNotes %}
+                                                {% set parts = note|split(':') %}
+                                                {% set type = parts|first %}
+                                                {% set text = parts[1] %}
+                                                {% if type == 'ok' %}
+                                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> {{ text }}</div>
+                                                {% elseif type == 'warn' %}
+                                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-yellow-500">!</span> {{ text }}</div>
+                                                {% else %}
+                                                    <div class="flex items-center gap-2 text-sm text-gray-600">{{ note }}</div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                                <hr class="my-4 border-gray-100">
-                                <div class="space-y-2">
-                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Eingang stufenlos</div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> WC Tür > 90cm</div>
+                                <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 mt-auto">
+                                    <a href="#" class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-800">Details ansehen</a>
                                 </div>
+                            </article>
+                        {% else %}
+                            <div class="col-span-2 text-center py-12 text-gray-500">
+                                <p class="text-lg">Noch keine Restaurants eingetragen.</p>
                             </div>
-                            <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 mt-auto">
-                                <a href="#" class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-800">Details ansehen</a>
-                            </div>
-                        </article>
-
-                        {# CARD 2 #}
-                        <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
-                            <div class="h-40 bg-gray-100 relative flex items-center justify-center text-gray-300 text-5xl">
-                                🍜
-                                <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geschlossen</span>
-                            </div>
-                            <div class="p-5 flex-grow">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700 transition">Umami Corner</h3>
-                                        <p class="text-sm text-gray-500">Esch-Belval • Asiatisch</p>
-                                    </div>
-                                </div>
-                                <hr class="my-4 border-gray-100">
-                                <div class="space-y-2">
-                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Menü in Braille</div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-yellow-500">!</span> Stufe am Eingang</div>
-                                </div>
-                            </div>
-                            <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 mt-auto">
-                                <a href="#" class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-800">Details ansehen</a>
-                            </div>
-                        </article>
-
-                        {# CARD 3 #}
-                        <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
-                            <div class="h-40 bg-gray-100 relative flex items-center justify-center text-gray-300 text-5xl">
-                                🍔
-                                <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geöffnet</span>
-                            </div>
-                            <div class="p-5 flex-grow">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700 transition">Burger & Co.</h3>
-                                        <p class="text-sm text-gray-500">Dudelange • Fast Food</p>
-                                    </div>
-                                    <div class="bg-cyan-50 text-cyan-700 px-2 py-1 rounded text-xs font-bold border border-cyan-100">8.5</div>
-                                </div>
-                                <hr class="my-4 border-gray-100">
-                                <div class="space-y-2">
-                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Parkplatz vor der Tür</div>
-                                </div>
-                            </div>
-                            <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 mt-auto">
-                                <a href="#" class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-800">Details ansehen</a>
-                            </div>
-                        </article>
+                        {% endfor %}
 
                     </div>
                 </main>

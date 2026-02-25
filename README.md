@@ -2,33 +2,33 @@
 
 Eine offene Plattform, um barrierefreie Restaurants in Luxemburg zu finden und zu bewerten. Gebaut für Inklusion, Community und Einfachheit.
 
-![Version](https://img.shields.io/badge/version-v2026.01.13-blue)
-![Status](https://img.shields.io/badge/status-development-orange)
+![Version](https://img.shields.io/badge/version-v2026.02.25-blue)
+![Status](https://img.shields.io/badge/status-beta-green)
 
 <div align="center">
   <img src="Element 1.png" alt="Endlech.lu Logo" width="200">
 </div>
 
-## 🚧 Projektstatus
+## 🚀 Projektstatus
 
-**Dieses Projekt befindet sich aktuell im Aufbau.**
-Wir arbeiten gerade am Grundgerüst (MVP). Ziel ist es, eine erste nutzbare Version für Luxemburg bereitzustellen.
+**Die erste Beta-Version ist live.**
+Die Restaurant-Listenansicht mit Barrierefreiheits-Informationen ist verfügbar. Als nächstes: Authentifizierung für Restaurant-Besitzer und eine Kartenansicht.
 
-## 🎯 Geplante Features & Fortschritt
+## 🎯 Features & Fortschritt
 
 Hier ist der aktuelle Entwicklungsstand der Plattform.
 
 ### 🏗️ Core & Backend
-- [x] **Projekt Setup:** Symfony 7 Installation & Konfiguration.
+- [x] **Projekt Setup:** Symfony 8.0 Installation & Konfiguration.
 - [x] **Frontend Stack:** Tailwind CSS & Webpack Encore Integration.
-- [x] **Datenbank:** Grundlegendes Schema für Restaurants & User.
+- [x] **Datenbank:** Schema für Restaurants & User (MySQL 8.0).
+- [x] **Daten-Seeding:** Initiale Restaurants für Luxemburg via Fixtures.
 - [ ] **Authentifizierung:** Login & Registrierung für User.
-- [ ] **Daten-Seeding:** Erste Test-Daten für Restaurants in Luxemburg.
 
-### 🍽️ Restaurant Finder (MVP)
-- [ ] **Listenansicht:** Anzeige aller Restaurants.
-- [ ] **Detailseite:** Einzelansicht mit Adresse und Infos.
-- [ ] **Barrierefreiheits-Icons:** Anzeige von Kriterien (Rollstuhl, WC, etc.).
+### 🍽️ Restaurant Finder
+- [x] **Listenansicht:** Anzeige aller Restaurants aus der Datenbank.
+- [x] **Barrierefreiheits-Icons:** Anzeige von Kriterien (Rollstuhl, WC, Assistenzhund, Beleuchtung).
+- [ ] **Detailseite:** Einzelansicht mit Adresse und weiteren Infos.
 - [ ] **Filter:** Filtern nach Kriterien (z. B. "Stufenloser Eingang").
 
 ### 👤 User & Community
@@ -38,7 +38,7 @@ Hier ist der aktuelle Entwicklungsstand der Plattform.
 
 ## 🔮 Roadmap (Zukunft)
 
-Ideen für Version 2.0 (nach dem ersten Release):
+Ideen für Version 2.0 (nach dem ersten stabilen Release):
 
 * **Verifizierung:** "Blauer Haken" für geprüfte Restaurants.
 * **Fotos:** User können Fotos von Eingängen/Toiletten hochladen.
@@ -47,8 +47,8 @@ Ideen für Version 2.0 (nach dem ersten Release):
 
 ## 🛠 Tech Stack
 
-* **Backend:** PHP 8.2+, Symfony 7
-* **Database:** MySQL (Doctrine ORM)
+* **Backend:** PHP 8.4+, Symfony 8.0
+* **Database:** MySQL 8.0 (Doctrine ORM)
 * **Frontend:** Twig, Tailwind CSS (via `symfonycasts/tailwind-bundle`)
 * **JS:** Stimulus, Turbo (Hotwire)
 * **Assets:** Webpack Encore
@@ -57,8 +57,8 @@ Ideen für Version 2.0 (nach dem ersten Release):
 
 1.  **Repository klonen:**
     ```bash
-    git clone [https://github.com/dein-username/endlech-lu.git](https://github.com/dein-username/endlech-lu.git)
-    cd endlech-lu
+    git clone https://github.com/Mukaarts/endlech.lu.git
+    cd endlech.lu
     ```
 
 2.  **Dependencies installieren:**
@@ -67,30 +67,34 @@ Ideen für Version 2.0 (nach dem ersten Release):
     npm install
     ```
 
-3.  **Umgebungsvariablen (.env.local):**
-    Erstelle eine `.env.local` Datei und konfiguriere deine Datenbank:
+3.  **Docker starten (MySQL):**
     ```bash
-    # Database
-    DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/endlech_db?serverVersion=8.0&charset=utf8mb4"
+    docker compose up -d
     ```
 
-4.  **Datenbank & Assets:**
+4.  **Umgebungsvariablen (.env.local):**
+    Erstelle eine `.env.local` Datei:
     ```bash
-    # Tailwind Binary init
-    php bin/console tailwind:init
-    
-    # DB Setup
-    php bin/console doctrine:database:create
+    DATABASE_URL="mysql://root:root@127.0.0.1:3306/endlech?serverVersion=8.0&charset=utf8mb4"
+    APP_SECRET=dein-geheimes-secret
+    ```
+
+5.  **Datenbank & Fixtures:**
+    ```bash
     php bin/console doctrine:migrations:migrate
-    
-    # Frontend Build
-    npm run build
-    php bin/console tailwind:build
+    php bin/console doctrine:fixtures:load
     ```
 
-5.  **Server starten:**
+6.  **Assets bauen & Server starten:**
     ```bash
+    npm run build
     symfony server:start
+    ```
+
+    Oder mit `make`:
+    ```bash
+    make init   # Vollständiges Setup (Docker, composer, npm, DB, Fixtures)
+    make start  # Server + Asset-Watcher starten
     ```
 
 ## 🌍 Environments
@@ -98,34 +102,31 @@ Ideen für Version 2.0 (nach dem ersten Release):
 ### 🛠 Development
 Der Modus für die aktive Entwicklung. Änderungen an Templates und CSS werden sofort erkannt.
 
-1.  Watcher starten (2 Terminals empfohlen):
-    ```bash
-    # Terminal 1: Tailwind
-    php bin/console tailwind:build --watch
-    
-    # Terminal 2: JS/Encore
-    npm run watch
-    ```
+```bash
+# Terminal 1: Tailwind
+php bin/console tailwind:build --watch
+
+# Terminal 2: JS/Encore
+npm run watch
+```
 
 ### 🚀 Production
 Optimiert für Performance und Sicherheit.
 
-1.  Assets bauen:
-    ```bash
-    php bin/console tailwind:build --minify
-    npm run build
-    ```
-2.  Cache leeren:
-    ```bash
-    php bin/console cache:clear
-    ```
+```bash
+php bin/console tailwind:build --minify
+npm run build
+php bin/console cache:clear
+```
 
 ## 📂 Struktur
 
 * `/src/Controller` - Logik für die Seiten.
-* `/src/Entity` - Datenbank-Modelle.
+* `/src/Entity` - Datenbank-Modelle (`User`, `Restaurant`).
+* `/src/DataFixtures` - Initiale Testdaten.
 * `/templates` - Twig Templates.
 * `/assets` - Stimulus Controller und CSS.
+* `/migrations` - Doctrine Datenbankmigrationen.
 
 ---
 *Built with ❤️ in Luxembourg.*

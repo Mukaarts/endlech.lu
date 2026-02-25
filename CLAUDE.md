@@ -4,14 +4,14 @@ Guide for AI assistants working on the endlech.lu codebase.
 
 ## Project Overview
 
-**Endlech.lu** is an open platform to find and rate accessible restaurants in Luxembourg. Built with Symfony 8 (PHP 8.4+), Tailwind CSS v4, and Hotwire (Stimulus + Turbo). Currently in MVP phase with a "Coming Soon" landing page.
+**Endlech.lu** is an open platform to find and rate accessible restaurants in Luxembourg. Built with Symfony 8 (PHP 8.4+), Tailwind CSS v4, and Hotwire (Stimulus + Turbo). The platform is live with a restaurant listing page backed by a real database.
 
 The UI language is German/Luxembourgish. The codebase comments (Makefile, templates) use German.
 
 ## Tech Stack
 
 - **Backend:** PHP 8.4+, Symfony 8.0.*
-- **Database:** PostgreSQL 16 (via Docker)
+- **Database:** MySQL 8.0 (via Docker)
 - **ORM:** Doctrine 3.6 with migrations
 - **Templates:** Twig
 - **CSS:** Tailwind CSS v4.1 via PostCSS
@@ -25,8 +25,9 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 ```
 src/
 ├── Controller/          # Route controllers (attribute-based routing)
-├── Entity/              # Doctrine entities (empty - MVP)
-├── Repository/          # Doctrine repositories (empty - MVP)
+├── DataFixtures/        # Doctrine fixtures (initial restaurant data)
+├── Entity/              # Doctrine entities (User, Restaurant)
+├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository)
 └── Kernel.php           # Symfony kernel
 
 config/
@@ -39,7 +40,7 @@ config/
 templates/
 ├── base.html.twig       # Base layout (header, nav, footer)
 └── home/
-    └── index.html.twig  # Home page with "Coming Soon" overlay
+    └── index.html.twig  # Home page with restaurant listing (DB-backed)
 
 assets/
 ├── app.js               # Main JS entry point
@@ -114,10 +115,11 @@ Routes are defined using PHP attributes (`#[Route]`) on controller methods. Auto
 Autowiring and autoconfiguration are enabled by default in `config/services.yaml`. All classes under `src/` are automatically registered as services.
 
 ### Database
-- PostgreSQL via Docker Compose (`compose.yaml`)
+- MySQL 8.0 via Docker Compose (`compose.yaml`) on port 3306
 - Migrations namespace: `DoctrineMigrations` (not `App\Migrations`)
 - Migration path: `migrations/` directory
-- Connection: `postgresql://app:!ChangeMe!@database:5432/app`
+- Connection string format: `mysql://root:root@127.0.0.1:3306/endlech?serverVersion=8.0&charset=utf8mb4`
+- Set `DATABASE_URL` in `.env.local`
 
 ### Frontend
 - Entry point: `assets/app.js` (compiled by Webpack Encore to `public/build/`)
@@ -148,7 +150,7 @@ Defined in `compose.yaml` and `compose.override.yaml`:
 
 | Service   | Image              | Ports          | Purpose              |
 |-----------|--------------------|----------------|----------------------|
-| database  | postgres:16-alpine | 5432           | PostgreSQL database  |
+| database  | mysql:8.0          | 3306           | MySQL database       |
 | mailer    | axllent/mailpit    | 1025, 8025     | Dev email (SMTP+UI)  |
 
 ## Environment Files
@@ -179,7 +181,7 @@ No GitHub Actions workflows are configured yet. The `.github/` directory contain
 | `webpack.config.js`   | Webpack Encore build configuration         |
 | `postcss.config.mjs`  | PostCSS with Tailwind CSS plugin           |
 | `phpunit.dist.xml`    | PHPUnit test configuration                 |
-| `compose.yaml`        | Docker services (PostgreSQL, Mailpit)      |
+| `compose.yaml`        | Docker services (MySQL 8.0, Mailpit)       |
 | `Makefile`            | Development workflow commands               |
 | `importmap.php`       | Symfony AssetMapper module mapping         |
 | `.editorconfig`       | Editor formatting rules                    |
