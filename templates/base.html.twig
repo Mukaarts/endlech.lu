@@ -44,17 +44,31 @@
             </a>
         </nav>
 
-        {# 3. Buttons (Login / Register) #}
+        {# 3. Buttons (Login / Register / Benutzer) #}
         <div class="flex items-center gap-4">
-            <a href="#" class="hidden md:inline-block text-sm font-semibold text-gray-500 hover:text-purple-600">
-                Login
-            </a>
-            <a href="#" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-full font-bold shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
-                Mitmachen
-            </a>
+            {% if app.user %}
+                <span class="hidden md:inline-block text-sm text-gray-600">
+                    {{ app.user.name }}
+                </span>
+                <a href="{{ path('app_logout') }}" class="hidden md:inline-block text-sm font-semibold text-gray-500 hover:text-purple-600">
+                    Abmelden
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="hidden md:inline-block text-sm font-semibold text-gray-500 hover:text-purple-600">
+                    Login
+                </a>
+                <a href="{{ path('app_register') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-full font-bold shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                    Mitmachen
+                </a>
+            {% endif %}
         </div>
     </div>
 </header>
+
+{# === FLASH NACHRICHTEN === #}
+<div class="container mx-auto px-4 mt-4">
+    {% include 'partials/_flash_messages.html.twig' %}
+</div>
 
 {# === HAUPTINHALT (Hier wird index.html.twig reingeladen) === #}
 <main class="flex-grow">
