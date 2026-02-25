@@ -25,7 +25,7 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 ```
 src/
 ├── Controller/          # Route controllers (attribute-based routing)
-├── DataFixtures/        # Doctrine fixtures (initial restaurant data)
+├── DataFixtures/        # Doctrine fixtures (restaurant data + user test data)
 ├── Entity/              # Doctrine entities (User, Restaurant)
 ├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository)
 └── Kernel.php           # Symfony kernel
@@ -113,6 +113,14 @@ Routes are defined using PHP attributes (`#[Route]`) on controller methods. Auto
 
 ### Services
 Autowiring and autoconfiguration are enabled by default in `config/services.yaml`. All classes under `src/` are automatically registered as services.
+
+### Data Fixtures
+- Restaurant fixtures: 8 Luxembourg restaurants (`RestaurantFixtures`)
+- User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
+  - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
+  - `user@endlech.lu` / `user123` — ROLE_USER, verified
+  - `unverified@endlech.lu` / `unverified123` — ROLE_USER, unverified
+- Fixture references available: `UserFixtures::REFERENCE_ADMIN`, `REFERENCE_USER`, `REFERENCE_UNVERIFIED`
 
 ### Database
 - MySQL 8.0 via Docker Compose (`compose.yaml`) on port 3306

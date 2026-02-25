@@ -23,6 +23,7 @@ Hier ist der aktuelle Entwicklungsstand der Plattform.
 - [x] **Frontend Stack:** Tailwind CSS & Webpack Encore Integration.
 - [x] **Datenbank:** Schema für Restaurants & User (MySQL 8.0).
 - [x] **Daten-Seeding:** Initiale Restaurants für Luxemburg via Fixtures.
+- [x] **User-Fixtures:** Test-User (Admin, verifiziert, unverifiziert) für Entwicklung & Tests.
 - [ ] **Authentifizierung:** Login & Registrierung für User.
 
 ### 🍽️ Restaurant Finder

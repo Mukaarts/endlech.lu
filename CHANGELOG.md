@@ -11,6 +11,7 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 ### 🚀 Features
 - **Auth:** Login & Registrierung für Restaurant-Besitzer.
 - **Map:** Kartenansicht der Locations.
+- **Data:** `UserFixtures` mit 3 Test-Usern (Admin, verifiziert, unverifiziert) und korrekt gehashten Passwörtern (Symfony PasswordHasher).
 
 ---
 
