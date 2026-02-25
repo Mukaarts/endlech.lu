@@ -2,16 +2,32 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.01.13-blue)
-![Status](https://img.shields.io/badge/status-development-orange)
+![Version](https://img.shields.io/badge/version-v2026.02.25-blue)
+![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
 *Geplante Features für das nächste Release.*
 
 ### 🚀 Features
-- **Backend:** Echte Datenbank-Verbindung für die Restaurant-Karten.
 - **Auth:** Login & Registrierung für Restaurant-Besitzer.
 - **Map:** Kartenansicht der Locations.
+
+---
+
+## [2026.02.25]
+*Platform-Launch: Overlay entfernt, echte Datenbank-Anbindung für Restaurant-Karten.*
+
+### 🚀 Features
+- **Launch:** "Coming Soon" Overlay entfernt – die Plattform ist jetzt live.
+- **Backend:** `Restaurant`-Entity mit Barrierefreiheits-Feldern (Rollstuhl, WC, Assistenzhund, Beleuchtung).
+- **Backend:** Doctrine-Migration für die `restaurant`-Tabelle (MySQL 8.0).
+- **Data:** 8 Luxemburger Restaurants als initiale Fixtures (Luxembourg-Ville, Esch-Belval, Dudelange, Kirchberg, Grevenmacher, Diekirch, Strassen, Remich).
+- **UI:** Dynamische Restaurant-Karten via DB-Abfrage statt hardcoded HTML.
+- **UI:** Empty-State bei leerer Restaurantliste.
+
+### 🛠 Tech & Config
+- **Dependency:** `doctrine/doctrine-fixtures-bundle` als Dev-Abhängigkeit hinzugefügt.
+- **Controller:** `HomeController` injiziert `RestaurantRepository` und übergibt `$restaurants` ans Template.
 
 ---
 
