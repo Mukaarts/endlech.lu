@@ -2,7 +2,7 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.02.25-blue)
+![Version](https://img.shields.io/badge/version-v2026.02.27-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
@@ -11,6 +11,24 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 ### 🚀 Features
 - **Auth:** Login & Registrierung für Restaurant-Besitzer.
 - **Map:** Kartenansicht der Locations.
+- **Restaurant:** Detailseite für einzelne Restaurants.
+- **Filter:** Aktive Filterung nach Barrierefreiheitskriterien.
+
+---
+
+## [2026.02.27]
+*Restaurant-Listenansicht unter `/restaurants` mit Pagination und Sortierung.*
+
+### 🚀 Features
+- **Backend:** `RestaurantController` mit Route `/restaurants` (Name: `app_restaurant_index`).
+- **Backend:** Paginierung via Doctrine `Paginator` (6 Ergebnisse pro Seite).
+- **Backend:** Sortierung nach Bewertung (Standard), Name (A–Z) und Neueste via URL-Parameter `?sort=`.
+- **UI:** Dediziertes Template `restaurant/index.html.twig` mit Restaurant-Karten, Barrierefreiheits-Icons, Pagination-Navigation und Leer-Zustand.
+- **Data:** 3 neue Fixture-Restaurants (Trattoria Roma/Ettelbruck, Green Bowl/Cloche d'Or, Brasserie du Grund/Grund) – jetzt 11 Einträge insgesamt.
+- **Nav:** "Restaurants finden" in der Navigation verlinkt jetzt auf `/restaurants`.
+
+### 🛠 Tech & Config
+- **Repository:** `RestaurantRepository::findPaginated(string $sort, int $page, int $limit)` hinzugefügt.
 - **Data:** `UserFixtures` mit 3 Test-Usern (Admin, verifiziert, unverifiziert) und korrekt gehashten Passwörtern (Symfony PasswordHasher).
 
 ---
