@@ -1,0 +1,191 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Restaurants – Endlech.lu{% endblock %}
+
+{% block body %}
+
+    <div class="min-h-screen bg-gray-50">
+        {# --- HERO SECTION --- #}
+        <div class="bg-linear-to-r from-cyan-600 to-purple-700 text-white py-12 shadow-md">
+            <div class="container mx-auto px-4">
+                <h1 class="text-3xl font-bold mb-2">Restaurants in Luxemburg</h1>
+                <p class="text-cyan-100 text-lg">{{ total }} barrierefreie Orte entdecken.</p>
+            </div>
+        </div>
+
+        {# --- MAIN LAYOUT MIT PANELS --- #}
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+
+                {# === LINKES PANEL: FILTER (Sidebar) === #}
+                <aside class="w-full lg:w-1/4">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
+                        <div class="flex items-center gap-2 mb-6 text-purple-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                            <h3 class="font-bold text-lg">Filter</h3>
+                        </div>
+
+                        <form>
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Ort</label>
+                                <input type="text" placeholder="Stadt oder PLZ..." class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Bedürfnisse</label>
+
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                    <input type="checkbox" class="rounded text-purple-600 focus:ring-purple-500 border-gray-300">
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">♿ Rollstuhl (stufenlos)</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                    <input type="checkbox" class="rounded text-purple-600 focus:ring-purple-500 border-gray-300">
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🚻 Barrierefreies WC</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                    <input type="checkbox" class="rounded text-purple-600 focus:ring-purple-500 border-gray-300">
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🐕 Assistenzhund erlaubt</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" class="rounded text-purple-600 focus:ring-purple-500 border-gray-300">
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">💡 Helle Beleuchtung</span>
+                                </label>
+                            </div>
+
+                            <button class="w-full bg-gray-900 hover:bg-black text-white font-medium py-2 rounded-lg transition">
+                                Filter anwenden
+                            </button>
+                        </form>
+                    </div>
+                </aside>
+
+                {# === RECHTES PANEL: RESTAURANTS (Grid) === #}
+                <main class="w-full lg:w-3/4">
+
+                    {# Sortierung & Ergebnisanzahl #}
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">{{ total }} Ergebnisse gefunden</h2>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ path('app_restaurant_index', {sort: 'rating', page: 1}) }}"
+                               class="px-3 py-1.5 text-sm rounded-lg border transition {{ sort == 'rating' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400' }}">
+                                Beste Bewertung
+                            </a>
+                            <a href="{{ path('app_restaurant_index', {sort: 'name', page: 1}) }}"
+                               class="px-3 py-1.5 text-sm rounded-lg border transition {{ sort == 'name' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400' }}">
+                                A – Z
+                            </a>
+                            <a href="{{ path('app_restaurant_index', {sort: 'newest', page: 1}) }}"
+                               class="px-3 py-1.5 text-sm rounded-lg border transition {{ sort == 'newest' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400' }}">
+                                Neueste
+                            </a>
+                        </div>
+                    </div>
+
+                    {# Restaurant-Karten #}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        {% for restaurant in restaurants %}
+                            <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
+                                <div class="h-40 bg-gray-100 relative flex items-center justify-center text-gray-300 text-5xl">
+                                    {{ restaurant.emoji }}
+                                    {% if restaurant.isOpen %}
+                                        <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geöffnet</span>
+                                    {% else %}
+                                        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geschlossen</span>
+                                    {% endif %}
+                                </div>
+                                <div class="p-5 flex-grow">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700 transition">{{ restaurant.name }}</h3>
+                                            <p class="text-sm text-gray-500">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
+                                        </div>
+                                        {% if restaurant.rating is not null %}
+                                            <div class="bg-cyan-50 text-cyan-700 px-2 py-1 rounded text-xs font-bold border border-cyan-100 shrink-0">{{ restaurant.rating }}</div>
+                                        {% endif %}
+                                    </div>
+
+                                    {# Barrierefreiheits-Icons #}
+                                    <div class="flex gap-2 mt-3 flex-wrap">
+                                        {% if restaurant.isWheelchairAccessible %}
+                                            <span title="Rollstuhlgerecht" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">♿</span>
+                                        {% endif %}
+                                        {% if restaurant.hasAccessibleToilet %}
+                                            <span title="Barrierefreies WC" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🚻</span>
+                                        {% endif %}
+                                        {% if restaurant.allowsAssistanceDogs %}
+                                            <span title="Assistenzhund erlaubt" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🐕</span>
+                                        {% endif %}
+                                        {% if restaurant.hasBrightLighting %}
+                                            <span title="Helle Beleuchtung" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">💡</span>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if restaurant.accessibilityNotes is not empty %}
+                                        <hr class="my-4 border-gray-100">
+                                        <div class="space-y-2">
+                                            {% for note in restaurant.accessibilityNotes %}
+                                                {% set parts = note|split(':') %}
+                                                {% set type = parts|first %}
+                                                {% set text = parts[1] %}
+                                                {% if type == 'ok' %}
+                                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> {{ text }}</div>
+                                                {% elseif type == 'warn' %}
+                                                    <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-yellow-500">!</span> {{ text }}</div>
+                                                {% else %}
+                                                    <div class="flex items-center gap-2 text-sm text-gray-600">{{ note }}</div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 mt-auto">
+                                    <a href="#" class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-800">Details ansehen</a>
+                                </div>
+                            </article>
+                        {% else %}
+                            <div class="col-span-2 text-center py-16 text-gray-400">
+                                <p class="text-5xl mb-4">🍽️</p>
+                                <p class="text-lg font-medium text-gray-600">Noch keine Restaurants eingetragen.</p>
+                                <p class="text-sm mt-1">Hilf uns und schlage ein Restaurant vor!</p>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    {# --- PAGINATION --- #}
+                    {% if lastPage > 1 %}
+                        <nav class="flex justify-center items-center gap-2 mt-10" aria-label="Seitennavigation">
+                            {% if currentPage > 1 %}
+                                <a href="{{ path('app_restaurant_index', {sort: sort, page: currentPage - 1}) }}"
+                                   class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:border-purple-400 transition text-sm">
+                                    ← Zurück
+                                </a>
+                            {% endif %}
+
+                            {% for p in 1..lastPage %}
+                                <a href="{{ path('app_restaurant_index', {sort: sort, page: p}) }}"
+                                   class="px-4 py-2 rounded-lg border text-sm transition {{ p == currentPage ? 'bg-purple-600 text-white border-purple-600 font-bold' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400' }}">
+                                    {{ p }}
+                                </a>
+                            {% endfor %}
+
+                            {% if currentPage < lastPage %}
+                                <a href="{{ path('app_restaurant_index', {sort: sort, page: currentPage + 1}) }}"
+                                   class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:border-purple-400 transition text-sm">
+                                    Weiter →
+                                </a>
+                            {% endif %}
+                        </nav>
+                        <p class="text-center text-sm text-gray-400 mt-3">Seite {{ currentPage }} von {{ lastPage }}</p>
+                    {% endif %}
+
+                </main>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -39,8 +39,10 @@ config/
 
 templates/
 ├── base.html.twig       # Base layout (header, nav, footer)
-└── home/
-    └── index.html.twig  # Home page with restaurant listing (DB-backed)
+├── home/
+│   └── index.html.twig  # Home page with restaurant listing (DB-backed, no pagination)
+└── restaurant/
+    └── index.html.twig  # /restaurants – paginated & sortable restaurant list
 
 assets/
 ├── app.js               # Main JS entry point
@@ -114,8 +116,24 @@ Routes are defined using PHP attributes (`#[Route]`) on controller methods. Auto
 ### Services
 Autowiring and autoconfiguration are enabled by default in `config/services.yaml`. All classes under `src/` are automatically registered as services.
 
+### Routes
+
+| Route name              | URL            | Controller method                   |
+|-------------------------|----------------|-------------------------------------|
+| `app_home`              | `/`            | `HomeController::index()`           |
+| `app_restaurant_index`  | `/restaurants` | `RestaurantController::index()`     |
+| `app_login`             | `/login`       | `SecurityController::login()`       |
+| `app_register`          | `/register`    | `RegistrationController::register()`|
+| `app_logout`            | `/logout`      | `SecurityController::logout()`      |
+
+`/restaurants` accepts query params:
+- `?sort=rating` (default) – sorted by rating DESC
+- `?sort=name` – sorted A–Z
+- `?sort=newest` – sorted by `createdAt` DESC
+- `?page=N` – page number (6 items per page, uses Doctrine `Paginator`)
+
 ### Data Fixtures
-- Restaurant fixtures: 8 Luxembourg restaurants (`RestaurantFixtures`)
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`)
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified
