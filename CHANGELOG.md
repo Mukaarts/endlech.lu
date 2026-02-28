@@ -16,6 +16,17 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 ---
 
 ## [2026.02.28]
+*Startseite als Landing Page neu gestaltet. Detailseite für einzelne Restaurants.*
+
+### 🚀 Features
+- **Startseite:** Komplette Neugestaltung als Landing Page mit Hero-Section, „So funktioniert's" (3 Schritte), Top-6 Restaurant-Vorschau, „Warum Endlech.lu?" Wertversprechen und CTA-Banner.
+- **Backend:** `RestaurantRepository::findTopRated(int $limit)` für die Top-bewerteten Restaurants.
+- **Backend:** `HomeController` zeigt jetzt Top-6 Restaurants statt alle und übergibt Gesamtanzahl ans Template.
+- **UI:** Restaurant-Karten auf der Startseite mit Barrierefreiheits-Icons (♿ 🚻 🐕 💡).
+- **UI:** Responsive 3-Spalten-Grid (1 Spalte mobil, 2 Tablet, 3 Desktop).
+- **CTA:** „Restaurants entdecken" → `/restaurants`, „Mitmachen" / „Restaurant vorschlagen" → `/register`.
+
+### Vorige Änderungen (2026.02.28)
 *Detailseite für einzelne Restaurants unter `/restaurants/{id}`.*
 
 ### 🚀 Features
