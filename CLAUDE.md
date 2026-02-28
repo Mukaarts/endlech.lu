@@ -42,7 +42,8 @@ templates/
 ├── home/
 │   └── index.html.twig  # Home page with restaurant listing (DB-backed, no pagination)
 └── restaurant/
-    └── index.html.twig  # /restaurants – paginated & sortable restaurant list
+    ├── index.html.twig  # /restaurants – paginated & sortable restaurant list
+    └── show.html.twig   # /restaurants/{id} – restaurant detail view
 
 assets/
 ├── app.js               # Main JS entry point
@@ -122,6 +123,7 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 |-------------------------|----------------|-------------------------------------|
 | `app_home`              | `/`            | `HomeController::index()`           |
 | `app_restaurant_index`  | `/restaurants` | `RestaurantController::index()`     |
+| `app_restaurant_show`   | `/restaurants/{id}` | `RestaurantController::show()`      |
 | `app_login`             | `/login`       | `SecurityController::login()`       |
 | `app_register`          | `/register`    | `RegistrationController::register()`|
 | `app_logout`            | `/logout`      | `SecurityController::logout()`      |

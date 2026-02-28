@@ -2,7 +2,7 @@
 
 Eine offene Plattform, um barrierefreie Restaurants in Luxemburg zu finden und zu bewerten. Gebaut für Inklusion, Community und Einfachheit.
 
-![Version](https://img.shields.io/badge/version-v2026.02.27-blue)
+![Version](https://img.shields.io/badge/version-v2026.02.28-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 <div align="center">
@@ -29,7 +29,7 @@ Hier ist der aktuelle Entwicklungsstand der Plattform.
 ### 🍽️ Restaurant Finder
 - [x] **Listenansicht:** Dedizierte `/restaurants`-Seite mit Pagination (6/Seite) und Sortierung (Bewertung, Name, Neueste).
 - [x] **Barrierefreiheits-Icons:** Anzeige von Kriterien (Rollstuhl, WC, Assistenzhund, Beleuchtung).
-- [ ] **Detailseite:** Einzelansicht mit Adresse und weiteren Infos.
+- [x] **Detailseite:** Einzelansicht mit Adresse und weiteren Infos.
 - [ ] **Filter:** Filtern nach Kriterien (z. B. "Stufenloser Eingang").
 
 ### 👤 User & Community
