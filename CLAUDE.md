@@ -40,7 +40,7 @@ config/
 templates/
 ├── base.html.twig       # Base layout (header, nav, footer)
 ├── home/
-│   └── index.html.twig  # Home page with restaurant listing (DB-backed, no pagination)
+│   └── index.html.twig  # Landing page (Hero, "So funktioniert's", Top-6 Restaurants, "Warum Endlech.lu?", CTA)
 └── restaurant/
     ├── index.html.twig  # /restaurants – paginated & sortable restaurant list
     └── show.html.twig   # /restaurants/{id} – restaurant detail view
@@ -121,7 +121,7 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 
 | Route name              | URL            | Controller method                   |
 |-------------------------|----------------|-------------------------------------|
-| `app_home`              | `/`            | `HomeController::index()`           |
+| `app_home`              | `/`            | `HomeController::index()` (Landing Page) |
 | `app_restaurant_index`  | `/restaurants` | `RestaurantController::index()`     |
 | `app_restaurant_show`   | `/restaurants/{id}` | `RestaurantController::show()`      |
 | `app_login`             | `/login`       | `SecurityController::login()`       |

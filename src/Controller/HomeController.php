@@ -13,7 +13,8 @@ final class HomeController extends AbstractController
     public function index(RestaurantRepository $restaurantRepository): Response
     {
         return $this->render('home/index.html.twig', [
-            'restaurants' => $restaurantRepository->findAll(),
+            'restaurants' => $restaurantRepository->findTopRated(6),
+            'totalCount' => $restaurantRepository->count(),
         ]);
     }
 }

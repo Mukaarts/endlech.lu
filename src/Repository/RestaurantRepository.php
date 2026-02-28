@@ -17,6 +17,19 @@ class RestaurantRepository extends ServiceEntityRepository
         parent::__construct($registry, Restaurant::class);
     }
 
+    /**
+     * @return Restaurant[]
+     */
+    public function findTopRated(int $limit = 6): array
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.rating', 'DESC')
+            ->addOrderBy('r.name', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findPaginated(string $sort = 'rating', int $page = 1, int $limit = 6): Paginator
     {
         $qb = $this->createQueryBuilder('r');
