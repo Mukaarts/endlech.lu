@@ -2,7 +2,7 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.02.27-blue)
+![Version](https://img.shields.io/badge/version-v2026.02.28-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
@@ -11,8 +11,19 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 ### 🚀 Features
 - **Auth:** Login & Registrierung für Restaurant-Besitzer.
 - **Map:** Kartenansicht der Locations.
-- **Restaurant:** Detailseite für einzelne Restaurants.
 - **Filter:** Aktive Filterung nach Barrierefreiheitskriterien.
+
+---
+
+## [2026.02.28]
+*Detailseite für einzelne Restaurants unter `/restaurants/{id}`.*
+
+### 🚀 Features
+- **Backend:** `RestaurantController::show()` mit Route `/restaurants/{id}` (Name: `app_restaurant_show`).
+- **Backend:** Automatische 404-Antwort bei nicht existierender Restaurant-ID (Symfony Entity Value Resolver).
+- **UI:** Template `restaurant/show.html.twig` mit Emoji-Hero, Status-Badge, Bewertung, Barrierefreiheits-Übersicht (4 Kriterien) und Hinweisen (ok/warn).
+- **UI:** Responsive Layout (single-column, max-w-3xl) mit bestehendem Design (Cyan/Purple Gradient).
+- **Linking:** "Details ansehen" Links in `restaurant/index.html.twig` und `home/index.html.twig` verlinken jetzt auf die Detailseite.
 
 ---
 

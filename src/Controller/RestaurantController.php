@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Restaurant;
 use App\Repository\RestaurantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +33,14 @@ final class RestaurantController extends AbstractController
             'lastPage' => $lastPage,
             'total' => $total,
             'sort' => $sort,
+        ]);
+    }
+
+    #[Route('/restaurants/{id}', name: 'app_restaurant_show', requirements: ['id' => '\d+'])]
+    public function show(Restaurant $restaurant): Response
+    {
+        return $this->render('restaurant/show.html.twig', [
+            'restaurant' => $restaurant,
         ]);
     }
 }
