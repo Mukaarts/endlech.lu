@@ -2,7 +2,7 @@
 
 Eine offene Plattform, um barrierefreie Restaurants in Luxemburg zu finden und zu bewerten. Gebaut für Inklusion, Community und Einfachheit.
 
-![Version](https://img.shields.io/badge/version-v2026.02.28-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.01-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 <div align="center">
@@ -12,7 +12,7 @@ Eine offene Plattform, um barrierefreie Restaurants in Luxemburg zu finden und z
 ## 🚀 Projektstatus
 
 **Die erste Beta-Version ist live.**
-Die Startseite wurde als Landing Page mit Hero, „So funktioniert's", Restaurant-Vorschau und CTA-Bereichen neu gestaltet. Die dedizierte Restaurant-Listenansicht unter `/restaurants` mit Pagination und Sortierung ist verfügbar. Als nächstes: Authentifizierung für Restaurant-Besitzer und eine Kartenansicht.
+Die Startseite wurde als Landing Page mit Hero, „So funktioniert's", Restaurant-Vorschau und CTA-Bereichen neu gestaltet. Die dedizierte Restaurant-Listenansicht unter `/restaurants` mit Pagination und Sortierung ist verfügbar. Ein Admin-Panel unter `/admin` ermöglicht ROLE_ADMIN Benutzern die vollständige Verwaltung (CRUD) von Restaurants. Als nächstes: Kartenansicht und aktive Filterung.
 
 ## 🎯 Features & Fortschritt
 
@@ -25,6 +25,12 @@ Hier ist der aktuelle Entwicklungsstand der Plattform.
 - [x] **Daten-Seeding:** Initiale Restaurants für Luxemburg via Fixtures.
 - [x] **User-Fixtures:** Test-User (Admin, verifiziert, unverifiziert) für Entwicklung & Tests.
 - [ ] **Authentifizierung:** Login & Registrierung für User.
+
+### 🔧 Admin-Panel
+- [x] **Dashboard:** Admin-Bereich unter `/admin` mit Statistiken und Schnellaktionen.
+- [x] **Restaurant CRUD:** Restaurants erstellen, bearbeiten und löschen (`/admin/restaurants`).
+- [x] **Formular:** Vollständiges Formular mit Barrierefreiheits-Checkboxen und dynamischen Hinweisen.
+- [x] **Sicherheit:** Zugriffskontrolle via `access_control` und `#[IsGranted('ROLE_ADMIN')]`.
 
 ### 🍽️ Restaurant Finder
 - [x] **Startseite:** Landing Page mit Hero, „So funktioniert's", Top-6 Restaurant-Vorschau, Wertversprechen und CTA.
@@ -123,10 +129,11 @@ php bin/console cache:clear
 
 ## 📂 Struktur
 
-* `/src/Controller` - Logik für die Seiten.
+* `/src/Controller` - Logik für die Seiten (inkl. `AdminRestaurantController`).
 * `/src/Entity` - Datenbank-Modelle (`User`, `Restaurant`).
+* `/src/Form` - Symfony Formulare (`RegistrationType`, `RestaurantType`).
 * `/src/DataFixtures` - Initiale Testdaten.
-* `/templates` - Twig Templates.
+* `/templates` - Twig Templates (inkl. `admin/` für Admin-Panel).
 * `/assets` - Stimulus Controller und CSS.
 * `/migrations` - Doctrine Datenbankmigrationen.
 

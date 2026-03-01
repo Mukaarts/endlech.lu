@@ -2,16 +2,37 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.02.28-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.01-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
 *Geplante Features für das nächste Release.*
 
 ### 🚀 Features
-- **Auth:** Login & Registrierung für Restaurant-Besitzer.
 - **Map:** Kartenansicht der Locations.
 - **Filter:** Aktive Filterung nach Barrierefreiheitskriterien.
+
+---
+
+## [2026.03.01]
+*Admin-Panel für die Verwaltung von Restaurants (CRUD).*
+
+### 🚀 Features
+- **Admin-Panel:** Neuer Admin-Bereich unter `/admin` für ROLE_ADMIN Benutzer.
+- **Dashboard:** Admin-Dashboard mit Restaurant-Statistiken und Schnellaktionen.
+- **Restaurant CRUD:** Restaurants erstellen, bearbeiten und löschen über `/admin/restaurants`.
+- **Formular:** `RestaurantType`-Formular mit allen Restaurant-Feldern (Name, Stadt, Küche, Emoji, Bewertung, Status, Barrierefreiheits-Checkboxen, dynamische Hinweise).
+- **Barrierefreiheits-Hinweise:** Dynamisches Hinzufügen/Entfernen von Hinweisen im Format `ok:Text` / `warn:Text` via Stimulus-Controller.
+- **Navigation:** "Admin"-Link in der Hauptnavigation für Admin-Benutzer.
+- **Sicherheit:** `/admin`-Bereich via `access_control` und `#[IsGranted('ROLE_ADMIN')]` geschützt.
+- **CSRF-Schutz:** Löschen von Restaurants mit CSRF-Token-Validierung und Bestätigungsdialog.
+
+### 🛠 Tech & Config
+- **Controller:** `AdminRestaurantController` mit 5 Aktionen (Dashboard, Index, New, Edit, Delete).
+- **Form:** `RestaurantType` mit CollectionType für dynamische accessibilityNotes.
+- **Stimulus:** `collection_form_controller.js` für dynamische Formularfelder.
+- **Templates:** Admin-Layout mit Sidebar-Navigation (`admin/base.html.twig`), 5 Admin-Templates.
+- **Security:** `access_control`-Regel für `/admin`-Pfad in `security.yaml`.
 
 ---
 
