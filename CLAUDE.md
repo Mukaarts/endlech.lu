@@ -39,6 +39,14 @@ config/
 
 templates/
 ├── base.html.twig       # Base layout (header, nav, footer)
+├── admin/
+│   ├── base.html.twig   # Admin layout (sidebar nav, extends base)
+│   ├── dashboard.html.twig # Admin dashboard with stats
+│   └── restaurant/
+│       ├── index.html.twig  # Restaurant table listing (CRUD overview)
+│       ├── new.html.twig    # Create restaurant form
+│       ├── edit.html.twig   # Edit restaurant form
+│       └── _form.html.twig  # Shared form partial (new + edit)
 ├── home/
 │   └── index.html.twig  # Landing page (Hero, "So funktioniert's", Top-6 Restaurants, "Warum Endlech.lu?", CTA)
 └── restaurant/
@@ -127,6 +135,11 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `app_login`             | `/login`       | `SecurityController::login()`       |
 | `app_register`          | `/register`    | `RegistrationController::register()`|
 | `app_logout`            | `/logout`      | `SecurityController::logout()`      |
+| `admin_dashboard`       | `/admin`       | `AdminRestaurantController::dashboard()` |
+| `admin_restaurant_index`| `/admin/restaurants` | `AdminRestaurantController::index()` |
+| `admin_restaurant_new`  | `/admin/restaurants/neu` | `AdminRestaurantController::new()` |
+| `admin_restaurant_edit` | `/admin/restaurants/{id}/bearbeiten` | `AdminRestaurantController::edit()` |
+| `admin_restaurant_delete`| `/admin/restaurants/{id}/loeschen` | `AdminRestaurantController::delete()` |
 
 `/restaurants` accepts query params:
 - `?sort=rating` (default) – sorted by rating DESC
