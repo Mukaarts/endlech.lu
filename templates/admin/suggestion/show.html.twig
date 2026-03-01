@@ -1,0 +1,115 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Vorschlag: {{ suggestion.name }}{% endblock %}
+
+{% block admin_body %}
+<div class="mb-6">
+    <a href="{{ path('admin_suggestion_index') }}" class="text-sm text-gray-500 hover:text-gray-700 transition">
+        ← Zurück zur Übersicht
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    {# --- Detailkarte --- #}
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center gap-3 mb-6">
+            <span class="text-4xl">{{ suggestion.emoji }}</span>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">{{ suggestion.name }}</h2>
+                <p class="text-gray-500">{{ suggestion.city }} · {{ suggestion.cuisine }}</p>
+            </div>
+        </div>
+
+        {# Barrierefreiheit #}
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Barrierefreiheit</h3>
+        <ul class="space-y-2 mb-6">
+            <li class="{{ suggestion.isWheelchairAccessible ? 'text-green-700' : 'text-gray-400' }}">
+                ♿ Rollstuhlgerecht: {{ suggestion.isWheelchairAccessible ? 'Ja' : 'Nein / unbekannt' }}
+            </li>
+            <li class="{{ suggestion.hasAccessibleToilet ? 'text-green-700' : 'text-gray-400' }}">
+                🚻 Barrierefreies WC: {{ suggestion.hasAccessibleToilet ? 'Ja' : 'Nein / unbekannt' }}
+            </li>
+            <li class="{{ suggestion.allowsAssistanceDogs ? 'text-green-700' : 'text-gray-400' }}">
+                🐕 Assistenzhund erlaubt: {{ suggestion.allowsAssistanceDogs ? 'Ja' : 'Nein / unbekannt' }}
+            </li>
+            <li class="{{ suggestion.hasBrightLighting ? 'text-green-700' : 'text-gray-400' }}">
+                💡 Helle Beleuchtung: {{ suggestion.hasBrightLighting ? 'Ja' : 'Nein / unbekannt' }}
+            </li>
+        </ul>
+
+        {# Notizen #}
+        {% if suggestion.notes %}
+            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Hinweise des Nutzers</h3>
+            <p class="text-gray-700 bg-gray-50 rounded-lg p-4 text-sm leading-relaxed">{{ suggestion.notes }}</p>
+        {% endif %}
+
+        {# Meta #}
+        <div class="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-400 space-y-1">
+            <p>Vorgeschlagen von: <strong class="text-gray-600">{{ suggestion.suggestedBy ? suggestion.suggestedBy.name ~ ' (' ~ suggestion.suggestedBy.email ~ ')' : 'Unbekannt' }}</strong></p>
+            <p>Eingereicht am: <strong class="text-gray-600">{{ suggestion.createdAt|date('d.m.Y H:i') }} Uhr</strong></p>
+        </div>
+    </div>
+
+    {# --- Aktions-Panel --- #}
+    <div class="space-y-4">
+
+        {% if suggestion.status == 'pending' %}
+
+            {# Genehmigen #}
+            <div class="bg-green-50 border border-green-200 rounded-xl p-5">
+                <h3 class="font-bold text-green-800 mb-2">✓ Genehmigen</h3>
+                <p class="text-sm text-green-700 mb-4">
+                    Erstellt automatisch einen neuen Restaurant-Eintrag aus diesem Vorschlag.
+                </p>
+                <form method="post" action="{{ path('admin_suggestion_approve', {id: suggestion.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('approve-suggestion-' ~ suggestion.id) }}">
+                    <button type="submit"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-4 rounded-lg shadow transition"
+                            onclick="return confirm('Restaurant \"{{ suggestion.name|e('js') }}\" genehmigen und hinzufügen?')">
+                        Genehmigen
+                    </button>
+                </form>
+            </div>
+
+            {# Ablehnen #}
+            <div class="bg-red-50 border border-red-200 rounded-xl p-5">
+                <h3 class="font-bold text-red-800 mb-2">✕ Ablehnen</h3>
+                <form method="post" action="{{ path('admin_suggestion_reject', {id: suggestion.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('reject-suggestion-' ~ suggestion.id) }}">
+                    <div class="mb-3">
+                        <label for="admin_note" class="block text-xs font-semibold text-red-700 mb-1">
+                            Ablehnungsgrund (optional)
+                        </label>
+                        <textarea id="admin_note" name="admin_note" rows="3"
+                                  placeholder="z.B. Duplikat, nicht in Luxemburg, ..."
+                                  class="w-full text-sm bg-white border border-red-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none resize-none"></textarea>
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-lg shadow transition">
+                        Ablehnen
+                    </button>
+                </form>
+            </div>
+
+        {% else %}
+
+            {# Status-Badge wenn bereits entschieden #}
+            <div class="bg-white border border-gray-200 rounded-xl p-5 text-center">
+                {% if suggestion.status == 'approved' %}
+                    <div class="text-3xl mb-2">✅</div>
+                    <p class="font-bold text-green-700">Genehmigt</p>
+                {% else %}
+                    <div class="text-3xl mb-2">❌</div>
+                    <p class="font-bold text-red-600">Abgelehnt</p>
+                    {% if suggestion.adminNote %}
+                        <p class="text-sm text-gray-500 mt-2">{{ suggestion.adminNote }}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Restaurant vorschlagen – Endlech.lu{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-12 max-w-2xl">
+
+    {# Header #}
+    <div class="text-center mb-10">
+        <div class="text-5xl mb-4">🏪</div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-3">Restaurant vorschlagen</h1>
+        <p class="text-gray-600 text-lg">
+            Kennst du ein barrierefreies Restaurant in Luxemburg, das noch fehlt?
+            Schlage es vor – wir prüfen es und nehmen es auf!
+        </p>
+    </div>
+
+    {# Formular-Karte #}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+
+        {{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
+
+            {# --- Grunddaten --- #}
+            <fieldset class="space-y-5">
+                <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Grunddaten</legend>
+
+                {# Name #}
+                <div>
+                    {{ form_label(form.name, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition'}}) }}
+                    {{ form_errors(form.name) }}
+                </div>
+
+                {# Stadt & Küche (2-Spalten) #}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        {{ form_label(form.city, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                        {{ form_widget(form.city, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition'}}) }}
+                        {{ form_errors(form.city) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.cuisine, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                        {{ form_widget(form.cuisine, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition'}}) }}
+                        {{ form_errors(form.cuisine) }}
+                    </div>
+                </div>
+
+                {# Emoji #}
+                <div class="w-40">
+                    {{ form_label(form.emoji, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                    {{ form_widget(form.emoji, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition'}}) }}
+                    {{ form_errors(form.emoji) }}
+                </div>
+            </fieldset>
+
+            {# --- Barrierefreiheit --- #}
+            <fieldset class="space-y-3">
+                <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Barrierefreiheit</legend>
+                <p class="text-sm text-gray-500 -mt-1 mb-3">Kreuze an, was du weißt. Unbekannte Felder einfach frei lassen.</p>
+
+                <label class="flex items-center gap-3 cursor-pointer group">
+                    {{ form_widget(form.isWheelchairAccessible, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">♿ Rollstuhlgerecht (stufenloser Zugang)</span>
+                </label>
+
+                <label class="flex items-center gap-3 cursor-pointer group">
+                    {{ form_widget(form.hasAccessibleToilet, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">🚻 Barrierefreies WC</span>
+                </label>
+
+                <label class="flex items-center gap-3 cursor-pointer group">
+                    {{ form_widget(form.allowsAssistanceDogs, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">🐕 Assistenzhund erlaubt</span>
+                </label>
+
+                <label class="flex items-center gap-3 cursor-pointer group">
+                    {{ form_widget(form.hasBrightLighting, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">💡 Helle Beleuchtung</span>
+                </label>
+            </fieldset>
+
+            {# --- Notizen --- #}
+            <div>
+                {{ form_label(form.notes, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.notes, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none transition resize-none'}}) }}
+                {{ form_errors(form.notes) }}
+            </div>
+
+            {# Submit #}
+            <div class="pt-4 border-t border-gray-200 flex items-center gap-4">
+                <button type="submit"
+                        class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold px-8 py-3 rounded-full shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                    Vorschlag einreichen
+                </button>
+                <a href="{{ path('app_restaurant_index') }}" class="text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
+                    Abbrechen
+                </a>
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+
+</div>
+{% endblock %}

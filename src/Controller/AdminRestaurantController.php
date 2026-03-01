@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Restaurant;
 use App\Form\RestaurantType;
 use App\Repository\RestaurantRepository;
+use App\Repository\RestaurantSuggestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,10 +18,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class AdminRestaurantController extends AbstractController
 {
     #[Route('', name: 'admin_dashboard')]
-    public function dashboard(RestaurantRepository $restaurantRepository): Response
+    public function dashboard(RestaurantRepository $restaurantRepository, RestaurantSuggestionRepository $suggestionRepository): Response
     {
         return $this->render('admin/dashboard.html.twig', [
             'restaurantCount' => $restaurantRepository->count(),
+            'pendingSuggestionCount' => $suggestionRepository->countPending(),
         ]);
     }
 

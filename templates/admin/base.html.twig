@@ -39,6 +39,13 @@
                                 🍽️ Restaurants
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ path('admin_suggestion_index') }}"
+                               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
+                                      {{ app.request.attributes.get('_route') starts with 'admin_suggestion' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600' }}">
+                                💡 Vorschläge
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </aside>
