@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Über uns | Endlech.lu{% endblock %}
+
+{% block body %}
+    {# Hero #}
+    <section class="bg-linear-to-r from-cyan-600 to-purple-700 text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Über uns</h1>
+            <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto">
+                Die Geschichte hinter Endlech.lu — einer Plattform, die lange überfällig war.
+            </p>
+        </div>
+    </section>
+
+    {# Story #}
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-3xl mx-auto px-4">
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Die Geschichte von Endlech.lu</h2>
+
+                <p class="text-gray-700 leading-relaxed mb-8">
+                    Endlech.lu war eigentlich schon seit Jahren überfällig. Die Idee hatte ich schon
+                    als Jugendlicher — ein Ort, an dem Menschen mit eingeschränkter Mobilität unkompliziert
+                    barrierefreie Restaurants in Luxemburg finden können. Etwas, das es so einfach und
+                    übersichtlich schlicht noch nicht gab.
+                </p>
+
+                {# Timeline #}
+                <div class="relative">
+                    {# Vertical line #}
+                    <div class="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+
+                    <div class="space-y-10 pl-14">
+
+                        {# 2018 #}
+                        <div class="relative">
+                            <div class="absolute -left-9 top-1 w-8 h-8 rounded-full bg-cyan-600 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-semibold text-cyan-600 uppercase tracking-wide mb-1">2018</p>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Planung beginnt</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                Die Idee reifte zur konkreten Entscheidung: Ich wollte die Plattform wirklich
+                                bauen. 2018 begann ich, das Projekt ernsthaft zu planen.
+                            </p>
+                        </div>
+
+                        {# 2020–2021 #}
+                        <div class="relative">
+                            <div class="absolute -left-9 top-1 w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-semibold text-purple-600 uppercase tracking-wide mb-1">2020 – 2021</p>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Aktive Entwicklung</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                Gemeinsam mit einem Freund und Partner begann ich, die Plattform aktiv
+                                umzusetzen. Wir teilten die Vision und arbeiteten mit echtem Elan daran.
+                            </p>
+                        </div>
+
+                        {# Pause #}
+                        <div class="relative">
+                            <div class="absolute -left-9 top-1 w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">2022 – 2024</p>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Unfreiwillige Pause</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                Leider klappte es mit dem Partner nicht, und alleine fehlte mir schlicht die
+                                Zeit. Das Projekt musste ich schweren Herzens auf Eis legen.
+                            </p>
+                        </div>
+
+                        {# Ende 2025 #}
+                        <div class="relative">
+                            <div class="absolute -left-9 top-1 w-8 h-8 rounded-full bg-cyan-600 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-semibold text-cyan-600 uppercase tracking-wide mb-1">Ende 2025</p>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Neustart</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                Ende 2025 habe ich beschlossen, wieder anzufangen — und es diesmal
+                                durchzuziehen. Endlech.lu ist jetzt live.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {# Mission #}
+            <div class="mt-8 bg-linear-to-r from-cyan-600 to-purple-700 rounded-2xl p-8 text-white text-center">
+                <h2 class="text-2xl font-bold mb-3">Unsere Mission</h2>
+                <p class="text-white/90 leading-relaxed max-w-xl mx-auto">
+                    Barrierefreiheit soll kein Zufall sein. Mit Endlech.lu wollen wir Menschen mit
+                    eingeschränkter Mobilität helfen, Restaurants in Luxemburg zu finden, die wirklich
+                    zugänglich sind — geprüft von der Community, für die Community.
+                </p>
+                <a href="{{ path('app_restaurant_index') }}"
+                   class="inline-block mt-6 bg-white text-purple-700 font-semibold px-8 py-3 rounded-full shadow hover:shadow-md hover:-translate-y-0.5 transition">
+                    Restaurants entdecken
+                </a>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
