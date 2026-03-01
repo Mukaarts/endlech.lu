@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kriterien für Barrierefreiheit – Endlech.lu{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-12 max-w-3xl">
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">Kriterien für Barrierefreiheit</h1>
+    <p class="text-gray-600 mb-10 text-lg">
+        Diese Kriterien helfen uns, Restaurants objektiv auf ihre Barrierefreiheit zu bewerten.
+        Jedes Restaurant wird anhand der folgenden Punkte eingeschätzt.
+    </p>
+
+    <div class="space-y-6">
+
+        {# Eingang #}
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="text-3xl">🚪</div>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Barrierefreier Eingang</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Der Eingang ist ohne Stufen oder Schwellen zugänglich, oder eine Rampe ist vorhanden.
+                        Automatische oder leicht zu öffnende Türen sind ein Plus.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {# Parkplatz #}
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="text-3xl">🅿️</div>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Behindertenparkplatz</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Ein ausgewiesener Parkplatz für Personen mit Behinderung in unmittelbarer Nähe des Eingangs
+                        ist vorhanden.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {# WC #}
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="text-3xl">🚻</div>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Barrierefreie Toilette</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Eine rollstuhlgerechte Toilette mit ausreichend Bewegungsfreiheit, Haltegriffen und
+                        erreichbarem Waschbecken ist vorhanden.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {# Rollstuhl im Innenbereich #}
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="text-3xl">♿</div>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Rollstuhlgerechtes Inneres</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Ausreichend breite Gänge (mindestens 90 cm), unterfahrbare Tische und genügend
+                        Bewegungsraum zwischen den Sitzplätzen ermöglichen eine selbstständige Navigation.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {# Personal #}
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="text-3xl">🙋</div>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Hilfsbereites Personal</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Das Personal ist sensibilisiert und bereit, Menschen mit Einschränkungen aktiv
+                        zu unterstützen – ohne aufdringlich zu sein.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {# Speisekarte #}
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="text-3xl">📋</div>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-1">Gut lesbare Speisekarte</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Die Speisekarte ist in gut lesbarer Schriftgröße gedruckt oder digital verfügbar.
+                        Braille- oder Großdruck-Versionen sind ein weiteres Plus.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-12 bg-cyan-50 border border-cyan-200 rounded-xl p-6">
+        <p class="text-cyan-800 text-sm leading-relaxed">
+            <strong>Hinweis:</strong> Die Bewertungen auf Endlech.lu basieren auf Erfahrungen unserer Community.
+            Barrierefreiheit kann sich je nach individuellem Bedarf unterscheiden. Wir empfehlen,
+            vor dem Besuch direkt beim Restaurant nachzufragen.
+        </p>
+    </div>
+</div>
+{% endblock %}
