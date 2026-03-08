@@ -18,6 +18,7 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 - **JS:** Hotwire (Stimulus 3.x + Turbo 7/8)
 - **Build:** Webpack Encore 5.1
 - **Testing:** PHPUnit 12.5
+- **Email:** Brevo (formerly Sendinblue) via `symfony/brevo-mailer` (production)
 - **Dev Mail:** Mailpit (SMTP on port 1025, UI on port 8025)
 
 ## Project Structure
@@ -49,6 +50,9 @@ templates/
 │       └── _form.html.twig  # Shared form partial (new + edit)
 ├── home/
 │   └── index.html.twig  # Landing page (Hero, "So funktioniert's", Top-6 Restaurants, "Warum Endlech.lu?", CTA)
+├── email/
+│   ├── base.html.twig       # Base email layout (header, footer, branding)
+│   └── verification.html.twig # Email verification template (extends base)
 └── restaurant/
     ├── index.html.twig  # /restaurants – paginated & sortable restaurant list
     └── show.html.twig   # /restaurants/{id} – restaurant detail view
@@ -204,6 +208,15 @@ Defined in `compose.yaml` and `compose.override.yaml`:
 | `.env.local`    | Local overrides (gitignored, secrets here) |
 
 `APP_SECRET` must be set in `.env.local` for production. The `.env.dev` file provides a dev-only secret.
+
+### Email / Mailer
+- **Production:** Brevo API via `symfony/brevo-mailer` – set `MAILER_DSN=brevo+api://YOUR_API_KEY@default` in `.env.local`
+- **Development:** Mailpit via `smtp://localhost:1025` (configured in `.env.dev`), UI at `http://localhost:8025`
+- **Default:** `null://null` (emails discarded) in `.env`
+- **Sender:** Configured globally via `MAILER_SENDER_ADDRESS` and `MAILER_SENDER_NAME` env vars, applied in `config/packages/mailer.yaml`
+- **Async:** Emails routed to async Doctrine transport via Messenger (see `config/packages/messenger.yaml`)
+- **Templates:** All emails extend `email/base.html.twig` for consistent Endlech.lu branding
+- **Error handling:** Controllers catch `TransportExceptionInterface` and show user-friendly flash messages
 
 ## Versioning
 
