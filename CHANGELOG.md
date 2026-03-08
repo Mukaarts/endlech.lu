@@ -14,6 +14,26 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ---
 
+## [2026.03.08c] – Verifiziertes Lokal
+*Blaues Verifikations-Badge für vom Endlech.lu-Team geprüfte Restaurants.*
+
+### 🚀 Features
+- **Verifikations-Badge:** Blauer Haken (Cyan-600) für verifizierte Restaurants auf Karte und Detailseite.
+- **Tooltip:** „Von Endlech.lu persönlich vor Ort geprüft" via Browser-Tooltip.
+- **Filter:** Listenansicht filtert nach „Nur verifizierte Lokale" (?verified=1).
+- **Admin:** Verifikations-Checkbox im Bearbeitungsformular mit Auto-Stamping von Datum + Admin-User.
+- **Admin:** Quick-Toggle-Button in der Restaurants-Übersicht (verifiziert/unverifiziert).
+- **Admin:** Stat-Card „Verifizierte Lokale" im Dashboard.
+
+### 🛠 Tech & Config
+- **Entity:** `isVerified`, `verifiedAt`, `verifiedBy` zur `Restaurant`-Entity hinzugefügt.
+- **Migration:** `Version20260308100000` – fügt `is_verified`, `verified_at`, `verified_by_id` zur `restaurant`-Tabelle hinzu.
+- **Route:** `admin_restaurant_toggle_verified` POST `/admin/restaurants/{id}/verifizieren`.
+- **Partial:** `templates/partials/_verified_badge.html.twig` – wiederverwendbares Badge-Template.
+- **Fixtures:** 3 Restaurants als verifiziert markiert (Pizzeria Bella Vista, Sushi Zen, Green Bowl).
+
+---
+
 ## [2026.03.08b] – Zahlungsmethoden
 *Zahlungsmethoden pro Restaurant (Bargeld, Karte, Payconiq).*
 

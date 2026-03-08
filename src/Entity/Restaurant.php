@@ -52,6 +52,16 @@ class Restaurant
     #[ORM\Column]
     private bool $acceptsPayconiq = false;
 
+    #[ORM\Column]
+    private bool $isVerified = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $verifiedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $verifiedBy = null;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $accessibilityNotes = [];
@@ -242,5 +252,41 @@ class Restaurant
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getVerifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->verifiedAt;
+    }
+
+    public function setVerifiedAt(?\DateTimeImmutable $verifiedAt): static
+    {
+        $this->verifiedAt = $verifiedAt;
+
+        return $this;
+    }
+
+    public function getVerifiedBy(): ?User
+    {
+        return $this->verifiedBy;
+    }
+
+    public function setVerifiedBy(?User $verifiedBy): static
+    {
+        $this->verifiedBy = $verifiedBy;
+
+        return $this;
     }
 }

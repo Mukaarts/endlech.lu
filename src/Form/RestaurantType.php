@@ -69,6 +69,10 @@ class RestaurantType extends AbstractType
                 'label' => 'Geöffnet',
                 'required' => false,
             ])
+            ->add('isVerified', CheckboxType::class, [
+                'label'    => 'Verifiziertes Lokal (von Endlech.lu geprüft)',
+                'required' => false,
+            ])
             ->add('isWheelchairAccessible', CheckboxType::class, [
                 'label' => 'Rollstuhlgerecht',
                 'required' => false,

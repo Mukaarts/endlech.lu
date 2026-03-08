@@ -23,6 +23,7 @@ final class AdminRestaurantController extends AbstractController
         return $this->render('admin/dashboard.html.twig', [
             'restaurantCount' => $restaurantRepository->count(),
             'pendingSuggestionCount' => $suggestionRepository->countPending(),
+            'verifiedCount' => $restaurantRepository->countVerified(),
         ]);
     }
 
@@ -58,10 +59,20 @@ final class AdminRestaurantController extends AbstractController
     #[Route('/restaurants/{id}/bearbeiten', name: 'admin_restaurant_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(Restaurant $restaurant, Request $request, EntityManagerInterface $entityManager): Response
     {
+        $wasVerified = $restaurant->isVerified();
         $form = $this->createForm(RestaurantType::class, $restaurant);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $isNowVerified = $restaurant->isVerified();
+            if ($isNowVerified && !$wasVerified) {
+                $restaurant->setVerifiedAt(new \DateTimeImmutable());
+                $restaurant->setVerifiedBy($this->getUser());
+            } elseif (!$isNowVerified && $wasVerified) {
+                $restaurant->setVerifiedAt(null);
+                $restaurant->setVerifiedBy(null);
+            }
+
             $entityManager->flush();
 
             $this->addFlash('success', 'Restaurant erfolgreich aktualisiert.');
@@ -73,6 +84,29 @@ final class AdminRestaurantController extends AbstractController
             'restaurant' => $restaurant,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/restaurants/{id}/verifizieren', name: 'admin_restaurant_toggle_verified', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function toggleVerified(Restaurant $restaurant, Request $request, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('toggle-verified-' . $restaurant->getId(), $request->request->getString('_token'))) {
+            if ($restaurant->isVerified()) {
+                $restaurant->setIsVerified(false);
+                $restaurant->setVerifiedAt(null);
+                $restaurant->setVerifiedBy(null);
+                $this->addFlash('success', 'Verifizierung für „' . $restaurant->getName() . '" aufgehoben.');
+            } else {
+                $restaurant->setIsVerified(true);
+                $restaurant->setVerifiedAt(new \DateTimeImmutable());
+                $restaurant->setVerifiedBy($this->getUser());
+                $this->addFlash('success', '„' . $restaurant->getName() . '" als verifiziert markiert.');
+            }
+            $em->flush();
+        } else {
+            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+        }
+
+        return $this->redirectToRoute('admin_restaurant_index');
     }
 
     #[Route('/restaurants/{id}/loeschen', name: 'admin_restaurant_delete', requirements: ['id' => '\d+'], methods: ['POST'])]

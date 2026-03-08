@@ -30,9 +30,13 @@ class RestaurantRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findPaginated(string $sort = 'rating', int $page = 1, int $limit = 6): Paginator
+    public function findPaginated(string $sort = 'rating', int $page = 1, int $limit = 6, bool $verifiedOnly = false): Paginator
     {
         $qb = $this->createQueryBuilder('r');
+
+        if ($verifiedOnly) {
+            $qb->andWhere('r.isVerified = :verified')->setParameter('verified', true);
+        }
 
         match ($sort) {
             'name' => $qb->orderBy('r.name', 'ASC'),
@@ -44,5 +48,15 @@ class RestaurantRepository extends ServiceEntityRepository
             ->setMaxResults($limit);
 
         return new Paginator($qb);
+    }
+
+    public function countVerified(): int
+    {
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->where('r.isVerified = :verified')
+            ->setParameter('verified', true)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
