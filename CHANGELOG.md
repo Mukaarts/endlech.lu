@@ -10,7 +10,22 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ### 🚀 Features
 - **Map:** Kartenansicht der Locations.
-- **Filter:** Aktive Filterung nach Barrierefreiheitskriterien.
+
+---
+
+## [2026.03.08d] – Filterfunktion für Lokale
+
+### 🚀 Features
+- **Barrierefreiheits-Filter:** Checkboxen für ♿ Rollstuhlgerecht, 🚻 Barrierefreies WC, 🐕 Assistenzhund, 💡 Helle Beleuchtung.
+- **Status-Filter:** „Nur geöffnete Lokale" Checkbox.
+- **Ort-Filter:** Freitext-Suche nach Stadt (LIKE).
+- **Küchen-Filter:** Freitext-Suche nach Küchentyp (LIKE).
+- **Aktive Filter:** Chip-Zeile über Ergebnissen + „Alle zurücksetzen"-Link in der Sidebar.
+- **Filter-Persistenz:** Sort- und Pagination-Links behalten alle aktiven Filter bei.
+
+### 🛠 Tech
+- **Repository:** `findPaginated()` auf `array $filters` umgestellt (skalierbar, 8 Filter-Keys).
+- **Controller:** 8 Query-Parameter ausgelesen und als `$filters`-Array weitergereicht.
 
 ---
 
