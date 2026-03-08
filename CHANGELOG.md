@@ -13,6 +13,23 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ---
 
+## [2026.03.08e] – Restaurant-Fotos
+
+### 🚀 Features
+- **Bildergalerie:** Fotos pro Restaurant auf der Detailseite (GLightbox-Lightbox).
+- **Thumbnail:** Erstes Foto als Vorschau-Bild auf der Restaurantliste.
+- **Admin-Upload:** Mehrere Fotos gleichzeitig hochladen (jpg, png, webp, max. 5 MB).
+- **Admin-Löschung:** Einzelne Fotos per Hover-Button entfernen.
+- **Alt-Texte:** Barrierefreie Bildbeschreibungen für alle Fotos.
+
+### 🛠 Tech
+- Entity `RestaurantImage` (ManyToOne zu Restaurant, CASCADE DELETE).
+- `ImageUploadService` – Upload & Löschung (Symfony-nativ, kein VichUploaderBundle).
+- GLightbox via npm für Lightbox-Galerie.
+- Migration `Version20260308110000`.
+
+---
+
 ## [2026.03.08d] – Filterfunktion für Lokale
 
 ### 🚀 Features

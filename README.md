@@ -40,6 +40,7 @@ Current development status of the platform.
 - [x] **Detail Page:** Individual view with address and additional information.
 - [x] **Payment Methods:** Display of accepted payment methods (cash, card, Payconiq) per restaurant.
 - [x] **Filters:** Filter by accessibility criteria (wheelchair, toilet, dogs, lighting), open status, city, and cuisine type.
+- [x] **Photo Gallery:** Image upload per restaurant with lightbox gallery (GLightbox) on detail page and thumbnail on list view.
 
 ### 👤 User & Community
 - [ ] **User Profiles:** Save favorites.

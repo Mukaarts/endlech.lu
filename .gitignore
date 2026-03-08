@@ -23,3 +23,8 @@ yarn-error.log
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###> endlech uploads ###
+/public/uploads/
+!/public/uploads/restaurants/.gitkeep
+###< endlech uploads ###

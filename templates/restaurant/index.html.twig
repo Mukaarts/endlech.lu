@@ -151,8 +151,14 @@
 
                         {% for restaurant in restaurants %}
                             <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
-                                <div class="h-40 bg-gray-100 relative flex items-center justify-center text-gray-300 text-5xl">
-                                    {{ restaurant.emoji }}
+                                <div class="h-40 bg-gray-100 relative {{ restaurant.images is empty ? 'flex items-center justify-center text-gray-300 text-5xl' : '' }}">
+                                    {% if restaurant.images is not empty %}
+                                        <img src="/uploads/restaurants/{{ restaurant.images.first.filename }}"
+                                             alt="{{ restaurant.images.first.altText }}"
+                                             class="w-full h-full object-cover">
+                                    {% else %}
+                                        {{ restaurant.emoji }}
+                                    {% endif %}
                                     {% if restaurant.isOpen %}
                                         <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geöffnet</span>
                                     {% else %}
