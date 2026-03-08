@@ -30,12 +30,33 @@ class RestaurantRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findPaginated(string $sort = 'rating', int $page = 1, int $limit = 6, bool $verifiedOnly = false): Paginator
+    public function findPaginated(string $sort = 'rating', int $page = 1, int $limit = 6, array $filters = []): Paginator
     {
         $qb = $this->createQueryBuilder('r');
 
-        if ($verifiedOnly) {
-            $qb->andWhere('r.isVerified = :verified')->setParameter('verified', true);
+        if (!empty($filters['verified'])) {
+            $qb->andWhere('r.isVerified = true');
+        }
+        if (!empty($filters['wheelchair'])) {
+            $qb->andWhere('r.isWheelchairAccessible = true');
+        }
+        if (!empty($filters['toilet'])) {
+            $qb->andWhere('r.hasAccessibleToilet = true');
+        }
+        if (!empty($filters['dogs'])) {
+            $qb->andWhere('r.allowsAssistanceDogs = true');
+        }
+        if (!empty($filters['lighting'])) {
+            $qb->andWhere('r.hasBrightLighting = true');
+        }
+        if (!empty($filters['open'])) {
+            $qb->andWhere('r.isOpen = true');
+        }
+        if (!empty($filters['city'])) {
+            $qb->andWhere('r.city LIKE :city')->setParameter('city', '%'.$filters['city'].'%');
+        }
+        if (!empty($filters['cuisine'])) {
+            $qb->andWhere('r.cuisine LIKE :cuisine')->setParameter('cuisine', '%'.$filters['cuisine'].'%');
         }
 
         match ($sort) {

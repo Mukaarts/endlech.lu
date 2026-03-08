@@ -152,6 +152,15 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 - `?sort=newest` – sorted by `createdAt` DESC
 - `?page=N` – page number (6 items per page, uses Doctrine `Paginator`)
 - `?verified=1` – filter to verified restaurants only
+- `?wheelchair=1` – filter to wheelchair-accessible restaurants
+- `?toilet=1` – filter to restaurants with accessible toilet
+- `?dogs=1` – filter to restaurants that allow assistance dogs
+- `?lighting=1` – filter to restaurants with bright lighting
+- `?open=1` – filter to currently open restaurants
+- `?city=Strassen` – filter by city name (LIKE search)
+- `?cuisine=Italienisch` – filter by cuisine type (LIKE search)
+
+All filter params are combinable. `RestaurantRepository::findPaginated(string $sort, int $page, int $limit, array $filters)` handles all filtering.
 
 ### Data Fixtures
 - Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), and verification fields (`isVerified`, `verifiedAt`, `verifiedBy`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl.
