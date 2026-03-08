@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
@@ -43,6 +45,25 @@ class Restaurant
     #[ORM\Column]
     private bool $hasBrightLighting = false;
 
+    #[ORM\Column]
+    private bool $acceptsCash = false;
+
+    #[ORM\Column]
+    private bool $acceptsCard = false;
+
+    #[ORM\Column]
+    private bool $acceptsPayconiq = false;
+
+    #[ORM\Column]
+    private bool $isVerified = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $verifiedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $verifiedBy = null;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $accessibilityNotes = [];
@@ -50,9 +71,14 @@ class Restaurant
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: RestaurantImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['uploadedAt' => 'ASC'])]
+    private Collection $images;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -180,6 +206,42 @@ class Restaurant
         return $this;
     }
 
+    public function acceptsCash(): bool
+    {
+        return $this->acceptsCash;
+    }
+
+    public function setAcceptsCash(bool $acceptsCash): static
+    {
+        $this->acceptsCash = $acceptsCash;
+
+        return $this;
+    }
+
+    public function acceptsCard(): bool
+    {
+        return $this->acceptsCard;
+    }
+
+    public function setAcceptsCard(bool $acceptsCard): static
+    {
+        $this->acceptsCard = $acceptsCard;
+
+        return $this;
+    }
+
+    public function acceptsPayconiq(): bool
+    {
+        return $this->acceptsPayconiq;
+    }
+
+    public function setAcceptsPayconiq(bool $acceptsPayconiq): static
+    {
+        $this->acceptsPayconiq = $acceptsPayconiq;
+
+        return $this;
+    }
+
     /** @return list<string> */
     public function getAccessibilityNotes(): array
     {
@@ -197,5 +259,47 @@ class Restaurant
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getVerifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->verifiedAt;
+    }
+
+    public function setVerifiedAt(?\DateTimeImmutable $verifiedAt): static
+    {
+        $this->verifiedAt = $verifiedAt;
+
+        return $this;
+    }
+
+    public function getVerifiedBy(): ?User
+    {
+        return $this->verifiedBy;
+    }
+
+    public function setVerifiedBy(?User $verifiedBy): static
+    {
+        $this->verifiedBy = $verifiedBy;
+
+        return $this;
+    }
+
+    /** @return Collection<int, RestaurantImage> */
+    public function getImages(): Collection
+    {
+        return $this->images;
     }
 }

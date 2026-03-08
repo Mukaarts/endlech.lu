@@ -12,7 +12,7 @@ An open platform to find and rate accessible restaurants in Luxembourg. Built fo
 ## 🚀 Project Status
 
 **The first beta version is live.**
-The homepage has been redesigned as a landing page with a hero section, "How it works" steps, restaurant preview, and call-to-action areas. A dedicated restaurant listing at `/restaurants` with pagination and sorting is available. An admin panel at `/admin` allows ROLE_ADMIN users to fully manage (CRUD) restaurants. Transactional emails are powered by Brevo (formerly Sendinblue) with Mailpit for local development. Next up: map view and active filtering.
+The homepage has been redesigned as a landing page with a hero section, "How it works" steps, restaurant preview, and call-to-action areas. A dedicated restaurant listing at `/restaurants` with pagination, sorting, and full filter support (accessibility, open status, city, cuisine) is available. An admin panel at `/admin` allows ROLE_ADMIN users to fully manage (CRUD) restaurants. Transactional emails are powered by Brevo (formerly Sendinblue) with Mailpit for local development. Next up: map view.
 
 ## 🎯 Features & Progress
 
@@ -38,7 +38,9 @@ Current development status of the platform.
 - [x] **List View:** Dedicated `/restaurants` page with pagination (6/page) and sorting (rating, name, newest).
 - [x] **Accessibility Icons:** Display of criteria (wheelchair, toilet, assistance dog, lighting).
 - [x] **Detail Page:** Individual view with address and additional information.
-- [ ] **Filters:** Filter by criteria (e.g., "Step-free entrance").
+- [x] **Payment Methods:** Display of accepted payment methods (cash, card, Payconiq) per restaurant.
+- [x] **Filters:** Filter by accessibility criteria (wheelchair, toilet, dogs, lighting), open status, city, and cuisine type.
+- [x] **Photo Gallery:** Image upload per restaurant with lightbox gallery (GLightbox) on detail page and thumbnail on list view.
 
 ### 👤 User & Community
 - [ ] **User Profiles:** Save favorites.

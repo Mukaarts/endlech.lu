@@ -3,11 +3,18 @@
 namespace App\DataFixtures;
 
 use App\Entity\Restaurant;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class RestaurantFixtures extends Fixture
+class RestaurantFixtures extends Fixture implements DependentFixtureInterface
 {
+    public function getDependencies(): array
+    {
+        return [UserFixtures::class];
+    }
+
     public function load(ObjectManager $manager): void
     {
         $restaurants = [
@@ -22,7 +29,11 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => false,
+                'acceptsCash'            => true,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Eingang stufenlos', 'ok:WC Tür > 90cm'],
+                'isVerified'             => true,
             ],
             [
                 'name'                   => 'Umami Corner',
@@ -35,6 +46,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'acceptsCash'            => true,
+                'acceptsCard'            => false,
+                'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['ok:Menü in Braille', 'warn:Stufe am Eingang'],
             ],
             [
@@ -48,6 +62,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => true,
+                'acceptsCash'            => true,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['ok:Parkplatz vor der Tür'],
             ],
             [
@@ -61,6 +78,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => false,
+                'acceptsCash'            => true,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Eingang stufenlos', 'ok:Barrierefreies WC', 'ok:Assistenzhunde willkommen'],
             ],
             [
@@ -74,6 +94,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => true,
+                'acceptsCash'            => true,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['warn:Zwei Stufen am Eingang', 'ok:Helle Innenbeleuchtung'],
             ],
             [
@@ -87,6 +110,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'acceptsCash'            => true,
+                'acceptsCard'            => false,
+                'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['ok:Ebenerdiger Zugang', 'ok:Assistenzhunde erlaubt', 'warn:WC nicht barrierefrei'],
             ],
             [
@@ -100,7 +126,11 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => false,
+                'acceptsCash'            => false,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Rollstuhlrampe vorhanden', 'ok:Barrierefreies WC'],
+                'isVerified'             => true,
             ],
             [
                 'name'                   => 'Wäinhaus am Markt',
@@ -113,6 +143,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => false,
+                'acceptsCash'            => true,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['warn:Kopfsteinpflaster vor dem Eingang', 'warn:Treppen im Inneren'],
             ],
             [
@@ -126,6 +159,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'acceptsCash'            => true,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Ebenerdiger Eingang', 'ok:Helle Beleuchtung im Gastraum'],
             ],
             [
@@ -139,7 +175,11 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'acceptsCash'            => false,
+                'acceptsCard'            => true,
+                'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Induktive Höranlage vorhanden'],
+                'isVerified'             => true,
             ],
             [
                 'name'                   => 'Brasserie du Grund',
@@ -152,6 +192,9 @@ class RestaurantFixtures extends Fixture
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => false,
+                'acceptsCash'            => true,
+                'acceptsCard'            => false,
+                'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['warn:Historisches Gebäude, mehrere Stufen', 'warn:Keine barrierefreie Toilette'],
             ],
         ];
@@ -168,7 +211,18 @@ class RestaurantFixtures extends Fixture
             $restaurant->setHasAccessibleToilet($data['hasAccessibleToilet']);
             $restaurant->setAllowsAssistanceDogs($data['allowsAssistanceDogs']);
             $restaurant->setHasBrightLighting($data['hasBrightLighting']);
+            $restaurant->setAcceptsCash($data['acceptsCash']);
+            $restaurant->setAcceptsCard($data['acceptsCard']);
+            $restaurant->setAcceptsPayconiq($data['acceptsPayconiq']);
             $restaurant->setAccessibilityNotes($data['accessibilityNotes']);
+
+            $isVerified = $data['isVerified'] ?? false;
+            $restaurant->setIsVerified($isVerified);
+            if ($isVerified) {
+                $restaurant->setVerifiedAt(new \DateTimeImmutable('2026-01-15'));
+                $restaurant->setVerifiedBy($this->getReference(UserFixtures::REFERENCE_ADMIN, User::class));
+            }
+
             $manager->persist($restaurant);
         }
 

@@ -69,6 +69,7 @@ migrations/              # Doctrine migrations (DoctrineMigrations namespace)
 tests/                   # PHPUnit tests (empty - MVP)
 translations/            # i18n files (empty - MVP)
 public/                  # Web root (index.php front controller)
+public/uploads/restaurants/ # Uploaded restaurant images (gitignored except .gitkeep)
 ```
 
 ## Common Commands
@@ -144,15 +145,33 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `admin_restaurant_new`  | `/admin/restaurants/neu` | `AdminRestaurantController::new()` |
 | `admin_restaurant_edit` | `/admin/restaurants/{id}/bearbeiten` | `AdminRestaurantController::edit()` |
 | `admin_restaurant_delete`| `/admin/restaurants/{id}/loeschen` | `AdminRestaurantController::delete()` |
+| `admin_restaurant_toggle_verified`| `/admin/restaurants/{id}/verifizieren` | `AdminRestaurantController::toggleVerified()` |
+| `admin_restaurant_image_upload`| `/admin/restaurants/{id}/fotos` | `AdminRestaurantController::uploadImage()` |
+| `admin_restaurant_image_delete`| `/admin/restaurants/{id}/fotos/{imageId}/loeschen` | `AdminRestaurantController::deleteImage()` |
 
 `/restaurants` accepts query params:
 - `?sort=rating` (default) – sorted by rating DESC
 - `?sort=name` – sorted A–Z
 - `?sort=newest` – sorted by `createdAt` DESC
 - `?page=N` – page number (6 items per page, uses Doctrine `Paginator`)
+- `?verified=1` – filter to verified restaurants only
+- `?wheelchair=1` – filter to wheelchair-accessible restaurants
+- `?toilet=1` – filter to restaurants with accessible toilet
+- `?dogs=1` – filter to restaurants that allow assistance dogs
+- `?lighting=1` – filter to restaurants with bright lighting
+- `?open=1` – filter to currently open restaurants
+- `?city=Strassen` – filter by city name (LIKE search)
+- `?cuisine=Italienisch` – filter by cuisine type (LIKE search)
+
+All filter params are combinable. `RestaurantRepository::findPaginated(string $sort, int $page, int $limit, array $filters)` handles all filtering.
+
+## Entity: RestaurantImage
+Felder: id, filename (VARCHAR 255), altText (VARCHAR 255 nullable), restaurant (ManyToOne Restaurant, CASCADE DELETE), uploadedAt (DateTimeImmutable).
+Collection auf Restaurant: `$images` (OneToMany, cascade persist+remove, orphanRemoval, OrderBy uploadedAt ASC).
+Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Löschung inkl. Dateisystem.
 
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`)
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), and verification fields (`isVerified`, `verifiedAt`, `verifiedBy`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl.
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified

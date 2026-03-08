@@ -69,6 +69,10 @@ class RestaurantType extends AbstractType
                 'label' => 'Geöffnet',
                 'required' => false,
             ])
+            ->add('isVerified', CheckboxType::class, [
+                'label'    => 'Verifiziertes Lokal (von Endlech.lu geprüft)',
+                'required' => false,
+            ])
             ->add('isWheelchairAccessible', CheckboxType::class, [
                 'label' => 'Rollstuhlgerecht',
                 'required' => false,
@@ -83,6 +87,18 @@ class RestaurantType extends AbstractType
             ])
             ->add('hasBrightLighting', CheckboxType::class, [
                 'label' => 'Helle Beleuchtung',
+                'required' => false,
+            ])
+            ->add('acceptsCash', CheckboxType::class, [
+                'label' => 'Barzahlung',
+                'required' => false,
+            ])
+            ->add('acceptsCard', CheckboxType::class, [
+                'label' => 'Kreditkarte / EC-Karte',
+                'required' => false,
+            ])
+            ->add('acceptsPayconiq', CheckboxType::class, [
+                'label' => 'Payconiq',
                 'required' => false,
             ])
             ->add('accessibilityNotes', CollectionType::class, [

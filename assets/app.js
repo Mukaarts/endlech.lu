@@ -8,3 +8,11 @@ import './stimulus_bootstrap.js';
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
+
+// GLightbox – Lightbox für Restaurant-Fotos
+import GLightbox from 'glightbox';
+import 'glightbox/dist/css/glightbox.css';
+
+document.addEventListener('DOMContentLoaded', () => {
+    GLightbox({ selector: '.glightbox' });
+});

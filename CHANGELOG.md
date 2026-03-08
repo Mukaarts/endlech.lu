@@ -10,7 +10,73 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ### 🚀 Features
 - **Map:** Kartenansicht der Locations.
-- **Filter:** Aktive Filterung nach Barrierefreiheitskriterien.
+
+---
+
+## [2026.03.08e] – Restaurant-Fotos
+
+### 🚀 Features
+- **Bildergalerie:** Fotos pro Restaurant auf der Detailseite (GLightbox-Lightbox).
+- **Thumbnail:** Erstes Foto als Vorschau-Bild auf der Restaurantliste.
+- **Admin-Upload:** Mehrere Fotos gleichzeitig hochladen (jpg, png, webp, max. 5 MB).
+- **Admin-Löschung:** Einzelne Fotos per Hover-Button entfernen.
+- **Alt-Texte:** Barrierefreie Bildbeschreibungen für alle Fotos.
+
+### 🛠 Tech
+- Entity `RestaurantImage` (ManyToOne zu Restaurant, CASCADE DELETE).
+- `ImageUploadService` – Upload & Löschung (Symfony-nativ, kein VichUploaderBundle).
+- GLightbox via npm für Lightbox-Galerie.
+- Migration `Version20260308110000`.
+
+---
+
+## [2026.03.08d] – Filterfunktion für Lokale
+
+### 🚀 Features
+- **Barrierefreiheits-Filter:** Checkboxen für ♿ Rollstuhlgerecht, 🚻 Barrierefreies WC, 🐕 Assistenzhund, 💡 Helle Beleuchtung.
+- **Status-Filter:** „Nur geöffnete Lokale" Checkbox.
+- **Ort-Filter:** Freitext-Suche nach Stadt (LIKE).
+- **Küchen-Filter:** Freitext-Suche nach Küchentyp (LIKE).
+- **Aktive Filter:** Chip-Zeile über Ergebnissen + „Alle zurücksetzen"-Link in der Sidebar.
+- **Filter-Persistenz:** Sort- und Pagination-Links behalten alle aktiven Filter bei.
+
+### 🛠 Tech
+- **Repository:** `findPaginated()` auf `array $filters` umgestellt (skalierbar, 8 Filter-Keys).
+- **Controller:** 8 Query-Parameter ausgelesen und als `$filters`-Array weitergereicht.
+
+---
+
+## [2026.03.08c] – Verifiziertes Lokal
+*Blaues Verifikations-Badge für vom Endlech.lu-Team geprüfte Restaurants.*
+
+### 🚀 Features
+- **Verifikations-Badge:** Blauer Haken (Cyan-600) für verifizierte Restaurants auf Karte und Detailseite.
+- **Tooltip:** „Von Endlech.lu persönlich vor Ort geprüft" via Browser-Tooltip.
+- **Filter:** Listenansicht filtert nach „Nur verifizierte Lokale" (?verified=1).
+- **Admin:** Verifikations-Checkbox im Bearbeitungsformular mit Auto-Stamping von Datum + Admin-User.
+- **Admin:** Quick-Toggle-Button in der Restaurants-Übersicht (verifiziert/unverifiziert).
+- **Admin:** Stat-Card „Verifizierte Lokale" im Dashboard.
+
+### 🛠 Tech & Config
+- **Entity:** `isVerified`, `verifiedAt`, `verifiedBy` zur `Restaurant`-Entity hinzugefügt.
+- **Migration:** `Version20260308100000` – fügt `is_verified`, `verified_at`, `verified_by_id` zur `restaurant`-Tabelle hinzu.
+- **Route:** `admin_restaurant_toggle_verified` POST `/admin/restaurants/{id}/verifizieren`.
+- **Partial:** `templates/partials/_verified_badge.html.twig` – wiederverwendbares Badge-Template.
+- **Fixtures:** 3 Restaurants als verifiziert markiert (Pizzeria Bella Vista, Sushi Zen, Green Bowl).
+
+---
+
+## [2026.03.08b] – Zahlungsmethoden
+*Zahlungsmethoden pro Restaurant (Bargeld, Karte, Payconiq).*
+
+### 🚀 Features
+- **Zahlungsmethoden:** Drei neue Boolean-Felder in der `Restaurant`-Entity (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`).
+- **Detailseite:** Neue Sektion „Zahlungsmethoden" auf `/restaurants/{id}` mit farbigen Badges pro Methode (Grün = akzeptiert, Payconiq in Markenfarbe `#FF4612`).
+- **Admin-Formular:** Neue Fieldset „Zahlungsmethoden" mit drei Checkboxen im Restaurant-Bearbeitungsformular.
+- **Fixtures:** Alle 11 Fixture-Restaurants mit realistischen Zahlungsmethoden-Daten versehen.
+
+### 🛠 Tech & Config
+- **Migration:** `Version20260308000000` – fügt `accepts_cash`, `accepts_card`, `accepts_payconiq` (TINYINT) zur `restaurant`-Tabelle hinzu.
 
 ---
 

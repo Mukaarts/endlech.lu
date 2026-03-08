@@ -23,7 +23,18 @@ final class RestaurantController extends AbstractController
 
         $page = max(1, $request->query->getInt('page', 1));
 
-        $paginator = $restaurantRepository->findPaginated($sort, $page, self::LIMIT);
+        $filters = [
+            'verified'   => $request->query->getBoolean('verified', false),
+            'wheelchair' => $request->query->getBoolean('wheelchair', false),
+            'toilet'     => $request->query->getBoolean('toilet', false),
+            'dogs'       => $request->query->getBoolean('dogs', false),
+            'lighting'   => $request->query->getBoolean('lighting', false),
+            'open'       => $request->query->getBoolean('open', false),
+            'city'       => trim($request->query->getString('city', '')),
+            'cuisine'    => trim($request->query->getString('cuisine', '')),
+        ];
+
+        $paginator = $restaurantRepository->findPaginated($sort, $page, self::LIMIT, $filters);
         $total = count($paginator);
         $lastPage = max(1, (int) ceil($total / self::LIMIT));
 
@@ -33,6 +44,7 @@ final class RestaurantController extends AbstractController
             'lastPage' => $lastPage,
             'total' => $total,
             'sort' => $sort,
+            'filters' => $filters,
         ]);
     }
 

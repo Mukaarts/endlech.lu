@@ -12,11 +12,14 @@
                 <div class="text-7xl mb-4">{{ restaurant.emoji }}</div>
                 <h1 class="text-3xl font-bold mb-2">{{ restaurant.name }}</h1>
                 <p class="text-cyan-100 text-lg">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
-                {% if restaurant.isOpen %}
-                    <span class="inline-block mt-4 bg-green-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">Geöffnet</span>
-                {% else %}
-                    <span class="inline-block mt-4 bg-red-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">Geschlossen</span>
-                {% endif %}
+                <div class="flex items-center justify-center gap-3 mt-4 flex-wrap">
+                    {% if restaurant.isOpen %}
+                        <span class="inline-block bg-green-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">Geöffnet</span>
+                    {% else %}
+                        <span class="inline-block bg-red-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">Geschlossen</span>
+                    {% endif %}
+                    {% include 'partials/_verified_badge.html.twig' with {restaurant: restaurant, size: 'lg'} %}
+                </div>
             </div>
         </div>
 
@@ -27,6 +30,22 @@
             <a href="{{ path('app_restaurant_index') }}" class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold mb-8 transition">
                 ← Zurück zur Liste
             </a>
+
+            {# --- VERIFIZIERUNGS-INFO-KARTE --- #}
+            {% if restaurant.isVerified %}
+            <div class="bg-cyan-50 rounded-xl border border-cyan-200 p-5 mb-6 flex items-start gap-4">
+                <svg class="w-6 h-6 text-cyan-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="text-sm font-bold text-cyan-800">Von Endlech.lu persönlich vor Ort geprüft</p>
+                    <p class="text-xs text-cyan-600 mt-0.5">
+                        Die Barrierefreiheitsangaben dieses Lokals wurden von unserem Team persönlich verifiziert.
+                        {% if restaurant.verifiedAt is not null %}Geprüft am {{ restaurant.verifiedAt|date('d.m.Y') }}.{% endif %}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
 
             {# --- BEWERTUNG --- #}
             {% if restaurant.rating is not null %}
@@ -83,6 +102,41 @@
                 </div>
             </div>
 
+            {# --- ZAHLUNGSMETHODEN --- #}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Zahlungsmethoden</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                    {# Bargeld #}
+                    <div class="flex items-center gap-3 p-3 rounded-lg {{ restaurant.acceptsCash ? 'bg-green-50 border border-green-100' : 'bg-gray-50 border border-gray-100' }}">
+                        <span class="text-2xl">💵</span>
+                        <div>
+                            <p class="text-sm font-semibold {{ restaurant.acceptsCash ? 'text-green-700' : 'text-gray-400' }}">Barzahlung</p>
+                            <p class="text-xs {{ restaurant.acceptsCash ? 'text-green-600' : 'text-gray-400' }}">{{ restaurant.acceptsCash ? 'Akzeptiert' : 'Nicht akzeptiert' }}</p>
+                        </div>
+                    </div>
+
+                    {# Karte #}
+                    <div class="flex items-center gap-3 p-3 rounded-lg {{ restaurant.acceptsCard ? 'bg-green-50 border border-green-100' : 'bg-gray-50 border border-gray-100' }}">
+                        <span class="text-2xl">💳</span>
+                        <div>
+                            <p class="text-sm font-semibold {{ restaurant.acceptsCard ? 'text-green-700' : 'text-gray-400' }}">Kreditkarte / EC</p>
+                            <p class="text-xs {{ restaurant.acceptsCard ? 'text-green-600' : 'text-gray-400' }}">{{ restaurant.acceptsCard ? 'Akzeptiert' : 'Nicht akzeptiert' }}</p>
+                        </div>
+                    </div>
+
+                    {# Payconiq #}
+                    <div class="flex items-center gap-3 p-3 rounded-lg {{ restaurant.acceptsPayconiq ? 'bg-green-50 border border-green-100' : 'bg-gray-50 border border-gray-100' }}">
+                        <span class="text-2xl">📱</span>
+                        <div>
+                            <p class="text-sm font-semibold {{ restaurant.acceptsPayconiq ? 'text-green-700' : 'text-gray-400' }}">Payconiq</p>
+                            <p class="text-xs {{ restaurant.acceptsPayconiq ? 'text-green-600' : 'text-gray-400' }}">{{ restaurant.acceptsPayconiq ? 'Akzeptiert' : 'Nicht akzeptiert' }}</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
             {# --- HINWEISE (Accessibility Notes) --- #}
             {% if restaurant.accessibilityNotes is not empty %}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
@@ -110,6 +164,22 @@
                         {% endfor %}
                     </div>
                 </div>
+            {% endif %}
+
+            {# --- FOTOS (Galerie mit GLightbox) --- #}
+            {% if restaurant.images is not empty %}
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">📷 Fotos</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {% for image in restaurant.images %}
+                    <a href="/uploads/restaurants/{{ image.filename }}"
+                       class="glightbox" data-gallery="restaurant-gallery" data-description="{{ image.altText }}">
+                        <img src="/uploads/restaurants/{{ image.filename }}" alt="{{ image.altText }}"
+                             class="w-full h-40 object-cover rounded-xl border border-gray-200 hover:opacity-90 transition">
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
             {% endif %}
 
             {# --- ERSTELLT AM --- #}
