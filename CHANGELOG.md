@@ -2,7 +2,7 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.03.01-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.08-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
@@ -11,6 +11,25 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 ### 🚀 Features
 - **Map:** Kartenansicht der Locations.
 - **Filter:** Aktive Filterung nach Barrierefreiheitskriterien.
+
+---
+
+## [2026.03.08]
+*Brevo Mailer Integration für Transaktions-E-Mails.*
+
+### 🚀 Features
+- **Brevo Integration:** `symfony/brevo-mailer` als Produktions-Mail-Provider installiert und konfiguriert.
+- **E-Mail-Konfiguration:** Zentraler Absender (`noreply@endlech.lu`) über `mailer.yaml` und Umgebungsvariablen konfigurierbar.
+- **Base E-Mail-Template:** Wiederverwendbares Basis-Layout (`email/base.html.twig`) mit Endlech.lu Branding (Gradient-Header, Footer).
+- **Fehlerbehandlung:** Try/Catch für `TransportExceptionInterface` in allen E-Mail-sendenden Controllern mit benutzerfreundlichen Flash-Nachrichten.
+
+### 🛠 Tech & Config
+- **Dependency:** `symfony/brevo-mailer` v8.0 hinzugefügt.
+- **Mailer Config:** Globaler Absender via `envelope.sender` und `headers.From` in `config/packages/mailer.yaml`.
+- **Umgebungsvariablen:** `MAILER_SENDER_ADDRESS` und `MAILER_SENDER_NAME` in `.env` für konfigurierbare Absenderadresse.
+- **Dev-Umgebung:** `.env.dev` nutzt Mailpit (`smtp://localhost:1025`) für lokales E-Mail-Testing.
+- **Templates:** Verification-E-Mail refactored, nutzt jetzt `email/base.html.twig` als Basis-Layout.
+- **Controller:** `RegistrationController` und `EmailVerificationController` nutzen globale Absender-Konfiguration statt hardcoded Adressen.
 
 ---
 

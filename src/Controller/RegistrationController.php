@@ -9,8 +9,8 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -45,7 +45,6 @@ final class RegistrationController extends AbstractController
             $verifyUrl = $this->generateUrl('app_verify_email', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $email = (new TemplatedEmail())
-                ->from(new Address('noreply@endlech.lu', 'Endlech.lu'))
                 ->to($user->getEmail())
                 ->subject('Bestätige deine E-Mail-Adresse')
                 ->htmlTemplate('email/verification.html.twig')
@@ -54,7 +53,13 @@ final class RegistrationController extends AbstractController
                     'verifyUrl' => $verifyUrl,
                 ]);
 
-            $mailer->send($email);
+            try {
+                $mailer->send($email);
+            } catch (TransportExceptionInterface) {
+                $this->addFlash('warning', 'Registrierung erfolgreich, aber die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte versuche es später erneut.');
+
+                return $this->redirectToRoute('app_verify_notice');
+            }
 
             $this->addFlash('success', 'Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach und bestätige deine Adresse.');
 

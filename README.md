@@ -2,7 +2,7 @@
 
 An open platform to find and rate accessible restaurants in Luxembourg. Built for inclusion, community, and simplicity.
 
-![Version](https://img.shields.io/badge/version-v2026.03.01-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.08-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 <div align="center">
@@ -12,7 +12,7 @@ An open platform to find and rate accessible restaurants in Luxembourg. Built fo
 ## 🚀 Project Status
 
 **The first beta version is live.**
-The homepage has been redesigned as a landing page with a hero section, "How it works" steps, restaurant preview, and call-to-action areas. A dedicated restaurant listing at `/restaurants` with pagination and sorting is available. An admin panel at `/admin` allows ROLE_ADMIN users to fully manage (CRUD) restaurants. Next up: map view and active filtering.
+The homepage has been redesigned as a landing page with a hero section, "How it works" steps, restaurant preview, and call-to-action areas. A dedicated restaurant listing at `/restaurants` with pagination and sorting is available. An admin panel at `/admin` allows ROLE_ADMIN users to fully manage (CRUD) restaurants. Transactional emails are powered by Brevo (formerly Sendinblue) with Mailpit for local development. Next up: map view and active filtering.
 
 ## 🎯 Features & Progress
 
@@ -25,6 +25,7 @@ Current development status of the platform.
 - [x] **Data Seeding:** Initial Luxembourg restaurants via fixtures.
 - [x] **User Fixtures:** Test users (admin, verified, unverified) for development & testing.
 - [ ] **Authentication:** Login & registration for users.
+- [x] **Email:** Brevo mailer integration for transactional emails (verification, password reset).
 
 ### 🔧 Admin Panel
 - [x] **Dashboard:** Admin area at `/admin` with statistics and quick actions.
@@ -59,6 +60,7 @@ Ideas for version 2.0 (after the first stable release):
 * **Database:** MySQL 8.0 (Doctrine ORM)
 * **Frontend:** Twig, Tailwind CSS v4 (via PostCSS)
 * **JS:** Stimulus, Turbo (Hotwire)
+* **Email:** Brevo (Symfony Mailer) / Mailpit (dev)
 * **Assets:** Webpack Encore
 
 ## ⚙️ Installation & Setup
@@ -85,6 +87,8 @@ Ideas for version 2.0 (after the first stable release):
     ```bash
     DATABASE_URL="mysql://root:root@127.0.0.1:3306/endlech?serverVersion=8.0&charset=utf8mb4"
     APP_SECRET=your-secret-here
+    # Production only (Brevo):
+    # MAILER_DSN=brevo+api://YOUR_API_KEY@default
     ```
 
 5.  **Database & fixtures:**

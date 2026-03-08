@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -73,7 +73,6 @@ final class EmailVerificationController extends AbstractController
         $verifyUrl = $this->generateUrl('app_verify_email', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $email = (new TemplatedEmail())
-            ->from(new Address('noreply@endlech.lu', 'Endlech.lu'))
             ->to($user->getEmail())
             ->subject('Bestätige deine E-Mail-Adresse')
             ->htmlTemplate('email/verification.html.twig')
@@ -82,7 +81,13 @@ final class EmailVerificationController extends AbstractController
                 'verifyUrl' => $verifyUrl,
             ]);
 
-        $mailer->send($email);
+        try {
+            $mailer->send($email);
+        } catch (TransportExceptionInterface) {
+            $this->addFlash('error', 'Die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte versuche es später erneut.');
+
+            return $this->redirectToRoute('app_verify_notice');
+        }
 
         $this->addFlash('success', 'Eine neue Bestätigungs-E-Mail wurde gesendet.');
 

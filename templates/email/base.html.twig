@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Endlech.lu{% endblock %}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table role="presentation" style="width: 100%; border: 0; cellpadding: 0; cellspacing: 0;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <table role="presentation" style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    {# Header #}
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #0891b2, #7c3aed); padding: 32px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700;">
+                                Endlech<span style="color: #e9d5ff;">.lu</span>
+                            </h1>
+                        </td>
+                    </tr>
+
+                    {# Body #}
+                    <tr>
+                        <td style="padding: 32px;">
+                            {% block body %}{% endblock %}
+                        </td>
+                    </tr>
+
+                    {# Footer #}
+                    <tr>
+                        <td style="padding: 24px 32px; border-top: 1px solid #f3f4f6; text-align: center;">
+                            <p style="margin: 0; color: #9ca3af; font-size: 11px;">
+                                &copy; {{ 'now'|date('Y') }} Endlech.lu - Made with love in Luxembourg
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
