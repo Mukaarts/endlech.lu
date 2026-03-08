@@ -166,6 +166,22 @@
                 </div>
             {% endif %}
 
+            {# --- FOTOS (Galerie mit GLightbox) --- #}
+            {% if restaurant.images is not empty %}
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">📷 Fotos</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {% for image in restaurant.images %}
+                    <a href="/uploads/restaurants/{{ image.filename }}"
+                       class="glightbox" data-gallery="restaurant-gallery" data-description="{{ image.altText }}">
+                        <img src="/uploads/restaurants/{{ image.filename }}" alt="{{ image.altText }}"
+                             class="w-full h-40 object-cover rounded-xl border border-gray-200 hover:opacity-90 transition">
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
             {# --- ERSTELLT AM --- #}
             <div class="text-center text-sm text-gray-400 mt-8">
                 Eingetragen am {{ restaurant.createdAt|date('d.m.Y') }}

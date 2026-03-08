@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
@@ -69,9 +71,14 @@ class Restaurant
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: RestaurantImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['uploadedAt' => 'ASC'])]
+    private Collection $images;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -288,5 +295,11 @@ class Restaurant
         $this->verifiedBy = $verifiedBy;
 
         return $this;
+    }
+
+    /** @return Collection<int, RestaurantImage> */
+    public function getImages(): Collection
+    {
+        return $this->images;
     }
 }

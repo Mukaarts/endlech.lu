@@ -4,10 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Restaurant;
 use App\Form\RestaurantType;
+use App\Repository\RestaurantImageRepository;
 use App\Repository\RestaurantRepository;
 use App\Repository\RestaurantSuggestionRepository;
+use App\Service\ImageUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -122,5 +125,54 @@ final class AdminRestaurantController extends AbstractController
         }
 
         return $this->redirectToRoute('admin_restaurant_index');
+    }
+
+    #[Route('/restaurants/{id}/fotos', name: 'admin_restaurant_image_upload', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function uploadImage(Restaurant $restaurant, Request $request, ImageUploadService $imageUploadService): Response
+    {
+        if (!$this->isCsrfTokenValid('upload-images-' . $restaurant->getId(), $request->request->getString('_token'))) {
+            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+
+            return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
+        }
+
+        $files = $request->files->get('images', []);
+        $altText = $request->request->getString('altText', '');
+        $uploaded = 0;
+
+        foreach ($files as $file) {
+            if ($file instanceof UploadedFile && $file->isValid()) {
+                $imageUploadService->upload($file, $restaurant, $altText);
+                ++$uploaded;
+            }
+        }
+
+        if ($uploaded > 0) {
+            $this->addFlash('success', $uploaded.' Foto(s) erfolgreich hochgeladen.');
+        } else {
+            $this->addFlash('error', 'Keine gültigen Dateien gefunden.');
+        }
+
+        return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
+    }
+
+    #[Route('/restaurants/{id}/fotos/{imageId}/loeschen', name: 'admin_restaurant_image_delete', requirements: ['id' => '\d+', 'imageId' => '\d+'], methods: ['POST'])]
+    public function deleteImage(Restaurant $restaurant, int $imageId, Request $request, RestaurantImageRepository $imageRepository, ImageUploadService $imageUploadService): Response
+    {
+        if (!$this->isCsrfTokenValid('delete-image-' . $imageId, $request->request->getString('_token'))) {
+            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+
+            return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
+        }
+
+        $image = $imageRepository->find($imageId);
+        if ($image && $image->getRestaurant() === $restaurant) {
+            $imageUploadService->delete($image);
+            $this->addFlash('success', 'Foto erfolgreich gelöscht.');
+        } else {
+            $this->addFlash('error', 'Foto nicht gefunden.');
+        }
+
+        return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
     }
 }
