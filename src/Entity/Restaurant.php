@@ -43,6 +43,15 @@ class Restaurant
     #[ORM\Column]
     private bool $hasBrightLighting = false;
 
+    #[ORM\Column]
+    private bool $acceptsCash = false;
+
+    #[ORM\Column]
+    private bool $acceptsCard = false;
+
+    #[ORM\Column]
+    private bool $acceptsPayconiq = false;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $accessibilityNotes = [];
@@ -176,6 +185,42 @@ class Restaurant
     public function setHasBrightLighting(bool $hasBrightLighting): static
     {
         $this->hasBrightLighting = $hasBrightLighting;
+
+        return $this;
+    }
+
+    public function acceptsCash(): bool
+    {
+        return $this->acceptsCash;
+    }
+
+    public function setAcceptsCash(bool $acceptsCash): static
+    {
+        $this->acceptsCash = $acceptsCash;
+
+        return $this;
+    }
+
+    public function acceptsCard(): bool
+    {
+        return $this->acceptsCard;
+    }
+
+    public function setAcceptsCard(bool $acceptsCard): static
+    {
+        $this->acceptsCard = $acceptsCard;
+
+        return $this;
+    }
+
+    public function acceptsPayconiq(): bool
+    {
+        return $this->acceptsPayconiq;
+    }
+
+    public function setAcceptsPayconiq(bool $acceptsPayconiq): static
+    {
+        $this->acceptsPayconiq = $acceptsPayconiq;
 
         return $this;
     }

@@ -76,6 +76,23 @@
         </label>
     </fieldset>
 
+    {# --- Zahlungsmethoden --- #}
+    <fieldset class="space-y-3">
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Zahlungsmethoden</legend>
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.acceptsCash, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">💵 Barzahlung</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.acceptsCard, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">💳 Kreditkarte / EC-Karte</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.acceptsPayconiq, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">📱 Payconiq</span>
+        </label>
+    </fieldset>
+
     {# --- Hinweise zur Barrierefreiheit (dynamische Collection) --- #}
     <fieldset>
         <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Hinweise zur Barrierefreiheit</legend>

@@ -38,6 +38,7 @@ Current development status of the platform.
 - [x] **List View:** Dedicated `/restaurants` page with pagination (6/page) and sorting (rating, name, newest).
 - [x] **Accessibility Icons:** Display of criteria (wheelchair, toilet, assistance dog, lighting).
 - [x] **Detail Page:** Individual view with address and additional information.
+- [x] **Payment Methods:** Display of accepted payment methods (cash, card, Payconiq) per restaurant.
 - [ ] **Filters:** Filter by criteria (e.g., "Step-free entrance").
 
 ### 👤 User & Community

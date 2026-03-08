@@ -83,6 +83,41 @@
                 </div>
             </div>
 
+            {# --- ZAHLUNGSMETHODEN --- #}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Zahlungsmethoden</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                    {# Bargeld #}
+                    <div class="flex items-center gap-3 p-3 rounded-lg {{ restaurant.acceptsCash ? 'bg-green-50 border border-green-100' : 'bg-gray-50 border border-gray-100' }}">
+                        <span class="text-2xl">💵</span>
+                        <div>
+                            <p class="text-sm font-semibold {{ restaurant.acceptsCash ? 'text-green-700' : 'text-gray-400' }}">Barzahlung</p>
+                            <p class="text-xs {{ restaurant.acceptsCash ? 'text-green-600' : 'text-gray-400' }}">{{ restaurant.acceptsCash ? 'Akzeptiert' : 'Nicht akzeptiert' }}</p>
+                        </div>
+                    </div>
+
+                    {# Karte #}
+                    <div class="flex items-center gap-3 p-3 rounded-lg {{ restaurant.acceptsCard ? 'bg-green-50 border border-green-100' : 'bg-gray-50 border border-gray-100' }}">
+                        <span class="text-2xl">💳</span>
+                        <div>
+                            <p class="text-sm font-semibold {{ restaurant.acceptsCard ? 'text-green-700' : 'text-gray-400' }}">Kreditkarte / EC</p>
+                            <p class="text-xs {{ restaurant.acceptsCard ? 'text-green-600' : 'text-gray-400' }}">{{ restaurant.acceptsCard ? 'Akzeptiert' : 'Nicht akzeptiert' }}</p>
+                        </div>
+                    </div>
+
+                    {# Payconiq #}
+                    <div class="flex items-center gap-3 p-3 rounded-lg {{ restaurant.acceptsPayconiq ? 'bg-green-50 border border-green-100' : 'bg-gray-50 border border-gray-100' }}">
+                        <span class="text-2xl">📱</span>
+                        <div>
+                            <p class="text-sm font-semibold {{ restaurant.acceptsPayconiq ? 'text-green-700' : 'text-gray-400' }}">Payconiq</p>
+                            <p class="text-xs {{ restaurant.acceptsPayconiq ? 'text-green-600' : 'text-gray-400' }}">{{ restaurant.acceptsPayconiq ? 'Akzeptiert' : 'Nicht akzeptiert' }}</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
             {# --- HINWEISE (Accessibility Notes) --- #}
             {% if restaurant.accessibilityNotes is not empty %}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">

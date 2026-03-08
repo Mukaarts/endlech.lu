@@ -152,7 +152,7 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 - `?page=N` – page number (6 items per page, uses Doctrine `Paginator`)
 
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`)
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`) and payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`)
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified

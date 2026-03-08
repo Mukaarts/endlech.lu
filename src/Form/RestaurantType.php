@@ -85,6 +85,18 @@ class RestaurantType extends AbstractType
                 'label' => 'Helle Beleuchtung',
                 'required' => false,
             ])
+            ->add('acceptsCash', CheckboxType::class, [
+                'label' => 'Barzahlung',
+                'required' => false,
+            ])
+            ->add('acceptsCard', CheckboxType::class, [
+                'label' => 'Kreditkarte / EC-Karte',
+                'required' => false,
+            ])
+            ->add('acceptsPayconiq', CheckboxType::class, [
+                'label' => 'Payconiq',
+                'required' => false,
+            ])
             ->add('accessibilityNotes', CollectionType::class, [
                 'label' => 'Hinweise zur Barrierefreiheit',
                 'entry_type' => TextType::class,

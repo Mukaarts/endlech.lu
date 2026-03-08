@@ -14,6 +14,20 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ---
 
+## [2026.03.08b] – Zahlungsmethoden
+*Zahlungsmethoden pro Restaurant (Bargeld, Karte, Payconiq).*
+
+### 🚀 Features
+- **Zahlungsmethoden:** Drei neue Boolean-Felder in der `Restaurant`-Entity (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`).
+- **Detailseite:** Neue Sektion „Zahlungsmethoden" auf `/restaurants/{id}` mit farbigen Badges pro Methode (Grün = akzeptiert, Payconiq in Markenfarbe `#FF4612`).
+- **Admin-Formular:** Neue Fieldset „Zahlungsmethoden" mit drei Checkboxen im Restaurant-Bearbeitungsformular.
+- **Fixtures:** Alle 11 Fixture-Restaurants mit realistischen Zahlungsmethoden-Daten versehen.
+
+### 🛠 Tech & Config
+- **Migration:** `Version20260308000000` – fügt `accepts_cash`, `accepts_card`, `accepts_payconiq` (TINYINT) zur `restaurant`-Tabelle hinzu.
+
+---
+
 ## [2026.03.08]
 *Brevo Mailer Integration für Transaktions-E-Mails.*
 
