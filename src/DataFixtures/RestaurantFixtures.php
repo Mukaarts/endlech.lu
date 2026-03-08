@@ -3,11 +3,18 @@
 namespace App\DataFixtures;
 
 use App\Entity\Restaurant;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class RestaurantFixtures extends Fixture
+class RestaurantFixtures extends Fixture implements DependentFixtureInterface
 {
+    public function getDependencies(): array
+    {
+        return [UserFixtures::class];
+    }
+
     public function load(ObjectManager $manager): void
     {
         $restaurants = [
@@ -26,6 +33,7 @@ class RestaurantFixtures extends Fixture
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Eingang stufenlos', 'ok:WC Tür > 90cm'],
+                'isVerified'             => true,
             ],
             [
                 'name'                   => 'Umami Corner',
@@ -122,6 +130,7 @@ class RestaurantFixtures extends Fixture
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Rollstuhlrampe vorhanden', 'ok:Barrierefreies WC'],
+                'isVerified'             => true,
             ],
             [
                 'name'                   => 'Wäinhaus am Markt',
@@ -170,6 +179,7 @@ class RestaurantFixtures extends Fixture
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Induktive Höranlage vorhanden'],
+                'isVerified'             => true,
             ],
             [
                 'name'                   => 'Brasserie du Grund',
@@ -205,6 +215,14 @@ class RestaurantFixtures extends Fixture
             $restaurant->setAcceptsCard($data['acceptsCard']);
             $restaurant->setAcceptsPayconiq($data['acceptsPayconiq']);
             $restaurant->setAccessibilityNotes($data['accessibilityNotes']);
+
+            $isVerified = $data['isVerified'] ?? false;
+            $restaurant->setIsVerified($isVerified);
+            if ($isVerified) {
+                $restaurant->setVerifiedAt(new \DateTimeImmutable('2026-01-15'));
+                $restaurant->setVerifiedBy($this->getReference(UserFixtures::REFERENCE_ADMIN, User::class));
+            }
+
             $manager->persist($restaurant);
         }
 

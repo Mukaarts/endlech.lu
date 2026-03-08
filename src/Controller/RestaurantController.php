@@ -22,8 +22,9 @@ final class RestaurantController extends AbstractController
         }
 
         $page = max(1, $request->query->getInt('page', 1));
+        $verifiedOnly = $request->query->getBoolean('verified', false);
 
-        $paginator = $restaurantRepository->findPaginated($sort, $page, self::LIMIT);
+        $paginator = $restaurantRepository->findPaginated($sort, $page, self::LIMIT, $verifiedOnly);
         $total = count($paginator);
         $lastPage = max(1, (int) ceil($total / self::LIMIT));
 
@@ -33,6 +34,7 @@ final class RestaurantController extends AbstractController
             'lastPage' => $lastPage,
             'total' => $total,
             'sort' => $sort,
+            'verifiedOnly' => $verifiedOnly,
         ]);
     }
 

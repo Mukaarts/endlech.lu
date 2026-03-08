@@ -144,15 +144,17 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `admin_restaurant_new`  | `/admin/restaurants/neu` | `AdminRestaurantController::new()` |
 | `admin_restaurant_edit` | `/admin/restaurants/{id}/bearbeiten` | `AdminRestaurantController::edit()` |
 | `admin_restaurant_delete`| `/admin/restaurants/{id}/loeschen` | `AdminRestaurantController::delete()` |
+| `admin_restaurant_toggle_verified`| `/admin/restaurants/{id}/verifizieren` | `AdminRestaurantController::toggleVerified()` |
 
 `/restaurants` accepts query params:
 - `?sort=rating` (default) – sorted by rating DESC
 - `?sort=name` – sorted A–Z
 - `?sort=newest` – sorted by `createdAt` DESC
 - `?page=N` – page number (6 items per page, uses Doctrine `Paginator`)
+- `?verified=1` – filter to verified restaurants only
 
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`) and payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`)
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), and verification fields (`isVerified`, `verifiedAt`, `verifiedBy`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl.
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified
