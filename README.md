@@ -1,131 +1,145 @@
 # Endlech.lu
 
-Eine offene Plattform, um barrierefreie Restaurants in Luxemburg zu finden und zu bewerten. Gebaut für Inklusion, Community und Einfachheit.
+An open platform to find and rate accessible restaurants in Luxembourg. Built for inclusion, community, and simplicity.
 
-![Version](https://img.shields.io/badge/version-v2026.01.13-blue)
-![Status](https://img.shields.io/badge/status-development-orange)
+![Version](https://img.shields.io/badge/version-v2026.03.08-blue)
+![Status](https://img.shields.io/badge/status-beta-green)
 
 <div align="center">
   <img src="Element 1.png" alt="Endlech.lu Logo" width="200">
 </div>
 
-## 🚧 Projektstatus
+## 🚀 Project Status
 
-**Dieses Projekt befindet sich aktuell im Aufbau.**
-Wir arbeiten gerade am Grundgerüst (MVP). Ziel ist es, eine erste nutzbare Version für Luxemburg bereitzustellen.
+**The first beta version is live.**
+The homepage has been redesigned as a landing page with a hero section, "How it works" steps, restaurant preview, and call-to-action areas. A dedicated restaurant listing at `/restaurants` with pagination and sorting is available. An admin panel at `/admin` allows ROLE_ADMIN users to fully manage (CRUD) restaurants. Transactional emails are powered by Brevo (formerly Sendinblue) with Mailpit for local development. Next up: map view and active filtering.
 
-## 🎯 Geplante Features & Fortschritt
+## 🎯 Features & Progress
 
-Hier ist der aktuelle Entwicklungsstand der Plattform.
+Current development status of the platform.
 
 ### 🏗️ Core & Backend
-- [x] **Projekt Setup:** Symfony 7 Installation & Konfiguration.
-- [x] **Frontend Stack:** Tailwind CSS & Webpack Encore Integration.
-- [x] **Datenbank:** Grundlegendes Schema für Restaurants & User.
-- [ ] **Authentifizierung:** Login & Registrierung für User.
-- [ ] **Daten-Seeding:** Erste Test-Daten für Restaurants in Luxemburg.
+- [x] **Project Setup:** Symfony 8.0 installation & configuration.
+- [x] **Frontend Stack:** Tailwind CSS & Webpack Encore integration.
+- [x] **Database:** Schema for restaurants & users (MySQL 8.0).
+- [x] **Data Seeding:** Initial Luxembourg restaurants via fixtures.
+- [x] **User Fixtures:** Test users (admin, verified, unverified) for development & testing.
+- [ ] **Authentication:** Login & registration for users.
+- [x] **Email:** Brevo mailer integration for transactional emails (verification, password reset).
 
-### 🍽️ Restaurant Finder (MVP)
-- [ ] **Listenansicht:** Anzeige aller Restaurants.
-- [ ] **Detailseite:** Einzelansicht mit Adresse und Infos.
-- [ ] **Barrierefreiheits-Icons:** Anzeige von Kriterien (Rollstuhl, WC, etc.).
-- [ ] **Filter:** Filtern nach Kriterien (z. B. "Stufenloser Eingang").
+### 🔧 Admin Panel
+- [x] **Dashboard:** Admin area at `/admin` with statistics and quick actions.
+- [x] **Restaurant CRUD:** Create, edit, and delete restaurants (`/admin/restaurants`).
+- [x] **Form:** Full form with accessibility checkboxes and dynamic notes.
+- [x] **Security:** Access control via `access_control` and `#[IsGranted('ROLE_ADMIN')]`.
+
+### 🍽️ Restaurant Finder
+- [x] **Homepage:** Landing page with hero, "How it works", top-6 restaurant preview, value proposition, and CTA.
+- [x] **List View:** Dedicated `/restaurants` page with pagination (6/page) and sorting (rating, name, newest).
+- [x] **Accessibility Icons:** Display of criteria (wheelchair, toilet, assistance dog, lighting).
+- [x] **Detail Page:** Individual view with address and additional information.
+- [ ] **Filters:** Filter by criteria (e.g., "Step-free entrance").
 
 ### 👤 User & Community
-- [ ] **User Profile:** Speichern von Favoriten.
-- [ ] **Crowdsourcing:** Formular, um neue Restaurants vorzuschlagen.
-- [ ] **Bewertungen:** Kommentarsystem für Barrierefreiheit.
+- [ ] **User Profiles:** Save favorites.
+- [ ] **Crowdsourcing:** Form to suggest new restaurants.
+- [ ] **Reviews:** Comment system for accessibility feedback.
 
-## 🔮 Roadmap (Zukunft)
+## 🔮 Roadmap
 
-Ideen für Version 2.0 (nach dem ersten Release):
+Ideas for version 2.0 (after the first stable release):
 
-* **Verifizierung:** "Blauer Haken" für geprüfte Restaurants.
-* **Fotos:** User können Fotos von Eingängen/Toiletten hochladen.
-* **Mehrsprachigkeit:** Interface auf LU, FR, EN.
-* **Karte:** Interaktive Map-View (Leaflet/Google Maps).
+* **Verification:** "Blue checkmark" for verified restaurants.
+* **Photos:** Users can upload photos of entrances/restrooms.
+* **Multilingual:** Interface in LU, FR, EN.
+* **Map:** Interactive map view (Leaflet/Google Maps).
 
 ## 🛠 Tech Stack
 
-* **Backend:** PHP 8.2+, Symfony 7
-* **Database:** MySQL (Doctrine ORM)
-* **Frontend:** Twig, Tailwind CSS (via `symfonycasts/tailwind-bundle`)
+* **Backend:** PHP 8.4+, Symfony 8.0
+* **Database:** MySQL 8.0 (Doctrine ORM)
+* **Frontend:** Twig, Tailwind CSS v4 (via PostCSS)
 * **JS:** Stimulus, Turbo (Hotwire)
+* **Email:** Brevo (Symfony Mailer) / Mailpit (dev)
 * **Assets:** Webpack Encore
 
 ## ⚙️ Installation & Setup
 
-1.  **Repository klonen:**
+1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/dein-username/endlech-lu.git](https://github.com/dein-username/endlech-lu.git)
-    cd endlech-lu
+    git clone https://github.com/Mukaarts/endlech.lu.git
+    cd endlech.lu
     ```
 
-2.  **Dependencies installieren:**
+2.  **Install dependencies:**
     ```bash
     composer install
     npm install
     ```
 
-3.  **Umgebungsvariablen (.env.local):**
-    Erstelle eine `.env.local` Datei und konfiguriere deine Datenbank:
+3.  **Start Docker (MySQL):**
     ```bash
-    # Database
-    DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/endlech_db?serverVersion=8.0&charset=utf8mb4"
+    docker compose up -d
     ```
 
-4.  **Datenbank & Assets:**
+4.  **Environment variables (.env.local):**
+    Create a `.env.local` file:
     ```bash
-    # Tailwind Binary init
-    php bin/console tailwind:init
-    
-    # DB Setup
-    php bin/console doctrine:database:create
+    DATABASE_URL="mysql://root:root@127.0.0.1:3306/endlech?serverVersion=8.0&charset=utf8mb4"
+    APP_SECRET=your-secret-here
+    # Production only (Brevo):
+    # MAILER_DSN=brevo+api://YOUR_API_KEY@default
+    ```
+
+5.  **Database & fixtures:**
+    ```bash
     php bin/console doctrine:migrations:migrate
-    
-    # Frontend Build
-    npm run build
-    php bin/console tailwind:build
+    php bin/console doctrine:fixtures:load
     ```
 
-5.  **Server starten:**
+6.  **Build assets & start server:**
     ```bash
+    npm run build
     symfony server:start
+    ```
+
+    Or using `make`:
+    ```bash
+    make init   # Full setup (Docker, composer, npm, DB, fixtures)
+    make start  # Start server + asset watcher
     ```
 
 ## 🌍 Environments
 
 ### 🛠 Development
-Der Modus für die aktive Entwicklung. Änderungen an Templates und CSS werden sofort erkannt.
+Active development mode. Changes to templates and CSS are picked up immediately.
 
-1.  Watcher starten (2 Terminals empfohlen):
-    ```bash
-    # Terminal 1: Tailwind
-    php bin/console tailwind:build --watch
-    
-    # Terminal 2: JS/Encore
-    npm run watch
-    ```
+```bash
+# Terminal 1: Tailwind
+php bin/console tailwind:build --watch
+
+# Terminal 2: JS/Encore
+npm run watch
+```
 
 ### 🚀 Production
-Optimiert für Performance und Sicherheit.
+Optimized for performance and security.
 
-1.  Assets bauen:
-    ```bash
-    php bin/console tailwind:build --minify
-    npm run build
-    ```
-2.  Cache leeren:
-    ```bash
-    php bin/console cache:clear
-    ```
+```bash
+php bin/console tailwind:build --minify
+npm run build
+php bin/console cache:clear
+```
 
-## 📂 Struktur
+## 📂 Structure
 
-* `/src/Controller` - Logik für die Seiten.
-* `/src/Entity` - Datenbank-Modelle.
-* `/templates` - Twig Templates.
-* `/assets` - Stimulus Controller und CSS.
+* `/src/Controller` — Page logic (including `AdminRestaurantController`).
+* `/src/Entity` — Database models (`User`, `Restaurant`).
+* `/src/Form` — Symfony forms (`RegistrationType`, `RestaurantType`).
+* `/src/DataFixtures` — Initial test data.
+* `/templates` — Twig templates (including `admin/` for the admin panel).
+* `/assets` — Stimulus controllers and CSS.
+* `/migrations` — Doctrine database migrations.
 
 ---
-*Built with ❤️ in Luxembourg.*
+*Built with love in Luxembourg.*

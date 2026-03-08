@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin – {% block admin_title %}Dashboard{% endblock %} – Endlech.lu{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50">
+
+    {# --- Admin Header Bar --- #}
+    <div class="bg-linear-to-r from-gray-800 to-gray-900 text-white py-4 shadow-md">
+        <div class="container mx-auto px-4 flex items-center justify-between">
+            <h1 class="text-xl font-bold">
+                <span class="text-cyan-400">Admin</span>-Bereich
+            </h1>
+            <a href="{{ path('app_home') }}" class="text-sm text-gray-300 hover:text-white transition">
+                ← Zurück zur Webseite
+            </a>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            {# === SIDEBAR === #}
+            <aside class="w-full lg:w-1/5">
+                <nav class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sticky top-24">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">Navigation</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{{ path('admin_dashboard') }}"
+                               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
+                                      {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600' }}">
+                                📊 Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin_restaurant_index') }}"
+                               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
+                                      {{ app.request.attributes.get('_route') starts with 'admin_restaurant' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600' }}">
+                                🍽️ Restaurants
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin_suggestion_index') }}"
+                               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
+                                      {{ app.request.attributes.get('_route') starts with 'admin_suggestion' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600' }}">
+                                💡 Vorschläge
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            {# === MAIN CONTENT === #}
+            <main class="w-full lg:w-4/5">
+                {% include 'partials/_flash_messages.html.twig' %}
+                {% block admin_body %}{% endblock %}
+            </main>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
