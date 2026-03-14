@@ -97,6 +97,17 @@
         </label>
     </fieldset>
 
+    {# --- Gesprochene Sprachen --- #}
+    <fieldset class="space-y-3">
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Gesprochene Sprachen</legend>
+        {% for child in form.spokenLanguages %}
+            <label class="flex items-center gap-3 cursor-pointer group">
+                {{ form_widget(child, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+                <span class="text-sm text-gray-600 group-hover:text-purple-700">{{ child.vars.label }}</span>
+            </label>
+        {% endfor %}
+    </fieldset>
+
     {# --- Hinweise zur Barrierefreiheit (dynamische Collection) --- #}
     <fieldset>
         <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Hinweise zur Barrierefreiheit</legend>

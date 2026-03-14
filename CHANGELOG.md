@@ -13,6 +13,24 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ---
 
+## [2026.03.14b] – Gesprochene Sprachen (Issue #40)
+
+### 🚀 Features
+- **Sprachen pro Restaurant:** Anzeige der vom Personal gesprochenen Sprachen (Luxemburgisch, Deutsch, Französisch, Englisch, Portugiesisch, Andere).
+- **Detailseite:** Neue Sektion „Gesprochene Sprachen" mit Flaggen-Badges.
+- **Listenansicht:** Flaggen-Badges auf den Restaurant-Karten.
+- **Sprachfilter:** Neue Filter-Checkboxen in der Sidebar – mehrere Sprachen kombinierbar (AND-Verknüpfung).
+- **Admin-Formular:** Sprachen-Checkboxen im Restaurant-Bearbeitungsformular.
+
+### 🛠 Tech
+- **Enum:** `App\Enum\Language` – PHP Backed Enum mit 6 Werten (`lu`, `de`, `fr`, `en`, `pt`, `other`), Helper-Methoden `label()`, `flag()`, `badgeLabel()`.
+- **Entity:** `spokenLanguages` JSON-Spalte auf `Restaurant` (gleiche Lösung wie `accessibilityNotes`).
+- **Repository:** `JSON_CONTAINS()` für Sprachfilterung in `findPaginated()`.
+- **Migration:** `Version20260314000000` – JSON-Spalte hinzugefügt.
+- **Fixtures:** Alle 11 Restaurants mit realistischen Sprachzuweisungen.
+
+---
+
 ## [2026.03.14] – TypeScript-Migration
 
 ### 🛠 Tech

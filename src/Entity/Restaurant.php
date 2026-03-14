@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Language;
 use App\Repository\RestaurantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -63,6 +64,10 @@ class Restaurant
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $verifiedBy = null;
+
+    /** @var list<string> */
+    #[ORM\Column(type: 'json')]
+    private array $spokenLanguages = [];
 
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
@@ -238,6 +243,28 @@ class Restaurant
     public function setAcceptsPayconiq(bool $acceptsPayconiq): static
     {
         $this->acceptsPayconiq = $acceptsPayconiq;
+
+        return $this;
+    }
+
+    /** @return Language[] */
+    public function getSpokenLanguages(): array
+    {
+        return array_filter(
+            array_map(
+                static fn (string $value) => Language::tryFrom($value),
+                $this->spokenLanguages,
+            ),
+        );
+    }
+
+    /** @param Language[]|string[] $languages */
+    public function setSpokenLanguages(array $languages): static
+    {
+        $this->spokenLanguages = array_map(
+            static fn (Language|string $l) => $l instanceof Language ? $l->value : $l,
+            $languages,
+        );
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Restaurant;
 use App\Entity\User;
+use App\Enum\Language;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -34,6 +35,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Eingang stufenlos', 'ok:WC Tür > 90cm'],
                 'isVerified'             => true,
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::EN, Language::OTHER],
             ],
             [
                 'name'                   => 'Umami Corner',
@@ -50,6 +52,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => false,
                 'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['ok:Menü in Braille', 'warn:Stufe am Eingang'],
+                'spokenLanguages'        => [Language::EN, Language::FR],
             ],
             [
                 'name'                   => 'Burger & Co.',
@@ -66,6 +69,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['ok:Parkplatz vor der Tür'],
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR],
             ],
             [
                 'name'                   => 'Le Jardin Brasserie',
@@ -82,6 +86,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Eingang stufenlos', 'ok:Barrierefreies WC', 'ok:Assistenzhunde willkommen'],
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::EN],
             ],
             [
                 'name'                   => 'Steakhaus Moselle',
@@ -98,6 +103,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['warn:Zwei Stufen am Eingang', 'ok:Helle Innenbeleuchtung'],
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR],
             ],
             [
                 'name'                   => 'Café Nordstad',
@@ -114,6 +120,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => false,
                 'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['ok:Ebenerdiger Zugang', 'ok:Assistenzhunde erlaubt', 'warn:WC nicht barrierefrei'],
+                'spokenLanguages'        => [Language::LU, Language::DE],
             ],
             [
                 'name'                   => 'Sushi Zen',
@@ -131,6 +138,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Rollstuhlrampe vorhanden', 'ok:Barrierefreies WC'],
                 'isVerified'             => true,
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::EN],
             ],
             [
                 'name'                   => 'Wäinhaus am Markt',
@@ -147,6 +155,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['warn:Kopfsteinpflaster vor dem Eingang', 'warn:Treppen im Inneren'],
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR],
             ],
             [
                 'name'                   => 'Trattoria Roma',
@@ -163,6 +172,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Ebenerdiger Eingang', 'ok:Helle Beleuchtung im Gastraum'],
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::PT, Language::OTHER],
             ],
             [
                 'name'                   => 'Green Bowl',
@@ -180,6 +190,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsPayconiq'        => true,
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Induktive Höranlage vorhanden'],
                 'isVerified'             => true,
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::EN, Language::PT],
             ],
             [
                 'name'                   => 'Brasserie du Grund',
@@ -196,6 +207,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'acceptsCard'            => false,
                 'acceptsPayconiq'        => false,
                 'accessibilityNotes'     => ['warn:Historisches Gebäude, mehrere Stufen', 'warn:Keine barrierefreie Toilette'],
+                'spokenLanguages'        => [Language::LU, Language::DE, Language::FR],
             ],
         ];
 
@@ -215,6 +227,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             $restaurant->setAcceptsCard($data['acceptsCard']);
             $restaurant->setAcceptsPayconiq($data['acceptsPayconiq']);
             $restaurant->setAccessibilityNotes($data['accessibilityNotes']);
+            $restaurant->setSpokenLanguages($data['spokenLanguages'] ?? []);
 
             $isVerified = $data['isVerified'] ?? false;
             $restaurant->setIsVerified($isVerified);
