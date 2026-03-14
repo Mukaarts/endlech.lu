@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Valid;
 
 class RestaurantType extends AbstractType
 {
@@ -123,6 +124,18 @@ class RestaurantType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
+            ])
+            ->add('orderingOptions', CollectionType::class, [
+                'label' => 'Bestelloptionen',
+                'entry_type' => OrderingOptionType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'by_reference' => false,
+                'required' => false,
+                'constraints' => [
+                    new Valid(),
+                ],
             ])
             ->add('accessibilityNotes', CollectionType::class, [
                 'label' => 'Hinweise zur Barrierefreiheit',

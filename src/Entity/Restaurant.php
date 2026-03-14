@@ -89,10 +89,15 @@ class Restaurant
     #[ORM\OrderBy(['uploadedAt' => 'ASC'])]
     private Collection $images;
 
+    /** @var Collection<int, OrderingOption> */
+    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: OrderingOption::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $orderingOptions;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->images = new ArrayCollection();
+        $this->orderingOptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -373,5 +378,32 @@ class Restaurant
     public function getImages(): Collection
     {
         return $this->images;
+    }
+
+    /** @return Collection<int, OrderingOption> */
+    public function getOrderingOptions(): Collection
+    {
+        return $this->orderingOptions;
+    }
+
+    public function addOrderingOption(OrderingOption $option): static
+    {
+        if (!$this->orderingOptions->contains($option)) {
+            $this->orderingOptions->add($option);
+            $option->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderingOption(OrderingOption $option): static
+    {
+        if ($this->orderingOptions->removeElement($option)) {
+            if ($option->getRestaurant() === $this) {
+                $option->setRestaurant(null);
+            }
+        }
+
+        return $this;
     }
 }

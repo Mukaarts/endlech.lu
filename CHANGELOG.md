@@ -13,6 +13,23 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ---
 
+## [2026.03.14d] – Bestelloptionen (Issue #43)
+
+### 🚀 Features
+- **Bestelloptionen pro Restaurant:** Anzeige über welche Plattformen bestellt werden kann (Uber Eats, Deliveroo, Just Eat, Telefon, Webseite, Andere).
+- **Detailseite:** Neue Sektion „Online bestellen" mit klickbaren CTA-Buttons und Direktlinks.
+- **Admin-Formular:** Dynamische Collection zum Hinzufügen/Entfernen von Bestelloptionen.
+- **Admin-Liste:** Neue Spalte „Bestellung" mit Plattform-Emoji-Icons.
+
+### 🛠 Tech
+- **Enum:** `App\Enum\OrderingPlatform` – PHP Backed Enum mit 6 Werten, Helper-Methoden `label()`, `emoji()`, `actionLabel()`.
+- **Entity:** `OrderingOption` (ManyToOne → Restaurant, CASCADE DELETE) mit `platform` (VARCHAR 20) und `url` (VARCHAR 500).
+- **Form:** `OrderingOptionType` als CollectionType-Entry in `RestaurantType` (`by_reference: false`).
+- **Migration:** `Version20260314200000` – `ordering_option`-Tabelle.
+- **Fixtures:** 4 Restaurants mit Bestelloptionen (Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co.).
+
+---
+
 ## [2026.03.14c] – Ernährungsoptionen (Issue #45)
 
 ### 🚀 Features

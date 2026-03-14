@@ -2,9 +2,11 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\OrderingOption;
 use App\Entity\Restaurant;
 use App\Entity\User;
 use App\Enum\Language;
+use App\Enum\OrderingPlatform;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -39,6 +41,11 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'accessibilityNotes'     => ['ok:Eingang stufenlos', 'ok:WC Tür > 90cm'],
                 'isVerified'             => true,
                 'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::EN, Language::OTHER],
+                'orderingOptions'        => [
+                    [OrderingPlatform::UBER_EATS, 'https://www.ubereats.com/lu/store/pizzeria-bella-vista'],
+                    [OrderingPlatform::WEBSITE, 'https://www.bellavista.lu'],
+                    [OrderingPlatform::PHONE, '+352 26 12 34 56'],
+                ],
             ],
             [
                 'name'                   => 'Umami Corner',
@@ -79,6 +86,10 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'isHalal'                => true,
                 'accessibilityNotes'     => ['ok:Parkplatz vor der Tür'],
                 'spokenLanguages'        => [Language::LU, Language::DE, Language::FR],
+                'orderingOptions'        => [
+                    [OrderingPlatform::JUST_EAT, 'https://www.just-eat.lu/menu/burger-and-co'],
+                    [OrderingPlatform::PHONE, '+352 27 98 76 54'],
+                ],
             ],
             [
                 'name'                   => 'Le Jardin Brasserie',
@@ -160,6 +171,10 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Rollstuhlrampe vorhanden', 'ok:Barrierefreies WC'],
                 'isVerified'             => true,
                 'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::EN],
+                'orderingOptions'        => [
+                    [OrderingPlatform::DELIVEROO, 'https://deliveroo.lu/menu/luxembourg/sushi-zen'],
+                    [OrderingPlatform::JUST_EAT, 'https://www.just-eat.lu/menu/sushi-zen'],
+                ],
             ],
             [
                 'name'                   => 'Wäinhaus am Markt',
@@ -221,6 +236,10 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'accessibilityNotes'     => ['ok:Vollständig barrierefrei', 'ok:Induktive Höranlage vorhanden'],
                 'isVerified'             => true,
                 'spokenLanguages'        => [Language::LU, Language::DE, Language::FR, Language::EN, Language::PT],
+                'orderingOptions'        => [
+                    [OrderingPlatform::UBER_EATS, 'https://www.ubereats.com/lu/store/green-bowl'],
+                    [OrderingPlatform::WEBSITE, 'https://www.greenbowl.lu/order'],
+                ],
             ],
             [
                 'name'                   => 'Brasserie du Grund',
@@ -270,6 +289,13 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             if ($isVerified) {
                 $restaurant->setVerifiedAt(new \DateTimeImmutable('2026-01-15'));
                 $restaurant->setVerifiedBy($this->getReference(UserFixtures::REFERENCE_ADMIN, User::class));
+            }
+
+            foreach ($data['orderingOptions'] ?? [] as [$platform, $url]) {
+                $option = new OrderingOption();
+                $option->setPlatform($platform);
+                $option->setUrl($url);
+                $restaurant->addOrderingOption($option);
             }
 
             $manager->persist($restaurant);

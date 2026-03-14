@@ -27,8 +27,8 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 src/
 ├── Controller/          # Route controllers (attribute-based routing)
 ├── DataFixtures/        # Doctrine fixtures (restaurant data + user test data)
-├── Entity/              # Doctrine entities (User, Restaurant)
-├── Enum/                # PHP Backed Enums (Language)
+├── Entity/              # Doctrine entities (User, Restaurant, RestaurantImage, OrderingOption)
+├── Enum/                # PHP Backed Enums (Language, OrderingPlatform)
 ├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository)
 └── Kernel.php           # Symfony kernel
 
@@ -179,8 +179,15 @@ Felder: id, filename (VARCHAR 255), altText (VARCHAR 255 nullable), restaurant (
 Collection auf Restaurant: `$images` (OneToMany, cascade persist+remove, orphanRemoval, OrderBy uploadedAt ASC).
 Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Löschung inkl. Dateisystem.
 
+## Entity: OrderingOption (Issue #43)
+Felder: id (int, PK), platform (VARCHAR 20 – Werte aus `App\Enum\OrderingPlatform`), url (VARCHAR 500), restaurant (ManyToOne Restaurant, CASCADE DELETE).
+Collection auf Restaurant: `$orderingOptions` (OneToMany, cascade persist+remove, orphanRemoval).
+Enum: `App\Enum\OrderingPlatform` – Cases: `uber_eats`, `deliveroo`, `just_eat`, `phone`, `website`, `other`. Helper: `label()`, `emoji()`, `actionLabel()`.
+Form: `OrderingOptionType` als CollectionType-Entry in `RestaurantType` (`by_reference: false`).
+Migration: `Version20260314200000`.
+
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), and verification fields (`isVerified`, `verifiedAt`, `verifiedBy`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl.
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), verification fields (`isVerified`, `verifiedAt`, `verifiedBy`), and ordering options. 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl. 4 restaurants have ordering options: Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co.
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified
