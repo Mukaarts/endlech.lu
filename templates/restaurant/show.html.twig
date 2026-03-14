@@ -6,7 +6,29 @@
 
     <div class="min-h-screen bg-gray-50">
 
-        {# --- HERO SECTION: Restaurant-Emoji und Name --- #}
+        {# --- HERO SECTION: Cover-Foto oder Emoji-Fallback --- #}
+        {% if restaurant.coverImage %}
+        <div class="relative h-72 md:h-96 shadow-md">
+            <a href="/uploads/restaurants/{{ restaurant.coverImage.filename }}"
+               class="glightbox" data-gallery="restaurant-gallery" data-description="{{ restaurant.coverImage.altText }}">
+                <img src="/uploads/restaurants/{{ restaurant.coverImage.filename }}" alt="{{ restaurant.coverImage.altText }}"
+                     class="w-full h-full object-cover">
+            </a>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 pb-8 text-white">
+                <h1 class="text-3xl font-bold mb-2">{{ restaurant.name }}</h1>
+                <p class="text-white/80 text-lg">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
+                <div class="flex items-center gap-3 mt-3 flex-wrap">
+                    {% if restaurant.isOpen %}
+                        <span class="inline-block bg-green-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">Geöffnet</span>
+                    {% else %}
+                        <span class="inline-block bg-red-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">Geschlossen</span>
+                    {% endif %}
+                    {% include 'partials/_verified_badge.html.twig' with {restaurant: restaurant, size: 'lg'} %}
+                </div>
+            </div>
+        </div>
+        {% else %}
         <div class="bg-linear-to-r from-cyan-600 to-purple-700 text-white py-16 shadow-md">
             <div class="container mx-auto px-4 text-center">
                 <div class="text-7xl mb-4">{{ restaurant.emoji }}</div>
@@ -22,6 +44,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         {# --- MAIN CONTENT --- #}
         <div class="container mx-auto px-4 py-8 max-w-3xl">
@@ -351,12 +374,12 @@
                 </div>
             {% endif %}
 
-            {# --- FOTOS (Galerie mit GLightbox) --- #}
-            {% if restaurant.images is not empty %}
+            {# --- WEITERE FOTOS (Galerie mit GLightbox, ohne Cover) --- #}
+            {% if restaurant.galleryImages is not empty %}
             <section class="mb-6">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">📷 Fotos</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-4">📷 Weitere Fotos</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {% for image in restaurant.images %}
+                    {% for image in restaurant.galleryImages %}
                     <a href="/uploads/restaurants/{{ image.filename }}"
                        class="glightbox" data-gallery="restaurant-gallery" data-description="{{ image.altText }}">
                         <img src="/uploads/restaurants/{{ image.filename }}" alt="{{ image.altText }}"

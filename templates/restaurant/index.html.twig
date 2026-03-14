@@ -213,10 +213,10 @@
 
                         {% for restaurant in restaurants %}
                             <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
-                                <div class="h-40 bg-gray-100 relative {{ restaurant.images is empty ? 'flex items-center justify-center text-gray-300 text-5xl' : '' }}">
-                                    {% if restaurant.images is not empty %}
-                                        <img src="/uploads/restaurants/{{ restaurant.images.first.filename }}"
-                                             alt="{{ restaurant.images.first.altText }}"
+                                <div class="h-40 bg-gray-100 relative {{ restaurant.coverImage is null ? 'flex items-center justify-center text-gray-300 text-5xl' : '' }}">
+                                    {% if restaurant.coverImage %}
+                                        <img src="/uploads/restaurants/{{ restaurant.coverImage.filename }}"
+                                             alt="{{ restaurant.coverImage.altText }}"
                                              class="w-full h-full object-cover">
                                     {% else %}
                                         {{ restaurant.emoji }}

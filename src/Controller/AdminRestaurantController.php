@@ -11,6 +11,7 @@ use App\Service\ImageUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -174,5 +175,28 @@ final class AdminRestaurantController extends AbstractController
         }
 
         return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
+    }
+
+    #[Route('/restaurants/{id}/fotos/sortieren', name: 'admin_restaurant_image_sort', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function sortImages(Restaurant $restaurant, Request $request, RestaurantImageRepository $imageRepository, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!$this->isCsrfTokenValid('sort-images-' . $restaurant->getId(), $data['_token'] ?? '')) {
+            return new JsonResponse(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
+        }
+
+        $imageIds = $data['imageIds'] ?? [];
+        foreach ($imageIds as $sortOrder => $imageId) {
+            $image = $imageRepository->find($imageId);
+            if (!$image || $image->getRestaurant() !== $restaurant) {
+                return new JsonResponse(['error' => 'Image does not belong to this restaurant'], Response::HTTP_BAD_REQUEST);
+            }
+            $image->setSortOrder($sortOrder);
+        }
+
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);
     }
 }

@@ -13,6 +13,27 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ---
 
+## [2026.03.14g] – Titelbild / Cover-Foto (Issue #44)
+
+### Features
+- **Titelbild:** Das erste Bild eines Restaurants dient automatisch als Cover-Foto.
+- **Drag & Drop Sortierung:** Bilder können im Admin-Panel per Drag & Drop umsortiert werden (SortableJS).
+- **Detailseite:** Cover-Foto wird als großes Hero-Bild mit Gradient-Overlay angezeigt. Restliche Bilder erscheinen unter „Weitere Fotos".
+- **Listenansicht & Homepage:** Cover-Foto wird als Card-Thumbnail angezeigt, Emoji als Fallback.
+- **Admin:** Sortierbare Bilderliste mit Drag-Handle, Titelbild-Badge und Hinweistext.
+
+### Tech
+- **Entity:** `RestaurantImage::$sortOrder` (int, default 0) mit Getter/Setter.
+- **Entity:** `Restaurant::getCoverImage()` und `Restaurant::getGalleryImages()`.
+- **Entity:** `Restaurant::$images` OrderBy auf `sortOrder ASC` geändert.
+- **Migration:** `Version20260314500000` – `sort_order` Spalte mit Backfill nach `uploaded_at`.
+- **Repository:** `RestaurantImageRepository::getNextSortOrder()`.
+- **Service:** `ImageUploadService::reorderAfterDelete()` für konsekutive Sortierung.
+- **Controller:** Neuer Endpoint `POST /admin/restaurants/{id}/fotos/sortieren` mit CSRF-Schutz.
+- **Frontend:** Stimulus Controller `image_sort_controller.ts` mit SortableJS.
+
+---
+
 ## [2026.03.14f] – Wickeltisch-Filter (Issue #41)
 
 ### Features
