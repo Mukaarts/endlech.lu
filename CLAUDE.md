@@ -28,6 +28,7 @@ src/
 ├── Controller/          # Route controllers (attribute-based routing)
 ├── DataFixtures/        # Doctrine fixtures (restaurant data + user test data)
 ├── Entity/              # Doctrine entities (User, Restaurant)
+├── Enum/                # PHP Backed Enums (Language)
 ├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository)
 └── Kernel.php           # Symfony kernel
 
@@ -166,6 +167,7 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 - `?open=1` – filter to currently open restaurants
 - `?city=Strassen` – filter by city name (LIKE search)
 - `?cuisine=Italienisch` – filter by cuisine type (LIKE search)
+- `?lang_de=1&lang_fr=1` – filter by spoken languages (AND: restaurant speaks all selected)
 
 All filter params are combinable. `RestaurantRepository::findPaginated(string $sort, int $page, int $limit, array $filters)` handles all filtering.
 

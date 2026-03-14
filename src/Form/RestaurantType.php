@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Restaurant;
+use App\Enum\Language;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -99,6 +101,15 @@ class RestaurantType extends AbstractType
             ])
             ->add('acceptsPayconiq', CheckboxType::class, [
                 'label' => 'Payconiq',
+                'required' => false,
+            ])
+            ->add('spokenLanguages', ChoiceType::class, [
+                'label' => 'Gesprochene Sprachen',
+                'choices' => Language::cases(),
+                'choice_value' => fn (?Language $l) => $l?->value,
+                'choice_label' => fn (Language $l) => $l->flag().' '.$l->label(),
+                'multiple' => true,
+                'expanded' => true,
                 'required' => false,
             ])
             ->add('accessibilityNotes', CollectionType::class, [

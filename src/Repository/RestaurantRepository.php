@@ -58,6 +58,13 @@ class RestaurantRepository extends ServiceEntityRepository
         if (!empty($filters['cuisine'])) {
             $qb->andWhere('r.cuisine LIKE :cuisine')->setParameter('cuisine', '%'.$filters['cuisine'].'%');
         }
+        if (!empty($filters['lang'])) {
+            foreach ($filters['lang'] as $i => $langValue) {
+                $param = 'lang'.$i;
+                $qb->andWhere("JSON_CONTAINS(r.spokenLanguages, :$param) = 1")
+                    ->setParameter($param, json_encode($langValue));
+            }
+        }
 
         match ($sort) {
             'name' => $qb->orderBy('r.name', 'ASC'),

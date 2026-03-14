@@ -86,11 +86,23 @@
                                 </label>
                             </div>
 
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Sprachen</label>
+                                {% for lang in languages %}
+                                    <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                        <input type="checkbox" name="lang_{{ lang.value }}" value="1"
+                                               class="rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                                               {{ lang.value in filters.lang ? 'checked' : '' }}>
+                                        <span class="text-sm text-gray-600 group-hover:text-blue-700">{{ lang.flag }} {{ lang.label }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+
                             <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white font-medium py-2 rounded-lg transition">
                                 Filter anwenden
                             </button>
 
-                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.open ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) %}
+                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.open ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) + (filters.lang|length) %}
                             {% if activeCount > 0 %}
                                 <a href="{{ path('app_restaurant_index', {sort: sort}) }}" class="block text-center text-xs text-red-500 hover:text-red-700 mt-3 transition">
                                     × Alle Filter zurücksetzen ({{ activeCount }})
@@ -114,6 +126,9 @@
                         city:       filters.city ?: null,
                         cuisine:    filters.cuisine ?: null
                     } %}
+                    {% for langVal in filters.lang %}
+                        {% set filterParams = filterParams|merge({('lang_' ~ langVal): 1}) %}
+                    {% endfor %}
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold text-gray-800">{{ total }} Ergebnisse gefunden</h2>
                         <div class="flex items-center gap-2">
@@ -143,6 +158,13 @@
                         {% if filters.lighting %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">💡 Helle Beleuchtung</span>{% endif %}
                         {% if filters.city %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">📍 {{ filters.city }}</span>{% endif %}
                         {% if filters.cuisine %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">🍽️ {{ filters.cuisine }}</span>{% endif %}
+                        {% for langVal in filters.lang %}
+                            {% for lang in languages %}
+                                {% if lang.value == langVal %}
+                                    <span class="inline-flex items-center text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full border border-blue-200">{{ lang.flag }} {{ lang.label }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
                     </div>
                     {% endif %}
 
@@ -193,6 +215,9 @@
                                         {% if restaurant.hasBrightLighting %}
                                             <span title="Helle Beleuchtung" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">💡</span>
                                         {% endif %}
+                                        {% for lang in restaurant.spokenLanguages %}
+                                            <span title="{{ lang.label }}" class="text-sm bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100">{{ lang.flag }}</span>
+                                        {% endfor %}
                                     </div>
 
                                     {% if restaurant.accessibilityNotes is not empty %}
