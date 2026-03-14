@@ -125,6 +125,38 @@
         {% endfor %}
     </fieldset>
 
+    {# --- Bestelloptionen (dynamische Collection) --- #}
+    <fieldset>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Bestelloptionen</legend>
+        <p class="text-xs text-gray-400 mb-3">Plattformen, über die Kunden bestellen können (Uber Eats, Deliveroo, Telefon, etc.)</p>
+
+        <div data-controller="collection-form"
+             data-collection-form-prototype-value="{{ form_widget(form.orderingOptions.vars.prototype)|e('html_attr') }}">
+
+            <div data-collection-form-target="entries" class="space-y-3">
+                {% for option in form.orderingOptions %}
+                    <div class="flex items-center gap-2" data-collection-form-target="entry">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
+                            {{ form_widget(option.platform, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                            {{ form_widget(option.url, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                        </div>
+                        <button type="button" data-action="collection-form#removeEntry"
+                                class="text-red-500 hover:text-red-700 text-sm font-bold px-2 py-1 shrink-0 transition">
+                            ✕
+                        </button>
+                    </div>
+                    {{ form_errors(option.platform, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+                    {{ form_errors(option.url, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+                {% endfor %}
+            </div>
+
+            <button type="button" data-action="collection-form#addEntry"
+                    class="mt-3 text-sm font-semibold text-purple-600 hover:text-purple-800 transition">
+                + Bestellmöglichkeit hinzufügen
+            </button>
+        </div>
+    </fieldset>
+
     {# --- Hinweise zur Barrierefreiheit (dynamische Collection) --- #}
     <fieldset>
         <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Hinweise zur Barrierefreiheit</legend>
