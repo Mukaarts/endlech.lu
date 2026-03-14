@@ -78,6 +78,24 @@ class Restaurant
     #[ORM\Column(type: 'json')]
     private array $spokenLanguages = [];
 
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $phone = null;
+
+    #[ORM\Column(length: 180, nullable: true)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $website = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $instagramUrl = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $facebookUrl = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $tiktokUrl = null;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $accessibilityNotes = [];
@@ -372,6 +390,83 @@ class Restaurant
         $this->verifiedBy = $verifiedBy;
 
         return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): static
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getInstagramUrl(): ?string
+    {
+        return $this->instagramUrl;
+    }
+
+    public function setInstagramUrl(?string $instagramUrl): static
+    {
+        $this->instagramUrl = $instagramUrl;
+
+        return $this;
+    }
+
+    public function getFacebookUrl(): ?string
+    {
+        return $this->facebookUrl;
+    }
+
+    public function setFacebookUrl(?string $facebookUrl): static
+    {
+        $this->facebookUrl = $facebookUrl;
+
+        return $this;
+    }
+
+    public function getTiktokUrl(): ?string
+    {
+        return $this->tiktokUrl;
+    }
+
+    public function setTiktokUrl(?string $tiktokUrl): static
+    {
+        $this->tiktokUrl = $tiktokUrl;
+
+        return $this;
+    }
+
+    public function hasContactInfo(): bool
+    {
+        return $this->phone || $this->email || $this->website || $this->instagramUrl || $this->facebookUrl || $this->tiktokUrl;
     }
 
     /** @return Collection<int, RestaurantImage> */

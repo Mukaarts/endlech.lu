@@ -12,10 +12,15 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Constraints\Valid;
 
 class RestaurantType extends AbstractType
@@ -124,6 +129,59 @@ class RestaurantType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
+            ])
+            ->add('phone', TelType::class, [
+                'label' => 'Telefon',
+                'required' => false,
+                'attr' => ['placeholder' => 'z.B. +352 26 12 34 56'],
+                'constraints' => [
+                    new Length(max: 30, maxMessage: 'Die Telefonnummer darf maximal {{ limit }} Zeichen lang sein.'),
+                ],
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'E-Mail',
+                'required' => false,
+                'attr' => ['placeholder' => 'z.B. info@restaurant.lu'],
+                'constraints' => [
+                    new Email(message: 'Bitte gib eine gültige E-Mail-Adresse ein.'),
+                    new Length(max: 180, maxMessage: 'Die E-Mail darf maximal {{ limit }} Zeichen lang sein.'),
+                ],
+            ])
+            ->add('website', UrlType::class, [
+                'label' => 'Webseite',
+                'required' => false,
+                'attr' => ['placeholder' => 'z.B. https://www.restaurant.lu'],
+                'constraints' => [
+                    new Url(message: 'Bitte gib eine gültige URL ein.'),
+                    new Length(max: 500, maxMessage: 'Die URL darf maximal {{ limit }} Zeichen lang sein.'),
+                ],
+            ])
+            ->add('instagramUrl', UrlType::class, [
+                'label' => 'Instagram',
+                'required' => false,
+                'attr' => ['placeholder' => 'z.B. https://instagram.com/restaurant'],
+                'constraints' => [
+                    new Url(message: 'Bitte gib eine gültige URL ein.'),
+                    new Length(max: 500, maxMessage: 'Die URL darf maximal {{ limit }} Zeichen lang sein.'),
+                ],
+            ])
+            ->add('facebookUrl', UrlType::class, [
+                'label' => 'Facebook',
+                'required' => false,
+                'attr' => ['placeholder' => 'z.B. https://facebook.com/restaurant'],
+                'constraints' => [
+                    new Url(message: 'Bitte gib eine gültige URL ein.'),
+                    new Length(max: 500, maxMessage: 'Die URL darf maximal {{ limit }} Zeichen lang sein.'),
+                ],
+            ])
+            ->add('tiktokUrl', UrlType::class, [
+                'label' => 'TikTok',
+                'required' => false,
+                'attr' => ['placeholder' => 'z.B. https://tiktok.com/@restaurant'],
+                'constraints' => [
+                    new Url(message: 'Bitte gib eine gültige URL ein.'),
+                    new Length(max: 500, maxMessage: 'Die URL darf maximal {{ limit }} Zeichen lang sein.'),
+                ],
             ])
             ->add('orderingOptions', CollectionType::class, [
                 'label' => 'Bestelloptionen',

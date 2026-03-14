@@ -2,7 +2,7 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.03.14-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.14e-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
@@ -10,6 +10,22 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ### 🚀 Features
 - **Map:** Kartenansicht der Locations.
+
+---
+
+## [2026.03.14e] – Kontaktdaten & Social Media (Issue #42)
+
+### Features
+- **Kontaktdaten pro Restaurant:** Telefon, E-Mail und Webseite auf der Detailseite mit direkten Aktions-Links (Anrufen, Schreiben, Besuchen).
+- **Social-Media-Links:** Instagram, Facebook und TikTok mit Marken-SVG-Icons und Farben.
+- **Detailseite:** Neue Sektion „Kontakt & Social Media" – nur sichtbar wenn mindestens ein Kontaktfeld befüllt ist.
+- **Admin-Formular:** Neues Fieldset „Kontaktdaten & Social Media" mit Telefon, E-Mail, Webseite und Social-Media-URLs.
+
+### Tech
+- **Entity:** 6 neue nullable Properties auf `Restaurant` (`phone`, `email`, `website`, `instagramUrl`, `facebookUrl`, `tiktokUrl`) + Helper `hasContactInfo()`.
+- **Form:** 6 neue FormType-Felder (`TelType`, `EmailType`, `UrlType` ×4) mit Validierung.
+- **Migration:** `Version20260314300000` – 6 VARCHAR-Spalten hinzugefügt.
+- **Fixtures:** Alle 11 Restaurants mit realistischen Kontaktdaten (unterschiedliche Kombinationen).
 
 ---
 
