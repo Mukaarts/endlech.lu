@@ -15,7 +15,7 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 - **ORM:** Doctrine 3.6 with migrations
 - **Templates:** Twig
 - **CSS:** Tailwind CSS v4.1 via PostCSS
-- **JS:** Hotwire (Stimulus 3.x + Turbo 7/8)
+- **JS/TS:** TypeScript, Hotwire (Stimulus 3.x + Turbo 7/8)
 - **Build:** Webpack Encore 5.1
 - **Testing:** PHPUnit 12.5
 - **Email:** Brevo (formerly Sendinblue) via `symfony/brevo-mailer` (production)
@@ -58,10 +58,10 @@ templates/
     └── show.html.twig   # /restaurants/{id} – restaurant detail view
 
 assets/
-├── app.js               # Main JS entry point
-├── controllers/         # Stimulus controllers
+├── app.ts               # Main TS entry point
+├── controllers/         # Stimulus controllers (.ts)
 ├── controllers.json     # Stimulus controller registry
-├── stimulus_bootstrap.js
+├── stimulus_bootstrap.ts
 └── styles/
     └── app.css          # Tailwind import (@import "tailwindcss")
 
@@ -90,6 +90,7 @@ make db-reset          # Drop DB, recreate, migrate, load fixtures
 make cc                # Clear Symfony cache
 make assets            # Production asset build (npm run build)
 make fix               # Run PHP-CS-Fixer
+make lint              # TypeScript type-check + ESLint
 ```
 
 ### NPM Scripts
@@ -99,6 +100,9 @@ npm run dev            # Development build
 npm run watch          # Watch mode (continuous rebuild)
 npm run build          # Production build (minified, hashed)
 npm run dev-server     # Webpack dev server with HMR
+npm run typecheck      # TypeScript type-check (tsc --noEmit)
+npm run lint           # ESLint check
+npm run lint:fix       # ESLint auto-fix
 ```
 
 ### Direct Symfony Console
@@ -186,22 +190,25 @@ Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Lö
 - Set `DATABASE_URL` in `.env.local`
 
 ### Frontend
-- Entry point: `assets/app.js` (compiled by Webpack Encore to `public/build/`)
-- Stimulus controllers go in `assets/controllers/` and are auto-discovered
+- Entry point: `assets/app.ts` (compiled by Webpack Encore to `public/build/`)
+- Stimulus controllers go in `assets/controllers/` as `.ts` files and are auto-discovered
+- TypeScript: `tsconfig.json` with `strict: true`, `ES2020` target, `noEmit: true` (type-checking only)
+- Webpack Encore uses `enableTypeScriptLoader()` with `transpileOnly: true` (ts-loader)
+- ESLint: Flat config (`eslint.config.mjs`) with `typescript-eslint`
 - Tailwind CSS v4 uses PostCSS plugin (`postcss.config.mjs`)
 - Templates use Tailwind utility classes throughout
-- CSRF protection uses double-submit cookie pattern (see `csrf_protection_controller.js`)
+- CSRF protection uses double-submit cookie pattern (see `csrf_protection_controller.ts`)
 
 ### Webpack Encore Configuration
 - Output: `public/build/`
-- Features: PostCSS, Stimulus bridge, code splitting, source maps (dev), filename hashing (prod)
+- Features: PostCSS, Stimulus bridge, TypeScript (ts-loader), code splitting, source maps (dev), filename hashing (prod)
 - Config: `webpack.config.js`
 
 ## Code Style
 
 - **PHP:** 4-space indentation, PSR-4 autoloading, enforced by PHP-CS-Fixer (`make fix`)
 - **YAML:** 2-space indentation
-- **JS/CSS:** 4-space indentation
+- **TypeScript/JS/CSS:** 4-space indentation
 - **Line endings:** LF
 - **Encoding:** UTF-8
 - **Trailing whitespace:** trimmed (except `.md` files)
@@ -256,5 +263,7 @@ No GitHub Actions workflows are configured yet. The `.github/` directory contain
 | `phpunit.dist.xml`    | PHPUnit test configuration                 |
 | `compose.yaml`        | Docker services (MySQL 8.0, Mailpit)       |
 | `Makefile`            | Development workflow commands               |
+| `tsconfig.json`       | TypeScript compiler configuration          |
+| `eslint.config.mjs`   | ESLint flat config (TypeScript rules)      |
 | `importmap.php`       | Symfony AssetMapper module mapping         |
 | `.editorconfig`       | Editor formatting rules                    |

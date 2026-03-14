@@ -2,7 +2,7 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.03.08-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.14-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
@@ -10,6 +10,19 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ### 🚀 Features
 - **Map:** Kartenansicht der Locations.
+
+---
+
+## [2026.03.14] – TypeScript-Migration
+
+### 🛠 Tech
+- **TypeScript:** Alle JavaScript-Assets (Entry Point, Bootstrap, 3 Stimulus Controller) auf TypeScript migriert.
+- **Typisierung:** Stimulus Targets/Values mit `declare`, Event-Typen, querySelector-Generics, Turbo-Event-Interfaces.
+- **Webpack Encore:** `enableTypeScriptLoader()` mit `transpileOnly` – Type-Checking separat via `tsc --noEmit`.
+- **ESLint:** Flat Config (ESLint 9+) mit `typescript-eslint` für statische Analyse.
+- **npm-Scripts:** `typecheck`, `lint`, `lint:fix` hinzugefügt.
+- **Makefile:** Neues `make lint` Target (TypeScript + ESLint).
+- **CSRF-Controller:** `window.msCrypto` entfernt (IE11 irrelevant bei ES2020 Target), `String.fromCharCode(...spread)`.
 
 ---
 

@@ -8,14 +8,18 @@ export default class extends Controller {
     static targets = ['entries', 'entry'];
     static values = { prototype: String };
 
-    #index;
+    declare readonly entriesTarget: HTMLElement;
+    declare readonly entryTargets: HTMLElement[];
+    declare prototypeValue: string;
+
+    #index!: number;
 
     connect() {
         this.#index = this.entryTargets.length;
     }
 
     addEntry() {
-        const html = this.prototypeValue.replace(/__name__/g, this.#index);
+        const html = this.prototypeValue.replace(/__name__/g, String(this.#index));
         this.#index++;
 
         const wrapper = document.createElement('div');
@@ -29,8 +33,9 @@ export default class extends Controller {
         this.entriesTarget.appendChild(wrapper);
     }
 
-    removeEntry(event) {
-        const entry = event.target.closest('[data-collection-form-target="entry"]');
+    removeEntry(event: Event) {
+        const target = event.target as HTMLElement;
+        const entry = target.closest('[data-collection-form-target="entry"]');
         if (entry) {
             entry.remove();
         }
