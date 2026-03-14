@@ -168,6 +168,9 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 - `?city=Strassen` – filter by city name (LIKE search)
 - `?cuisine=Italienisch` – filter by cuisine type (LIKE search)
 - `?lang_de=1&lang_fr=1` – filter by spoken languages (AND: restaurant speaks all selected)
+- `?vegan=1` – filter to restaurants with vegan options
+- `?vegetarian=1` – filter to restaurants with vegetarian options
+- `?halal=1` – filter to restaurants with halal options
 
 All filter params are combinable. `RestaurantRepository::findPaginated(string $sort, int $page, int $limit, array $filters)` handles all filtering.
 
@@ -177,7 +180,7 @@ Collection auf Restaurant: `$images` (OneToMany, cascade persist+remove, orphanR
 Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Löschung inkl. Dateisystem.
 
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), and verification fields (`isVerified`, `verifiedAt`, `verifiedBy`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl.
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), and verification fields (`isVerified`, `verifiedAt`, `verifiedBy`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl.
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified

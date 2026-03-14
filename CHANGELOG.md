@@ -13,6 +13,25 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ---
 
+## [2026.03.14c] – Ernährungsoptionen (Issue #45)
+
+### 🚀 Features
+- **Ernährungsoptionen pro Restaurant:** Anzeige ob ein Restaurant vegane, vegetarische oder Halal-Optionen anbietet.
+- **Detailseite:** Neue Sektion „Ernährungsoptionen" mit 3-Spalten-Grid (🌱 Vegan, 🥗 Vegetarisch, ☪️ Halal).
+- **Listenansicht:** Emerald-farbige Badges auf den Restaurant-Karten und Filter-Chips.
+- **Ernährungsfilter:** Neue Filter-Checkboxen in der Sidebar (Vegan, Vegetarisch, Halal).
+- **Admin-Formular:** Ernährungs-Checkboxen im Restaurant-Bearbeitungsformular.
+- **Admin-Liste:** Neue Spalte „Ernährung" mit Emoji-Anzeige.
+
+### 🛠 Tech
+- **Entity:** 3 neue Boolean-Properties auf `Restaurant` (`isVegan`, `isVegetarian`, `isHalal`).
+- **Migration:** `Version20260314100000` – 3 TINYINT(1)-Spalten hinzugefügt.
+- **Repository:** 3 Filter-Conditions in `findPaginated()`.
+- **Controller:** 3 Query-Parameter (`?vegan=1`, `?vegetarian=1`, `?halal=1`).
+- **Fixtures:** Alle 11 Restaurants mit realistischen Ernährungsdaten.
+
+---
+
 ## [2026.03.14b] – Gesprochene Sprachen (Issue #40)
 
 ### 🚀 Features

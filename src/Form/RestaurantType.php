@@ -103,6 +103,18 @@ class RestaurantType extends AbstractType
                 'label' => 'Payconiq',
                 'required' => false,
             ])
+            ->add('isVegan', CheckboxType::class, [
+                'label' => 'Vegan',
+                'required' => false,
+            ])
+            ->add('isVegetarian', CheckboxType::class, [
+                'label' => 'Vegetarisch',
+                'required' => false,
+            ])
+            ->add('isHalal', CheckboxType::class, [
+                'label' => 'Halal',
+                'required' => false,
+            ])
             ->add('spokenLanguages', ChoiceType::class, [
                 'label' => 'Gesprochene Sprachen',
                 'choices' => Language::cases(),

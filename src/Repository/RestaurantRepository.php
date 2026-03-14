@@ -52,6 +52,15 @@ class RestaurantRepository extends ServiceEntityRepository
         if (!empty($filters['open'])) {
             $qb->andWhere('r.isOpen = true');
         }
+        if (!empty($filters['vegan'])) {
+            $qb->andWhere('r.isVegan = true');
+        }
+        if (!empty($filters['vegetarian'])) {
+            $qb->andWhere('r.isVegetarian = true');
+        }
+        if (!empty($filters['halal'])) {
+            $qb->andWhere('r.isHalal = true');
+        }
         if (!empty($filters['city'])) {
             $qb->andWhere('r.city LIKE :city')->setParameter('city', '%'.$filters['city'].'%');
         }

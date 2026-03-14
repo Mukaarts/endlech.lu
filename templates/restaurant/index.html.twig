@@ -87,6 +87,31 @@
                             </div>
 
                             <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Ernährung</label>
+
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                    <input type="checkbox" name="vegan" value="1"
+                                           class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                                           {{ filters.vegan ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-emerald-700">🌱 Vegan</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                    <input type="checkbox" name="vegetarian" value="1"
+                                           class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                                           {{ filters.vegetarian ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-emerald-700">🥗 Vegetarisch</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="halal" value="1"
+                                           class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                                           {{ filters.halal ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-emerald-700">☪️ Halal</span>
+                                </label>
+                            </div>
+
+                            <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Sprachen</label>
                                 {% for lang in languages %}
                                     <label class="flex items-center gap-3 mb-2 cursor-pointer group">
@@ -102,7 +127,7 @@
                                 Filter anwenden
                             </button>
 
-                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.open ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) + (filters.lang|length) %}
+                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.open ? 1 : 0) + (filters.vegan ? 1 : 0) + (filters.vegetarian ? 1 : 0) + (filters.halal ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) + (filters.lang|length) %}
                             {% if activeCount > 0 %}
                                 <a href="{{ path('app_restaurant_index', {sort: sort}) }}" class="block text-center text-xs text-red-500 hover:text-red-700 mt-3 transition">
                                     × Alle Filter zurücksetzen ({{ activeCount }})
@@ -123,6 +148,9 @@
                         dogs:       filters.dogs       ? 1 : null,
                         lighting:   filters.lighting   ? 1 : null,
                         open:       filters.open       ? 1 : null,
+                        vegan:      filters.vegan      ? 1 : null,
+                        vegetarian: filters.vegetarian ? 1 : null,
+                        halal:      filters.halal      ? 1 : null,
                         city:       filters.city ?: null,
                         cuisine:    filters.cuisine ?: null
                     } %}
@@ -156,6 +184,9 @@
                         {% if filters.toilet %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🚻 Barrierefreies WC</span>{% endif %}
                         {% if filters.dogs %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🐕 Assistenzhund</span>{% endif %}
                         {% if filters.lighting %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">💡 Helle Beleuchtung</span>{% endif %}
+                        {% if filters.vegan %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">🌱 Vegan</span>{% endif %}
+                        {% if filters.vegetarian %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">🥗 Vegetarisch</span>{% endif %}
+                        {% if filters.halal %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">☪️ Halal</span>{% endif %}
                         {% if filters.city %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">📍 {{ filters.city }}</span>{% endif %}
                         {% if filters.cuisine %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">🍽️ {{ filters.cuisine }}</span>{% endif %}
                         {% for langVal in filters.lang %}
@@ -214,6 +245,15 @@
                                         {% endif %}
                                         {% if restaurant.hasBrightLighting %}
                                             <span title="Helle Beleuchtung" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">💡</span>
+                                        {% endif %}
+                                        {% if restaurant.isVegan %}
+                                            <span title="Vegan" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">🌱</span>
+                                        {% endif %}
+                                        {% if restaurant.isVegetarian %}
+                                            <span title="Vegetarisch" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">🥗</span>
+                                        {% endif %}
+                                        {% if restaurant.isHalal %}
+                                            <span title="Halal" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">☪️</span>
                                         {% endif %}
                                         {% for lang in restaurant.spokenLanguages %}
                                             <span title="{{ lang.label }}" class="text-sm bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100">{{ lang.flag }}</span>
