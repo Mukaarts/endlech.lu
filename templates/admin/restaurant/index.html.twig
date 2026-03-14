@@ -23,6 +23,7 @@
                     <th class="px-4 py-3 font-semibold text-gray-600">Bewertung</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Barrierefreiheit</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Ernährung</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Verifiziert</th>
                     <th class="px-4 py-3 font-semibold text-gray-600 text-right">Aktionen</th>
                 </tr>
@@ -59,6 +60,13 @@
                         </div>
                     </td>
                     <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                            {% if restaurant.isVegan %}<span title="Vegan">🌱</span>{% endif %}
+                            {% if restaurant.isVegetarian %}<span title="Vegetarisch">🥗</span>{% endif %}
+                            {% if restaurant.isHalal %}<span title="Halal">☪️</span>{% endif %}
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
                         <form method="post" action="{{ path('admin_restaurant_toggle_verified', {id: restaurant.id}) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('toggle-verified-' ~ restaurant.id) }}">
                             <button type="submit"
@@ -88,7 +96,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="9" class="px-4 py-8 text-center text-gray-400">
+                    <td colspan="10" class="px-4 py-8 text-center text-gray-400">
                         Noch keine Restaurants vorhanden.
                     </td>
                 </tr>

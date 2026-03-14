@@ -56,6 +56,15 @@ class Restaurant
     private bool $acceptsPayconiq = false;
 
     #[ORM\Column]
+    private bool $isVegan = false;
+
+    #[ORM\Column]
+    private bool $isVegetarian = false;
+
+    #[ORM\Column]
+    private bool $isHalal = false;
+
+    #[ORM\Column]
     private bool $isVerified = false;
 
     #[ORM\Column(nullable: true)]
@@ -243,6 +252,42 @@ class Restaurant
     public function setAcceptsPayconiq(bool $acceptsPayconiq): static
     {
         $this->acceptsPayconiq = $acceptsPayconiq;
+
+        return $this;
+    }
+
+    public function isVegan(): bool
+    {
+        return $this->isVegan;
+    }
+
+    public function setIsVegan(bool $isVegan): static
+    {
+        $this->isVegan = $isVegan;
+
+        return $this;
+    }
+
+    public function isVegetarian(): bool
+    {
+        return $this->isVegetarian;
+    }
+
+    public function setIsVegetarian(bool $isVegetarian): static
+    {
+        $this->isVegetarian = $isVegetarian;
+
+        return $this;
+    }
+
+    public function isHalal(): bool
+    {
+        return $this->isHalal;
+    }
+
+    public function setIsHalal(bool $isHalal): static
+    {
+        $this->isHalal = $isHalal;
 
         return $this;
     }
