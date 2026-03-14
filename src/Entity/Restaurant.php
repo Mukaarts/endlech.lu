@@ -47,6 +47,9 @@ class Restaurant
     private bool $hasBrightLighting = false;
 
     #[ORM\Column]
+    private bool $hasChangingTable = false;
+
+    #[ORM\Column]
     private bool $acceptsCash = false;
 
     #[ORM\Column]
@@ -239,6 +242,18 @@ class Restaurant
     public function setHasBrightLighting(bool $hasBrightLighting): static
     {
         $this->hasBrightLighting = $hasBrightLighting;
+
+        return $this;
+    }
+
+    public function hasChangingTable(): bool
+    {
+        return $this->hasChangingTable;
+    }
+
+    public function setHasChangingTable(bool $hasChangingTable): static
+    {
+        $this->hasChangingTable = $hasChangingTable;
 
         return $this;
     }

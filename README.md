@@ -2,7 +2,7 @@
 
 An open platform to find and rate accessible restaurants in Luxembourg. Built for inclusion, community, and simplicity.
 
-![Version](https://img.shields.io/badge/version-v2026.03.14e-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.14f-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 <div align="center">
@@ -36,10 +36,10 @@ Current development status of the platform.
 ### 🍽️ Restaurant Finder
 - [x] **Homepage:** Landing page with hero, "How it works", top-6 restaurant preview, value proposition, and CTA.
 - [x] **List View:** Dedicated `/restaurants` page with pagination (6/page) and sorting (rating, name, newest).
-- [x] **Accessibility Icons:** Display of criteria (wheelchair, toilet, assistance dog, lighting).
+- [x] **Accessibility Icons:** Display of criteria (wheelchair, toilet, assistance dog, lighting, changing table).
 - [x] **Detail Page:** Individual view with address and additional information.
 - [x] **Payment Methods:** Display of accepted payment methods (cash, card, Payconiq) per restaurant.
-- [x] **Filters:** Filter by accessibility criteria (wheelchair, toilet, dogs, lighting), open status, city, and cuisine type.
+- [x] **Filters:** Filter by accessibility criteria (wheelchair, toilet, dogs, lighting, changing table), open status, city, and cuisine type.
 - [x] **Photo Gallery:** Image upload per restaurant with lightbox gallery (GLightbox) on detail page and thumbnail on list view.
 - [x] **Spoken Languages:** Display of spoken languages per restaurant with flag badges and filter support.
 - [x] **Dietary Options:** Display of dietary options (vegan, vegetarian, halal) per restaurant with filter support.

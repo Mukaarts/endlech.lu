@@ -32,6 +32,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => false,
+                'hasChangingTable'       => true,
                 'acceptsCash'            => true,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
@@ -63,6 +64,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'hasChangingTable'       => false,
                 'acceptsCash'            => true,
                 'acceptsCard'            => false,
                 'acceptsPayconiq'        => false,
@@ -85,6 +87,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => true,
+                'hasChangingTable'       => true,
                 'acceptsCash'            => true,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => false,
@@ -115,6 +118,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => false,
+                'hasChangingTable'       => true,
                 'acceptsCash'            => true,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
@@ -139,6 +143,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => true,
+                'hasChangingTable'       => false,
                 'acceptsCash'            => true,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => false,
@@ -160,6 +165,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'hasChangingTable'       => false,
                 'acceptsCash'            => true,
                 'acceptsCard'            => false,
                 'acceptsPayconiq'        => false,
@@ -182,6 +188,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => false,
+                'hasChangingTable'       => true,
                 'acceptsCash'            => false,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
@@ -212,6 +219,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => false,
+                'hasChangingTable'       => false,
                 'acceptsCash'            => true,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => false,
@@ -235,6 +243,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'hasChangingTable'       => false,
                 'acceptsCash'            => true,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
@@ -259,6 +268,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
                 'hasBrightLighting'      => true,
+                'hasChangingTable'       => true,
                 'acceptsCash'            => false,
                 'acceptsCard'            => true,
                 'acceptsPayconiq'        => true,
@@ -289,6 +299,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
                 'hasBrightLighting'      => false,
+                'hasChangingTable'       => false,
                 'acceptsCash'            => true,
                 'acceptsCard'            => false,
                 'acceptsPayconiq'        => false,
@@ -313,6 +324,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             $restaurant->setHasAccessibleToilet($data['hasAccessibleToilet']);
             $restaurant->setAllowsAssistanceDogs($data['allowsAssistanceDogs']);
             $restaurant->setHasBrightLighting($data['hasBrightLighting']);
+            $restaurant->setHasChangingTable($data['hasChangingTable']);
             $restaurant->setAcceptsCash($data['acceptsCash']);
             $restaurant->setAcceptsCard($data['acceptsCard']);
             $restaurant->setAcceptsPayconiq($data['acceptsPayconiq']);

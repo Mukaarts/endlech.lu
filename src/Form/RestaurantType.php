@@ -97,6 +97,10 @@ class RestaurantType extends AbstractType
                 'label' => 'Helle Beleuchtung',
                 'required' => false,
             ])
+            ->add('hasChangingTable', CheckboxType::class, [
+                'label' => 'Wickeltisch vorhanden',
+                'required' => false,
+            ])
             ->add('acceptsCash', CheckboxType::class, [
                 'label' => 'Barzahlung',
                 'required' => false,

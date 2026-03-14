@@ -2,7 +2,7 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.03.14e-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.14f-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
@@ -10,6 +10,23 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ### 🚀 Features
 - **Map:** Kartenansicht der Locations.
+
+---
+
+## [2026.03.14f] – Wickeltisch-Filter (Issue #41)
+
+### Features
+- **Wickeltisch als Barrierefreiheits-Kriterium:** Neues Boolean-Feld `hasChangingTable` auf der Restaurant-Entity.
+- **Detailseite:** Neue Kachel „Wickeltisch" im Barrierefreiheits-Bereich mit Emoji 🍼.
+- **Listenansicht:** Filter-Checkbox „🍼 Wickeltisch" in der Sidebar, Chip-Anzeige und Badge auf Restaurant-Karten.
+- **Admin:** Checkbox im Formular, Icon in der Übersichtstabelle.
+
+### Tech
+- **Entity:** `hasChangingTable` (bool, default false) mit Getter/Setter.
+- **Migration:** `Version20260314400000` – `has_changing_table TINYINT(1)` Spalte.
+- **Repository:** Filter `changing_table` in `findPaginated()`.
+- **Controller:** Query-Parameter `?changing_table=1`.
+- **Fixtures:** 5 von 11 Restaurants mit Wickeltisch (Pizzeria Bella Vista, Burger & Co., Le Jardin Brasserie, Sushi Zen, Green Bowl).
 
 ---
 
