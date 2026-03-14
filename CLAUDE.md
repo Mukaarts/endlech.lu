@@ -56,7 +56,7 @@ templates/
 │   └── verification.html.twig # Email verification template (extends base)
 └── restaurant/
     ├── index.html.twig  # /restaurants – paginated & sortable restaurant list
-    └── show.html.twig   # /restaurants/{id} – restaurant detail view
+    └── show.html.twig   # /restaurants/{id} – restaurant detail view (incl. contact & social media)
 
 assets/
 ├── app.ts               # Main TS entry point
@@ -187,7 +187,7 @@ Form: `OrderingOptionType` als CollectionType-Entry in `RestaurantType` (`by_ref
 Migration: `Version20260314200000`.
 
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), verification fields (`isVerified`, `verifiedAt`, `verifiedBy`), and ordering options. 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl. 4 restaurants have ordering options: Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co.
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), verification fields (`isVerified`, `verifiedAt`, `verifiedBy`), ordering options, and contact/social media fields (`phone`, `email`, `website`, `instagramUrl`, `facebookUrl`, `tiktokUrl`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl. 4 restaurants have ordering options: Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co. All 11 restaurants have varying contact data (not all fields filled for every restaurant).
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified
