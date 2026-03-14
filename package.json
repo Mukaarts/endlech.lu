@@ -9,6 +9,7 @@
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^5.1.0",
         "@tailwindcss/postcss": "^4.1.18",
+        "@types/sortablejs": "^1.15.9",
         "core-js": "^3.38.0",
         "eslint": "^10.0.3",
         "postcss-loader": "^8.2.0",
@@ -31,6 +32,7 @@
         "lint:fix": "eslint assets/ --fix"
     },
     "dependencies": {
-        "glightbox": "^3.3.1"
+        "glightbox": "^3.3.1",
+        "sortablejs": "^1.15.7"
     }
 }

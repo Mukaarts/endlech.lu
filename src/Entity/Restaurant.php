@@ -107,7 +107,7 @@ class Restaurant
     private \DateTimeImmutable $createdAt;
 
     #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: RestaurantImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['uploadedAt' => 'ASC'])]
+    #[ORM\OrderBy(['sortOrder' => 'ASC'])]
     private Collection $images;
 
     /** @var Collection<int, OrderingOption> */
@@ -488,6 +488,17 @@ class Restaurant
     public function getImages(): Collection
     {
         return $this->images;
+    }
+
+    public function getCoverImage(): ?RestaurantImage
+    {
+        return $this->images->isEmpty() ? null : $this->images->first();
+    }
+
+    /** @return Collection<int, RestaurantImage> */
+    public function getGalleryImages(): Collection
+    {
+        return $this->images->filter(fn (RestaurantImage $image) => $image !== $this->images->first());
     }
 
     /** @return Collection<int, OrderingOption> */

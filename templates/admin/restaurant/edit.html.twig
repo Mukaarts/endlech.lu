@@ -22,27 +22,48 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-3xl mt-6">
     <h3 class="text-lg font-bold text-gray-800 mb-4">📷 Fotos</h3>
 
-    {# Bestehende Bilder #}
+    {# Bestehende Bilder (sortierbar per Drag & Drop) #}
     {% if restaurant.images is not empty %}
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-        {% for image in restaurant.images %}
-        <div class="relative group">
-            <img src="/uploads/restaurants/{{ image.filename }}" alt="{{ image.altText }}"
-                 class="w-full h-32 object-cover rounded-lg border border-gray-200">
-            <form method="post"
-                  action="{{ path('admin_restaurant_image_delete', {id: restaurant.id, imageId: image.id}) }}"
-                  class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition"
-                  onsubmit="return confirm('Foto löschen?')">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete-image-' ~ image.id) }}">
-                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded shadow">
-                    × Löschen
-                </button>
-            </form>
-            {% if image.altText %}
-            <p class="text-xs text-gray-400 mt-1 truncate">{{ image.altText }}</p>
-            {% endif %}
+    <p class="text-xs text-gray-500 mb-3">Ziehe die Bilder per Drag & Drop in die gewünschte Reihenfolge. Das erste Bild wird als Titelbild verwendet.</p>
+    <div data-controller="image-sort"
+         data-image-sort-url-value="{{ path('admin_restaurant_image_sort', {id: restaurant.id}) }}"
+         data-image-sort-token-value="{{ csrf_token('sort-images-' ~ restaurant.id) }}"
+         class="mb-6">
+        <div data-image-sort-target="list" class="space-y-2">
+            {% for image in restaurant.images %}
+            <div data-image-id="{{ image.id }}" class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg p-2 group">
+                {# Drag Handle #}
+                <span class="drag-handle cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 px-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16"/>
+                    </svg>
+                </span>
+                {# Thumbnail #}
+                <img src="/uploads/restaurants/{{ image.filename }}" alt="{{ image.altText }}"
+                     class="w-20 h-14 object-cover rounded border border-gray-200 shrink-0">
+                {# Info + Cover-Badge #}
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span data-cover-badge class="inline-block text-xs font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-200" {% if not loop.first %}style="display: none"{% endif %}>
+                            Titelbild
+                        </span>
+                        {% if image.altText %}
+                        <p class="text-xs text-gray-500 truncate">{{ image.altText }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {# Löschen-Button #}
+                <form method="post"
+                      action="{{ path('admin_restaurant_image_delete', {id: restaurant.id, imageId: image.id}) }}"
+                      onsubmit="return confirm('Foto löschen?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete-image-' ~ image.id) }}">
+                    <button type="submit" class="text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1 shrink-0 transition opacity-0 group-hover:opacity-100">
+                        × Löschen
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
     {% else %}
     <p class="text-sm text-gray-400 mb-4">Noch keine Fotos vorhanden.</p>

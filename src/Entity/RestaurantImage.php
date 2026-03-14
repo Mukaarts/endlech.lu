@@ -26,6 +26,9 @@ class RestaurantImage
     #[ORM\Column]
     private \DateTimeImmutable $uploadedAt;
 
+    #[ORM\Column(options: ['default' => 0])]
+    private int $sortOrder = 0;
+
     public function __construct()
     {
         $this->uploadedAt = new \DateTimeImmutable();
@@ -80,6 +83,18 @@ class RestaurantImage
     public function setUploadedAt(\DateTimeImmutable $uploadedAt): static
     {
         $this->uploadedAt = $uploadedAt;
+
+        return $this;
+    }
+
+    public function getSortOrder(): int
+    {
+        return $this->sortOrder;
+    }
+
+    public function setSortOrder(int $sortOrder): static
+    {
+        $this->sortOrder = $sortOrder;
 
         return $this;
     }
