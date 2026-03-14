@@ -2,7 +2,7 @@
 
 An open platform to find and rate accessible restaurants in Luxembourg. Built for inclusion, community, and simplicity.
 
-![Version](https://img.shields.io/badge/version-v2026.03.08-blue)
+![Version](https://img.shields.io/badge/version-v2026.03.14-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 <div align="center">
@@ -51,8 +51,6 @@ Current development status of the platform.
 
 Ideas for version 2.0 (after the first stable release):
 
-* **Verification:** "Blue checkmark" for verified restaurants.
-* **Photos:** Users can upload photos of entrances/restrooms.
 * **Multilingual:** Interface in LU, FR, EN.
 * **Map:** Interactive map view (Leaflet/Google Maps).
 
@@ -61,7 +59,7 @@ Ideas for version 2.0 (after the first stable release):
 * **Backend:** PHP 8.4+, Symfony 8.0
 * **Database:** MySQL 8.0 (Doctrine ORM)
 * **Frontend:** Twig, Tailwind CSS v4 (via PostCSS)
-* **JS:** Stimulus, Turbo (Hotwire)
+* **JS:** TypeScript, Stimulus, Turbo (Hotwire)
 * **Email:** Brevo (Symfony Mailer) / Mailpit (dev)
 * **Assets:** Webpack Encore
 

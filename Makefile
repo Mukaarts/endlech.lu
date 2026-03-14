@@ -1,4 +1,4 @@
-.PHONY: help init start stop restart db migration fixtures db-reset cc assets fix
+.PHONY: help init start stop restart db migration fixtures db-reset cc assets fix lint
 
 # Standard-Hilfe: Zeigt alle Befehle an, wenn du nur "make" tippst
 help: ## Zeigt diese Hilfe an
@@ -60,3 +60,7 @@ assets: ## Baut die Assets für Production (Minifiziert)
 
 fix: ## Repariert Code-Styles (CS-Fixer)
 	vendor/bin/php-cs-fixer fix
+
+lint: ## TypeScript & ESLint prüfen
+	npx tsc --noEmit
+	npm run lint
