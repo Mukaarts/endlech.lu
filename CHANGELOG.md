@@ -2,135 +2,26 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-v2026.03.14f-blue)
+![Version](https://img.shields.io/badge/version-unreleased-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
-*Geplante Features für das nächste Release.*
 
-### 🚀 Features
-- **Map:** Kartenansicht der Locations.
+### Added
+- **Titelbild / Cover-Foto (Issue #44):** Das erste Bild eines Restaurants dient automatisch als Cover-Foto. Drag & Drop Sortierung im Admin-Panel (SortableJS). Cover-Foto als Hero-Bild auf Detailseite und Thumbnail in Listenansicht & Homepage.
+- **Wickeltisch-Filter (Issue #41):** Neues Barrierefreiheits-Kriterium `hasChangingTable`. Kachel auf Detailseite, Filter-Checkbox in Sidebar, Badge auf Restaurant-Karten.
+- **Kontaktdaten & Social Media (Issue #42):** Telefon, E-Mail, Webseite mit direkten Aktions-Links. Instagram, Facebook, TikTok mit Marken-SVG-Icons. Neue Sektion auf Detailseite, neues Fieldset im Admin-Formular.
+- **Bestelloptionen (Issue #43):** Plattformen (Uber Eats, Deliveroo, Just Eat, Telefon, Webseite, Andere) pro Restaurant. CTA-Buttons auf Detailseite, dynamische Collection im Admin-Formular.
+- **Ernährungsoptionen (Issue #45):** Vegan, Vegetarisch, Halal pro Restaurant. Badges auf Karten, Filter in Sidebar, Sektion auf Detailseite.
+- **Gesprochene Sprachen (Issue #40):** Luxemburgisch, Deutsch, Französisch, Englisch, Portugiesisch, Andere. Flaggen-Badges, Sprachfilter (AND-Verknüpfung), Admin-Checkboxen.
+- **Map:** Kartenansicht der Locations. *(geplant)*
 
----
+### Changed
+- **TypeScript-Migration:** Alle JS-Assets auf TypeScript migriert. Webpack Encore `enableTypeScriptLoader()`, ESLint Flat Config, npm-Scripts `typecheck`/`lint`/`lint:fix`, `make lint` Target.
+- **Cover-Foto Sortierung:** `Restaurant::$images` OrderBy auf `sortOrder ASC` geändert. `ImageUploadService::reorderAfterDelete()` für konsekutive Sortierung.
 
-## [2026.03.14g] – Titelbild / Cover-Foto (Issue #44)
-
-### Features
-- **Titelbild:** Das erste Bild eines Restaurants dient automatisch als Cover-Foto.
-- **Drag & Drop Sortierung:** Bilder können im Admin-Panel per Drag & Drop umsortiert werden (SortableJS).
-- **Detailseite:** Cover-Foto wird als großes Hero-Bild mit Gradient-Overlay angezeigt. Restliche Bilder erscheinen unter „Weitere Fotos".
-- **Listenansicht & Homepage:** Cover-Foto wird als Card-Thumbnail angezeigt, Emoji als Fallback.
-- **Admin:** Sortierbare Bilderliste mit Drag-Handle, Titelbild-Badge und Hinweistext.
-
-### Tech
-- **Entity:** `RestaurantImage::$sortOrder` (int, default 0) mit Getter/Setter.
-- **Entity:** `Restaurant::getCoverImage()` und `Restaurant::getGalleryImages()`.
-- **Entity:** `Restaurant::$images` OrderBy auf `sortOrder ASC` geändert.
-- **Migration:** `Version20260314500000` – `sort_order` Spalte mit Backfill nach `uploaded_at`.
-- **Repository:** `RestaurantImageRepository::getNextSortOrder()`.
-- **Service:** `ImageUploadService::reorderAfterDelete()` für konsekutive Sortierung.
-- **Controller:** Neuer Endpoint `POST /admin/restaurants/{id}/fotos/sortieren` mit CSRF-Schutz.
-- **Frontend:** Stimulus Controller `image_sort_controller.ts` mit SortableJS.
-
----
-
-## [2026.03.14f] – Wickeltisch-Filter (Issue #41)
-
-### Features
-- **Wickeltisch als Barrierefreiheits-Kriterium:** Neues Boolean-Feld `hasChangingTable` auf der Restaurant-Entity.
-- **Detailseite:** Neue Kachel „Wickeltisch" im Barrierefreiheits-Bereich mit Emoji 🍼.
-- **Listenansicht:** Filter-Checkbox „🍼 Wickeltisch" in der Sidebar, Chip-Anzeige und Badge auf Restaurant-Karten.
-- **Admin:** Checkbox im Formular, Icon in der Übersichtstabelle.
-
-### Tech
-- **Entity:** `hasChangingTable` (bool, default false) mit Getter/Setter.
-- **Migration:** `Version20260314400000` – `has_changing_table TINYINT(1)` Spalte.
-- **Repository:** Filter `changing_table` in `findPaginated()`.
-- **Controller:** Query-Parameter `?changing_table=1`.
-- **Fixtures:** 5 von 11 Restaurants mit Wickeltisch (Pizzeria Bella Vista, Burger & Co., Le Jardin Brasserie, Sushi Zen, Green Bowl).
-
----
-
-## [2026.03.14e] – Kontaktdaten & Social Media (Issue #42)
-
-### Features
-- **Kontaktdaten pro Restaurant:** Telefon, E-Mail und Webseite auf der Detailseite mit direkten Aktions-Links (Anrufen, Schreiben, Besuchen).
-- **Social-Media-Links:** Instagram, Facebook und TikTok mit Marken-SVG-Icons und Farben.
-- **Detailseite:** Neue Sektion „Kontakt & Social Media" – nur sichtbar wenn mindestens ein Kontaktfeld befüllt ist.
-- **Admin-Formular:** Neues Fieldset „Kontaktdaten & Social Media" mit Telefon, E-Mail, Webseite und Social-Media-URLs.
-
-### Tech
-- **Entity:** 6 neue nullable Properties auf `Restaurant` (`phone`, `email`, `website`, `instagramUrl`, `facebookUrl`, `tiktokUrl`) + Helper `hasContactInfo()`.
-- **Form:** 6 neue FormType-Felder (`TelType`, `EmailType`, `UrlType` ×4) mit Validierung.
-- **Migration:** `Version20260314300000` – 6 VARCHAR-Spalten hinzugefügt.
-- **Fixtures:** Alle 11 Restaurants mit realistischen Kontaktdaten (unterschiedliche Kombinationen).
-
----
-
-## [2026.03.14d] – Bestelloptionen (Issue #43)
-
-### 🚀 Features
-- **Bestelloptionen pro Restaurant:** Anzeige über welche Plattformen bestellt werden kann (Uber Eats, Deliveroo, Just Eat, Telefon, Webseite, Andere).
-- **Detailseite:** Neue Sektion „Online bestellen" mit klickbaren CTA-Buttons und Direktlinks.
-- **Admin-Formular:** Dynamische Collection zum Hinzufügen/Entfernen von Bestelloptionen.
-- **Admin-Liste:** Neue Spalte „Bestellung" mit Plattform-Emoji-Icons.
-
-### 🛠 Tech
-- **Enum:** `App\Enum\OrderingPlatform` – PHP Backed Enum mit 6 Werten, Helper-Methoden `label()`, `emoji()`, `actionLabel()`.
-- **Entity:** `OrderingOption` (ManyToOne → Restaurant, CASCADE DELETE) mit `platform` (VARCHAR 20) und `url` (VARCHAR 500).
-- **Form:** `OrderingOptionType` als CollectionType-Entry in `RestaurantType` (`by_reference: false`).
-- **Migration:** `Version20260314200000` – `ordering_option`-Tabelle.
-- **Fixtures:** 4 Restaurants mit Bestelloptionen (Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co.).
-
----
-
-## [2026.03.14c] – Ernährungsoptionen (Issue #45)
-
-### 🚀 Features
-- **Ernährungsoptionen pro Restaurant:** Anzeige ob ein Restaurant vegane, vegetarische oder Halal-Optionen anbietet.
-- **Detailseite:** Neue Sektion „Ernährungsoptionen" mit 3-Spalten-Grid (🌱 Vegan, 🥗 Vegetarisch, ☪️ Halal).
-- **Listenansicht:** Emerald-farbige Badges auf den Restaurant-Karten und Filter-Chips.
-- **Ernährungsfilter:** Neue Filter-Checkboxen in der Sidebar (Vegan, Vegetarisch, Halal).
-- **Admin-Formular:** Ernährungs-Checkboxen im Restaurant-Bearbeitungsformular.
-- **Admin-Liste:** Neue Spalte „Ernährung" mit Emoji-Anzeige.
-
-### 🛠 Tech
-- **Entity:** 3 neue Boolean-Properties auf `Restaurant` (`isVegan`, `isVegetarian`, `isHalal`).
-- **Migration:** `Version20260314100000` – 3 TINYINT(1)-Spalten hinzugefügt.
-- **Repository:** 3 Filter-Conditions in `findPaginated()`.
-- **Controller:** 3 Query-Parameter (`?vegan=1`, `?vegetarian=1`, `?halal=1`).
-- **Fixtures:** Alle 11 Restaurants mit realistischen Ernährungsdaten.
-
----
-
-## [2026.03.14b] – Gesprochene Sprachen (Issue #40)
-
-### 🚀 Features
-- **Sprachen pro Restaurant:** Anzeige der vom Personal gesprochenen Sprachen (Luxemburgisch, Deutsch, Französisch, Englisch, Portugiesisch, Andere).
-- **Detailseite:** Neue Sektion „Gesprochene Sprachen" mit Flaggen-Badges.
-- **Listenansicht:** Flaggen-Badges auf den Restaurant-Karten.
-- **Sprachfilter:** Neue Filter-Checkboxen in der Sidebar – mehrere Sprachen kombinierbar (AND-Verknüpfung).
-- **Admin-Formular:** Sprachen-Checkboxen im Restaurant-Bearbeitungsformular.
-
-### 🛠 Tech
-- **Enum:** `App\Enum\Language` – PHP Backed Enum mit 6 Werten (`lu`, `de`, `fr`, `en`, `pt`, `other`), Helper-Methoden `label()`, `flag()`, `badgeLabel()`.
-- **Entity:** `spokenLanguages` JSON-Spalte auf `Restaurant` (gleiche Lösung wie `accessibilityNotes`).
-- **Repository:** `JSON_CONTAINS()` für Sprachfilterung in `findPaginated()`.
-- **Migration:** `Version20260314000000` – JSON-Spalte hinzugefügt.
-- **Fixtures:** Alle 11 Restaurants mit realistischen Sprachzuweisungen.
-
----
-
-## [2026.03.14] – TypeScript-Migration
-
-### 🛠 Tech
-- **TypeScript:** Alle JavaScript-Assets (Entry Point, Bootstrap, 3 Stimulus Controller) auf TypeScript migriert.
-- **Typisierung:** Stimulus Targets/Values mit `declare`, Event-Typen, querySelector-Generics, Turbo-Event-Interfaces.
-- **Webpack Encore:** `enableTypeScriptLoader()` mit `transpileOnly` – Type-Checking separat via `tsc --noEmit`.
-- **ESLint:** Flat Config (ESLint 9+) mit `typescript-eslint` für statische Analyse.
-- **npm-Scripts:** `typecheck`, `lint`, `lint:fix` hinzugefügt.
-- **Makefile:** Neues `make lint` Target (TypeScript + ESLint).
-- **CSRF-Controller:** `window.msCrypto` entfernt (IE11 irrelevant bei ES2020 Target), `String.fromCharCode(...spread)`.
+### Fixed
+- **OrderingOptionType:** Choice-Closures akzeptieren jetzt String-Werte korrekt (Issue #44).
 
 ---
 
