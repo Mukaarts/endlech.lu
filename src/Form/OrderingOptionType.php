@@ -20,8 +20,8 @@ class OrderingOptionType extends AbstractType
             ->add('platform', ChoiceType::class, [
                 'label' => 'Plattform',
                 'choices' => OrderingPlatform::cases(),
-                'choice_value' => fn (?OrderingPlatform $p) => $p?->value,
-                'choice_label' => fn (OrderingPlatform $p) => $p->emoji().' '.$p->label(),
+                'choice_value' => fn (OrderingPlatform|string|null $p) => $p instanceof OrderingPlatform ? $p->value : $p,
+                'choice_label' => fn (OrderingPlatform|string $p) => $p instanceof OrderingPlatform ? $p->emoji().' '.$p->label() : $p,
                 'placeholder' => 'Plattform wählen...',
                 'constraints' => [
                     new NotBlank(message: 'Bitte wähle eine Plattform.'),
