@@ -11,11 +11,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/admin/vorschlaege')]
 #[IsGranted('ROLE_ADMIN')]
 final class AdminSuggestionController extends AbstractController
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
     #[Route('', name: 'admin_suggestion_index')]
     public function index(RestaurantSuggestionRepository $repository): Response
     {
@@ -38,7 +42,7 @@ final class AdminSuggestionController extends AbstractController
     public function approve(RestaurantSuggestion $suggestion, Request $request, EntityManagerInterface $entityManager): Response
     {
         if (!$this->isCsrfTokenValid('approve-suggestion-' . $suggestion->getId(), $request->request->getString('_token'))) {
-            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+            $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
 
             return $this->redirectToRoute('admin_suggestion_index');
         }
@@ -58,7 +62,7 @@ final class AdminSuggestionController extends AbstractController
         $entityManager->persist($restaurant);
         $entityManager->flush();
 
-        $this->addFlash('success', sprintf('"%s" wurde genehmigt und als Restaurant hinzugefügt.', $suggestion->getName()));
+        $this->addFlash('success', $this->translator->trans('flash.suggestion_approved', ['%name%' => $suggestion->getName()]));
 
         return $this->redirectToRoute('admin_suggestion_index');
     }
@@ -67,7 +71,7 @@ final class AdminSuggestionController extends AbstractController
     public function reject(RestaurantSuggestion $suggestion, Request $request, EntityManagerInterface $entityManager): Response
     {
         if (!$this->isCsrfTokenValid('reject-suggestion-' . $suggestion->getId(), $request->request->getString('_token'))) {
-            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+            $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
 
             return $this->redirectToRoute('admin_suggestion_index');
         }
@@ -77,7 +81,7 @@ final class AdminSuggestionController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash('info', sprintf('Vorschlag "%s" wurde abgelehnt.', $suggestion->getName()));
+        $this->addFlash('info', $this->translator->trans('flash.suggestion_rejected', ['%name%' => $suggestion->getName()]));
 
         return $this->redirectToRoute('admin_suggestion_index');
     }

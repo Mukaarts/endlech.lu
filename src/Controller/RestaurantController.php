@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Restaurant;
+use App\Enum\Language;
 use App\Repository\RestaurantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,15 +24,27 @@ final class RestaurantController extends AbstractController
 
         $page = max(1, $request->query->getInt('page', 1));
 
+        $langValues = [];
+        foreach (Language::cases() as $lang) {
+            if ($request->query->getBoolean('lang_'.$lang->value, false)) {
+                $langValues[] = $lang->value;
+            }
+        }
+
         $filters = [
             'verified'   => $request->query->getBoolean('verified', false),
             'wheelchair' => $request->query->getBoolean('wheelchair', false),
             'toilet'     => $request->query->getBoolean('toilet', false),
             'dogs'       => $request->query->getBoolean('dogs', false),
-            'lighting'   => $request->query->getBoolean('lighting', false),
-            'open'       => $request->query->getBoolean('open', false),
+            'lighting'       => $request->query->getBoolean('lighting', false),
+            'changing_table' => $request->query->getBoolean('changing_table', false),
+            'open'           => $request->query->getBoolean('open', false),
+            'vegan'      => $request->query->getBoolean('vegan', false),
+            'vegetarian' => $request->query->getBoolean('vegetarian', false),
+            'halal'      => $request->query->getBoolean('halal', false),
             'city'       => trim($request->query->getString('city', '')),
             'cuisine'    => trim($request->query->getString('cuisine', '')),
+            'lang'       => $langValues,
         ];
 
         $paginator = $restaurantRepository->findPaginated($sort, $page, self::LIMIT, $filters);
@@ -45,6 +58,7 @@ final class RestaurantController extends AbstractController
             'total' => $total,
             'sort' => $sort,
             'filters' => $filters,
+            'languages' => Language::cases(),
         ]);
     }
 

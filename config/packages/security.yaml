@@ -28,10 +28,11 @@ security:
                 target: app_home
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/registrieren, roles: PUBLIC_ACCESS }
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/verifizieren, roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/admin', roles: ROLE_ADMIN }
+        - { path: '^/[a-z]{2}/profile', roles: IS_AUTHENTICATED_FULLY }
+        - { path: '^/[a-z]{2}/register', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/login', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/verify', roles: PUBLIC_ACCESS }
 
 when@test:
     security:

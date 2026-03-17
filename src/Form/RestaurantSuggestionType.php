@@ -18,62 +18,62 @@ class RestaurantSuggestionType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Name des Restaurants',
-                'attr' => ['placeholder' => 'z.B. Brasserie de la Poste'],
+                'label' => 'form.suggestion_name',
+                'attr' => ['placeholder' => 'form.suggestion_name_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib den Namen ein.'),
-                    new Length(max: 150, maxMessage: 'Der Name darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'suggestion.name_blank'),
+                    new Length(max: 150, maxMessage: 'suggestion.name_max'),
                 ],
             ])
             ->add('city', TextType::class, [
-                'label' => 'Stadt',
-                'attr' => ['placeholder' => 'z.B. Luxembourg-Ville'],
+                'label' => 'form.city',
+                'attr' => ['placeholder' => 'form.city_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib die Stadt ein.'),
-                    new Length(max: 100, maxMessage: 'Die Stadt darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'suggestion.city_blank'),
+                    new Length(max: 100, maxMessage: 'suggestion.city_max'),
                 ],
             ])
             ->add('cuisine', TextType::class, [
-                'label' => 'Küche / Art',
-                'attr' => ['placeholder' => 'z.B. Italienisch, Café, Brasserie'],
+                'label' => 'form.suggestion_cuisine',
+                'attr' => ['placeholder' => 'form.suggestion_cuisine_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib die Art des Restaurants ein.'),
-                    new Length(max: 80, maxMessage: 'Die Küche darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'suggestion.cuisine_blank'),
+                    new Length(max: 80, maxMessage: 'suggestion.cuisine_max'),
                 ],
             ])
             ->add('emoji', TextType::class, [
-                'label' => 'Emoji (optional)',
-                'attr' => ['placeholder' => '🍽️'],
+                'label' => 'form.suggestion_emoji',
+                'attr' => ['placeholder' => 'form.emoji_placeholder'],
                 'required' => false,
                 'constraints' => [
-                    new Length(max: 10, maxMessage: 'Das Emoji darf maximal {{ limit }} Zeichen lang sein.'),
+                    new Length(max: 10, maxMessage: 'suggestion.emoji_max'),
                 ],
             ])
             ->add('isWheelchairAccessible', CheckboxType::class, [
-                'label' => 'Rollstuhlgerecht',
+                'label' => 'form.wheelchair_accessible',
                 'required' => false,
             ])
             ->add('hasAccessibleToilet', CheckboxType::class, [
-                'label' => 'Barrierefreies WC',
+                'label' => 'form.accessible_toilet',
                 'required' => false,
             ])
             ->add('allowsAssistanceDogs', CheckboxType::class, [
-                'label' => 'Assistenzhund erlaubt',
+                'label' => 'form.assistance_dogs',
                 'required' => false,
             ])
             ->add('hasBrightLighting', CheckboxType::class, [
-                'label' => 'Helle Beleuchtung',
+                'label' => 'form.bright_lighting',
                 'required' => false,
             ])
             ->add('notes', TextareaType::class, [
-                'label' => 'Weitere Hinweise zur Barrierefreiheit (optional)',
+                'label' => 'form.suggestion_notes',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'z.B. Eingang stufenlos, Parkplatz für Rollstuhlfahrer vorhanden ...',
+                    'placeholder' => 'form.suggestion_notes_placeholder',
                     'rows' => 4,
                 ],
                 'constraints' => [
-                    new Length(max: 1000, maxMessage: 'Die Hinweise dürfen maximal {{ limit }} Zeichen lang sein.'),
+                    new Length(max: 1000, maxMessage: 'suggestion.notes_max'),
                 ],
             ]);
     }

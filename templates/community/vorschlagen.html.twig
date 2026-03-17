@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Restaurant vorschlagen – Endlech.lu{% endblock %}
+{% block title %}{{ 'community.suggest.title'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container mx-auto px-4 py-12 max-w-2xl">
@@ -8,10 +8,9 @@
     {# Header #}
     <div class="text-center mb-10">
         <div class="text-5xl mb-4">🏪</div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-3">Restaurant vorschlagen</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-3">{{ 'community.suggest.heading'|trans }}</h1>
         <p class="text-gray-600 text-lg">
-            Kennst du ein barrierefreies Restaurant in Luxemburg, das noch fehlt?
-            Schlage es vor – wir prüfen es und nehmen es auf!
+            {{ 'community.suggest.text'|trans }}
         </p>
     </div>
 
@@ -22,7 +21,7 @@
 
             {# --- Grunddaten --- #}
             <fieldset class="space-y-5">
-                <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Grunddaten</legend>
+                <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'community.suggest.basic_data'|trans }}</legend>
 
                 {# Name #}
                 <div>
@@ -55,27 +54,27 @@
 
             {# --- Barrierefreiheit --- #}
             <fieldset class="space-y-3">
-                <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Barrierefreiheit</legend>
-                <p class="text-sm text-gray-500 -mt-1 mb-3">Kreuze an, was du weißt. Unbekannte Felder einfach frei lassen.</p>
+                <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'community.suggest.accessibility'|trans }}</legend>
+                <p class="text-sm text-gray-500 -mt-1 mb-3">{{ 'community.suggest.accessibility_hint'|trans }}</p>
 
                 <label class="flex items-center gap-3 cursor-pointer group">
                     {{ form_widget(form.isWheelchairAccessible, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
-                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">♿ Rollstuhlgerecht (stufenloser Zugang)</span>
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">♿ {{ 'community.suggest.wheelchair'|trans }}</span>
                 </label>
 
                 <label class="flex items-center gap-3 cursor-pointer group">
                     {{ form_widget(form.hasAccessibleToilet, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
-                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">🚻 Barrierefreies WC</span>
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">🚻 {{ 'community.suggest.toilet'|trans }}</span>
                 </label>
 
                 <label class="flex items-center gap-3 cursor-pointer group">
                     {{ form_widget(form.allowsAssistanceDogs, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
-                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">🐕 Assistenzhund erlaubt</span>
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">🐕 {{ 'community.suggest.dogs'|trans }}</span>
                 </label>
 
                 <label class="flex items-center gap-3 cursor-pointer group">
                     {{ form_widget(form.hasBrightLighting, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
-                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">💡 Helle Beleuchtung</span>
+                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">💡 {{ 'community.suggest.lighting'|trans }}</span>
                 </label>
             </fieldset>
 
@@ -90,10 +89,10 @@
             <div class="pt-4 border-t border-gray-200 flex items-center gap-4">
                 <button type="submit"
                         class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold px-8 py-3 rounded-full shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
-                    Vorschlag einreichen
+                    {{ 'community.suggest.submit'|trans }}
                 </button>
                 <a href="{{ path('app_restaurant_index') }}" class="text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
-                    Abbrechen
+                    {{ 'community.suggest.cancel'|trans }}
                 </a>
             </div>
 

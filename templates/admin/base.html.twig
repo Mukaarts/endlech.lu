@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin – {% block admin_title %}Dashboard{% endblock %} – Endlech.lu{% endblock %}
+{% block title %}{{ 'admin.title_prefix'|trans }} – {% block admin_title %}{{ 'admin.nav.dashboard'|trans }}{% endblock %} – Endlech.lu{% endblock %}
 
 {% block body %}
 <div class="min-h-screen bg-gray-50">
@@ -9,11 +9,14 @@
     <div class="bg-linear-to-r from-gray-800 to-gray-900 text-white py-4 shadow-md">
         <div class="container mx-auto px-4 flex items-center justify-between">
             <h1 class="text-xl font-bold">
-                <span class="text-cyan-400">Admin</span>-Bereich
+                <span class="text-cyan-400">{{ 'admin.title_prefix'|trans }}</span>
             </h1>
-            <a href="{{ path('app_home') }}" class="text-sm text-gray-300 hover:text-white transition">
-                ← Zurück zur Webseite
-            </a>
+            <div class="flex items-center gap-4">
+                {% include 'partials/_admin_language_switcher.html.twig' %}
+                <a href="{{ path('app_home') }}" class="text-sm text-gray-300 hover:text-white transition">
+                    {{ 'admin.nav.back_to_website'|trans }}
+                </a>
+            </div>
         </div>
     </div>
 
@@ -23,27 +26,27 @@
             {# === SIDEBAR === #}
             <aside class="w-full lg:w-1/5">
                 <nav class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sticky top-24">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">Navigation</h3>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">{{ 'admin.nav.navigation'|trans }}</h3>
                     <ul class="space-y-1">
                         <li>
                             <a href="{{ path('admin_dashboard') }}"
                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
                                       {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600' }}">
-                                📊 Dashboard
+                                📊 {{ 'admin.nav.dashboard'|trans }}
                             </a>
                         </li>
                         <li>
                             <a href="{{ path('admin_restaurant_index') }}"
                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
                                       {{ app.request.attributes.get('_route') starts with 'admin_restaurant' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600' }}">
-                                🍽️ Restaurants
+                                🍽️ {{ 'admin.nav.restaurants'|trans }}
                             </a>
                         </li>
                         <li>
                             <a href="{{ path('admin_suggestion_index') }}"
                                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
                                       {{ app.request.attributes.get('_route') starts with 'admin_suggestion' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50 hover:text-purple-600' }}">
-                                💡 Vorschläge
+                                💡 {{ 'admin.nav.suggestions'|trans }}
                             </a>
                         </li>
                     </ul>

@@ -12,16 +12,20 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class EmailVerificationController extends AbstractController
 {
-    #[Route('/verifizieren', name: 'app_verify_notice')]
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+    #[Route('/verify', name: 'app_verify_notice')]
     public function notice(): Response
     {
         return $this->render('email_verification/notice.html.twig');
     }
 
-    #[Route('/verifizieren/{token}', name: 'app_verify_email')]
+    #[Route('/verify/{token}', name: 'app_verify_email')]
     public function verify(
         string $token,
         UserRepository $userRepository,
@@ -30,13 +34,13 @@ final class EmailVerificationController extends AbstractController
         $user = $userRepository->findByVerificationToken($token);
 
         if (!$user) {
-            $this->addFlash('error', 'Ungültiger Bestätigungslink.');
+            $this->addFlash('error', $this->translator->trans('flash.verify_invalid_link'));
 
             return $this->redirectToRoute('app_home');
         }
 
         if ($user->isVerificationTokenExpired()) {
-            $this->addFlash('error', 'Der Bestätigungslink ist abgelaufen. Bitte fordere einen neuen an.');
+            $this->addFlash('error', $this->translator->trans('flash.verify_expired'));
 
             return $this->redirectToRoute('app_verify_notice');
         }
@@ -47,12 +51,12 @@ final class EmailVerificationController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash('success', 'Deine E-Mail-Adresse wurde erfolgreich bestätigt! Du kannst dich jetzt anmelden.');
+        $this->addFlash('success', $this->translator->trans('flash.verify_success'));
 
         return $this->redirectToRoute('app_login');
     }
 
-    #[Route('/verifizieren-erneut', name: 'app_verify_resend')]
+    #[Route('/verify/resend', name: 'app_verify_resend')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function resend(
         EntityManagerInterface $entityManager,
@@ -62,7 +66,7 @@ final class EmailVerificationController extends AbstractController
         $user = $this->getUser();
 
         if ($user->isVerified()) {
-            $this->addFlash('info', 'Deine E-Mail-Adresse ist bereits bestätigt.');
+            $this->addFlash('info', $this->translator->trans('flash.verify_already'));
 
             return $this->redirectToRoute('app_home');
         }
@@ -74,7 +78,7 @@ final class EmailVerificationController extends AbstractController
 
         $email = (new TemplatedEmail())
             ->to($user->getEmail())
-            ->subject('Bestätige deine E-Mail-Adresse')
+            ->subject($this->translator->trans('email.verify_subject'))
             ->htmlTemplate('email/verification.html.twig')
             ->context([
                 'user' => $user,
@@ -84,12 +88,12 @@ final class EmailVerificationController extends AbstractController
         try {
             $mailer->send($email);
         } catch (TransportExceptionInterface) {
-            $this->addFlash('error', 'Die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte versuche es später erneut.');
+            $this->addFlash('error', $this->translator->trans('flash.verify_resend_failed'));
 
             return $this->redirectToRoute('app_verify_notice');
         }
 
-        $this->addFlash('success', 'Eine neue Bestätigungs-E-Mail wurde gesendet.');
+        $this->addFlash('success', $this->translator->trans('flash.verify_resent'));
 
         return $this->redirectToRoute('app_verify_notice');
     }

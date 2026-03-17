@@ -20,39 +20,39 @@ class RegistrationType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Name',
-                'attr' => ['placeholder' => 'Dein Name', 'autocomplete' => 'name'],
+                'label' => 'form.name',
+                'attr' => ['placeholder' => 'form.name_placeholder', 'autocomplete' => 'name'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib deinen Namen ein.'),
-                    new Length(min: 2, max: 100, minMessage: 'Der Name muss mindestens {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'user.name_blank'),
+                    new Length(min: 2, max: 100, minMessage: 'user.name_min'),
                 ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'E-Mail-Adresse',
-                'attr' => ['placeholder' => 'deine@email.lu', 'autocomplete' => 'email'],
+                'label' => 'form.email',
+                'attr' => ['placeholder' => 'form.email_placeholder', 'autocomplete' => 'email'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib deine E-Mail-Adresse ein.'),
-                    new Email(message: 'Bitte gib eine gültige E-Mail-Adresse ein.'),
+                    new NotBlank(message: 'user.email_blank'),
+                    new Email(message: 'user.email_invalid'),
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'mapped' => false,
                 'first_options' => [
-                    'label' => 'Passwort',
-                    'attr' => ['placeholder' => 'Mindestens 8 Zeichen', 'autocomplete' => 'new-password'],
+                    'label' => 'form.password',
+                    'attr' => ['placeholder' => 'form.password_placeholder', 'autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
-                    'label' => 'Passwort bestätigen',
-                    'attr' => ['placeholder' => 'Passwort wiederholen', 'autocomplete' => 'new-password'],
+                    'label' => 'form.password_confirm',
+                    'attr' => ['placeholder' => 'form.password_confirm_placeholder', 'autocomplete' => 'new-password'],
                 ],
-                'invalid_message' => 'Die Passwörter stimmen nicht überein.',
+                'invalid_message' => 'form.password_mismatch',
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib ein Passwort ein.'),
+                    new NotBlank(message: 'user.password_blank'),
                     new Length(
                         min: 8,
                         max: 4096,
-                        minMessage: 'Das Passwort muss mindestens {{ limit }} Zeichen lang sein.',
+                        minMessage: 'user.password_min',
                     ),
                 ],
             ]);

@@ -15,7 +15,7 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 - **ORM:** Doctrine 3.6 with migrations
 - **Templates:** Twig
 - **CSS:** Tailwind CSS v4.1 via PostCSS
-- **JS:** Hotwire (Stimulus 3.x + Turbo 7/8)
+- **JS/TS:** TypeScript, Hotwire (Stimulus 3.x + Turbo 7/8)
 - **Build:** Webpack Encore 5.1
 - **Testing:** PHPUnit 12.5
 - **Email:** Brevo (formerly Sendinblue) via `symfony/brevo-mailer` (production)
@@ -27,7 +27,8 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 src/
 ├── Controller/          # Route controllers (attribute-based routing)
 ├── DataFixtures/        # Doctrine fixtures (restaurant data + user test data)
-├── Entity/              # Doctrine entities (User, Restaurant)
+├── Entity/              # Doctrine entities (User, Restaurant, RestaurantImage, OrderingOption)
+├── Enum/                # PHP Backed Enums (Language, OrderingPlatform)
 ├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository)
 └── Kernel.php           # Symfony kernel
 
@@ -53,15 +54,17 @@ templates/
 ├── email/
 │   ├── base.html.twig       # Base email layout (header, footer, branding)
 │   └── verification.html.twig # Email verification template (extends base)
+├── profile/
+│   └── index.html.twig  # /profile – user profile page (edit info, avatar, password)
 └── restaurant/
     ├── index.html.twig  # /restaurants – paginated & sortable restaurant list
-    └── show.html.twig   # /restaurants/{id} – restaurant detail view
+    └── show.html.twig   # /restaurants/{id} – restaurant detail view (incl. contact & social media)
 
 assets/
-├── app.js               # Main JS entry point
-├── controllers/         # Stimulus controllers
+├── app.ts               # Main TS entry point
+├── controllers/         # Stimulus controllers (.ts)
 ├── controllers.json     # Stimulus controller registry
-├── stimulus_bootstrap.js
+├── stimulus_bootstrap.ts
 └── styles/
     └── app.css          # Tailwind import (@import "tailwindcss")
 
@@ -70,6 +73,7 @@ tests/                   # PHPUnit tests (empty - MVP)
 translations/            # i18n files (empty - MVP)
 public/                  # Web root (index.php front controller)
 public/uploads/restaurants/ # Uploaded restaurant images (gitignored except .gitkeep)
+public/uploads/avatars/    # Uploaded user avatars (gitignored except .gitkeep)
 ```
 
 ## Common Commands
@@ -90,6 +94,7 @@ make db-reset          # Drop DB, recreate, migrate, load fixtures
 make cc                # Clear Symfony cache
 make assets            # Production asset build (npm run build)
 make fix               # Run PHP-CS-Fixer
+make lint              # TypeScript type-check + ESLint
 ```
 
 ### NPM Scripts
@@ -99,6 +104,9 @@ npm run dev            # Development build
 npm run watch          # Watch mode (continuous rebuild)
 npm run build          # Production build (minified, hashed)
 npm run dev-server     # Webpack dev server with HMR
+npm run typecheck      # TypeScript type-check (tsc --noEmit)
+npm run lint           # ESLint check
+npm run lint:fix       # ESLint auto-fix
 ```
 
 ### Direct Symfony Console
@@ -148,6 +156,11 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `admin_restaurant_toggle_verified`| `/admin/restaurants/{id}/verifizieren` | `AdminRestaurantController::toggleVerified()` |
 | `admin_restaurant_image_upload`| `/admin/restaurants/{id}/fotos` | `AdminRestaurantController::uploadImage()` |
 | `admin_restaurant_image_delete`| `/admin/restaurants/{id}/fotos/{imageId}/loeschen` | `AdminRestaurantController::deleteImage()` |
+| `admin_restaurant_image_sort`| `/admin/restaurants/{id}/fotos/sortieren` | `AdminRestaurantController::sortImages()` |
+| `app_profile`           | `/profile`     | `ProfileController::index()`        |
+| `app_profile_edit`      | `/profile/edit` | `ProfileController::edit()`        |
+| `app_profile_password`  | `/profile/password` | `ProfileController::changePassword()` |
+| `app_profile_avatar_delete` | `/profile/avatar/delete` | `ProfileController::deleteAvatar()` |
 
 `/restaurants` accepts query params:
 - `?sort=rating` (default) – sorted by rating DESC
@@ -159,19 +172,41 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 - `?toilet=1` – filter to restaurants with accessible toilet
 - `?dogs=1` – filter to restaurants that allow assistance dogs
 - `?lighting=1` – filter to restaurants with bright lighting
+- `?changing_table=1` – filter to restaurants with a baby changing table
 - `?open=1` – filter to currently open restaurants
 - `?city=Strassen` – filter by city name (LIKE search)
 - `?cuisine=Italienisch` – filter by cuisine type (LIKE search)
+- `?lang_de=1&lang_fr=1` – filter by spoken languages (AND: restaurant speaks all selected)
+- `?vegan=1` – filter to restaurants with vegan options
+- `?vegetarian=1` – filter to restaurants with vegetarian options
+- `?halal=1` – filter to restaurants with halal options
 
 All filter params are combinable. `RestaurantRepository::findPaginated(string $sort, int $page, int $limit, array $filters)` handles all filtering.
 
 ## Entity: RestaurantImage
-Felder: id, filename (VARCHAR 255), altText (VARCHAR 255 nullable), restaurant (ManyToOne Restaurant, CASCADE DELETE), uploadedAt (DateTimeImmutable).
-Collection auf Restaurant: `$images` (OneToMany, cascade persist+remove, orphanRemoval, OrderBy uploadedAt ASC).
-Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Löschung inkl. Dateisystem.
+Felder: id, filename (VARCHAR 255), altText (VARCHAR 255 nullable), restaurant (ManyToOne Restaurant, CASCADE DELETE), uploadedAt (DateTimeImmutable), sortOrder (INT, default 0).
+Collection auf Restaurant: `$images` (OneToMany, cascade persist+remove, orphanRemoval, OrderBy sortOrder ASC).
+Helper auf Restaurant: `getCoverImage(): ?RestaurantImage` (erstes Bild), `getGalleryImages(): Collection` (alle außer Cover).
+Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Löschung inkl. Dateisystem, `reorderAfterDelete()` für konsekutive Sortierung.
+
+## Entity: User — Avatar (Issue #54)
+Zusätzliches Feld: `avatarFilename` (VARCHAR 255 nullable).
+Helper: `getAvatarUrl(): ?string` — gibt `/uploads/avatars/{filename}` zurück oder `null`.
+Service: `AvatarUploadService` — Upload nach `public/uploads/avatars/`, Löschung inkl. Dateisystem.
+Form: `ProfileType` (Name, E-Mail, Avatar-Upload), `ChangePasswordType` (aktuelles + neues PW).
+Controller: `ProfileController` — 4 Routen (`app_profile`, `app_profile_edit`, `app_profile_password`, `app_profile_avatar_delete`).
+Template: `templates/profile/index.html.twig`, `templates/partials/_avatar.html.twig`.
+Migration: `Version20260317000000`.
+
+## Entity: OrderingOption (Issue #43)
+Felder: id (int, PK), platform (VARCHAR 20 – Werte aus `App\Enum\OrderingPlatform`), url (VARCHAR 500), restaurant (ManyToOne Restaurant, CASCADE DELETE).
+Collection auf Restaurant: `$orderingOptions` (OneToMany, cascade persist+remove, orphanRemoval).
+Enum: `App\Enum\OrderingPlatform` – Cases: `uber_eats`, `deliveroo`, `just_eat`, `phone`, `website`, `other`. Helper: `label()`, `emoji()`, `actionLabel()`.
+Form: `OrderingOptionType` als CollectionType-Entry in `RestaurantType` (`by_reference: false`).
+Migration: `Version20260314200000`.
 
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), and verification fields (`isVerified`, `verifiedAt`, `verifiedBy`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl.
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`, `hasChangingTable`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), verification fields (`isVerified`, `verifiedAt`, `verifiedBy`), ordering options, and contact/social media fields (`phone`, `email`, `website`, `instagramUrl`, `facebookUrl`, `tiktokUrl`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl. 4 restaurants have ordering options: Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co. All 11 restaurants have varying contact data (not all fields filled for every restaurant).
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified
@@ -186,22 +221,25 @@ Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Lö
 - Set `DATABASE_URL` in `.env.local`
 
 ### Frontend
-- Entry point: `assets/app.js` (compiled by Webpack Encore to `public/build/`)
-- Stimulus controllers go in `assets/controllers/` and are auto-discovered
+- Entry point: `assets/app.ts` (compiled by Webpack Encore to `public/build/`)
+- Stimulus controllers go in `assets/controllers/` as `.ts` files and are auto-discovered
+- TypeScript: `tsconfig.json` with `strict: true`, `ES2020` target, `noEmit: true` (type-checking only)
+- Webpack Encore uses `enableTypeScriptLoader()` with `transpileOnly: true` (ts-loader)
+- ESLint: Flat config (`eslint.config.mjs`) with `typescript-eslint`
 - Tailwind CSS v4 uses PostCSS plugin (`postcss.config.mjs`)
 - Templates use Tailwind utility classes throughout
-- CSRF protection uses double-submit cookie pattern (see `csrf_protection_controller.js`)
+- CSRF protection uses double-submit cookie pattern (see `csrf_protection_controller.ts`)
 
 ### Webpack Encore Configuration
 - Output: `public/build/`
-- Features: PostCSS, Stimulus bridge, code splitting, source maps (dev), filename hashing (prod)
+- Features: PostCSS, Stimulus bridge, TypeScript (ts-loader), code splitting, source maps (dev), filename hashing (prod)
 - Config: `webpack.config.js`
 
 ## Code Style
 
 - **PHP:** 4-space indentation, PSR-4 autoloading, enforced by PHP-CS-Fixer (`make fix`)
 - **YAML:** 2-space indentation
-- **JS/CSS:** 4-space indentation
+- **TypeScript/JS/CSS:** 4-space indentation
 - **Line endings:** LF
 - **Encoding:** UTF-8
 - **Trailing whitespace:** trimmed (except `.md` files)
@@ -256,5 +294,7 @@ No GitHub Actions workflows are configured yet. The `.github/` directory contain
 | `phpunit.dist.xml`    | PHPUnit test configuration                 |
 | `compose.yaml`        | Docker services (MySQL 8.0, Mailpit)       |
 | `Makefile`            | Development workflow commands               |
+| `tsconfig.json`       | TypeScript compiler configuration          |
+| `eslint.config.mjs`   | ESLint flat config (TypeScript rules)      |
 | `importmap.php`       | Symfony AssetMapper module mapping         |
 | `.editorconfig`       | Editor formatting rules                    |

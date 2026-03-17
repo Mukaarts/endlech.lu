@@ -1,0 +1,48 @@
+restaurant:
+    name_blank: "Gëff w.e.g. den Numm an."
+    name_max: "Den Numm dierf maximal {{ limit }} Zeechen laang sinn."
+    city_blank: "Gëff w.e.g. d'Stad an."
+    city_max: "D'Stad dierf maximal {{ limit }} Zeechen laang sinn."
+    cuisine_blank: "Gëff w.e.g. d'Kichen an."
+    cuisine_max: "D'Kichen dierf maximal {{ limit }} Zeechen laang sinn."
+    emoji_blank: "Gëff w.e.g. en Emoji an."
+    emoji_max: "Den Emoji dierf maximal {{ limit }} Zeechen laang sinn."
+    rating_range: "D'Bewäertung muss tëschent {{ min }} an {{ max }} leien."
+    phone_max: "D'Telefonsnummer dierf maximal {{ limit }} Zeechen laang sinn."
+    email_invalid: "Gëff w.e.g. eng gëlteg E-Mail-Adress an."
+    email_max: "D'E-Mail dierf maximal {{ limit }} Zeechen laang sinn."
+    url_invalid: "Gëff w.e.g. eng gëlteg URL an."
+    url_max: "D'URL dierf maximal {{ limit }} Zeechen laang sinn."
+    note_blank: "Den Hiweis dierf net eidel sinn."
+    note_format: "Format: \"ok:Text\" oder \"warn:Text\""
+
+user:
+    email_unique: "Dës E-Mail-Adress gëtt scho benotzt."
+    name_blank: "Gëff w.e.g. däin Numm an."
+    name_min: "Den Numm muss mindestens {{ limit }} Zeechen laang sinn."
+    email_blank: "Gëff w.e.g. deng E-Mail-Adress an."
+    email_invalid: "Gëff w.e.g. eng gëlteg E-Mail-Adress an."
+    password_blank: "Gëff w.e.g. e Passwuert an."
+    password_min: "D'Passwuert muss mindestens {{ limit }} Zeechen laang sinn."
+
+ordering:
+    platform_blank: "Wiel w.e.g. eng Plattform."
+    url_blank: "Gëff w.e.g. eng URL oder Telefonsnummer an."
+    url_max: "D'URL dierf maximal {{ limit }} Zeechen laang sinn."
+
+profile:
+    avatar_max_size: "D'Profilbild dierf maximal {{ limit }} grouss sinn."
+    avatar_mime_type: "Luet w.e.g. e Bild am Format JPG, PNG oder WebP erop."
+    current_password_blank: "Gëff w.e.g. däin aktuellt Passwuert an."
+    new_password_blank: "Gëff w.e.g. en neit Passwuert an."
+    new_password_min: "Dat neit Passwuert muss mindestens {{ limit }} Zeechen laang sinn."
+
+suggestion:
+    name_blank: "Gëff w.e.g. den Numm an."
+    name_max: "Den Numm dierf maximal {{ limit }} Zeechen laang sinn."
+    city_blank: "Gëff w.e.g. d'Stad an."
+    city_max: "D'Stad dierf maximal {{ limit }} Zeechen laang sinn."
+    cuisine_blank: "Gëff w.e.g. d'Aart vum Restaurant an."
+    cuisine_max: "D'Kichen dierf maximal {{ limit }} Zeechen laang sinn."
+    emoji_max: "Den Emoji dierf maximal {{ limit }} Zeechen laang sinn."
+    notes_max: "D'Hiweiser dierfen maximal {{ limit }} Zeechen laang sinn."

@@ -1,0 +1,48 @@
+restaurant:
+    name_blank: "Veuillez saisir le nom."
+    name_max: "Le nom ne doit pas dépasser {{ limit }} caractères."
+    city_blank: "Veuillez saisir la ville."
+    city_max: "La ville ne doit pas dépasser {{ limit }} caractères."
+    cuisine_blank: "Veuillez saisir la cuisine."
+    cuisine_max: "La cuisine ne doit pas dépasser {{ limit }} caractères."
+    emoji_blank: "Veuillez saisir un emoji."
+    emoji_max: "L'emoji ne doit pas dépasser {{ limit }} caractères."
+    rating_range: "La note doit être comprise entre {{ min }} et {{ max }}."
+    phone_max: "Le numéro de téléphone ne doit pas dépasser {{ limit }} caractères."
+    email_invalid: "Veuillez saisir une adresse e-mail valide."
+    email_max: "L'adresse e-mail ne doit pas dépasser {{ limit }} caractères."
+    url_invalid: "Veuillez saisir une URL valide."
+    url_max: "L'URL ne doit pas dépasser {{ limit }} caractères."
+    note_blank: "La note ne doit pas être vide."
+    note_format: "Format : \"ok:Texte\" ou \"warn:Texte\""
+
+user:
+    email_unique: "Cette adresse e-mail est déjà utilisée."
+    name_blank: "Veuillez saisir votre nom."
+    name_min: "Le nom doit comporter au moins {{ limit }} caractères."
+    email_blank: "Veuillez saisir votre adresse e-mail."
+    email_invalid: "Veuillez saisir une adresse e-mail valide."
+    password_blank: "Veuillez saisir un mot de passe."
+    password_min: "Le mot de passe doit comporter au moins {{ limit }} caractères."
+
+ordering:
+    platform_blank: "Veuillez sélectionner une plateforme."
+    url_blank: "Veuillez saisir une URL ou un numéro de téléphone."
+    url_max: "L'URL ne doit pas dépasser {{ limit }} caractères."
+
+profile:
+    avatar_max_size: "La photo de profil ne doit pas dépasser {{ limit }}."
+    avatar_mime_type: "Veuillez télécharger une image au format JPG, PNG ou WebP."
+    current_password_blank: "Veuillez saisir votre mot de passe actuel."
+    new_password_blank: "Veuillez saisir un nouveau mot de passe."
+    new_password_min: "Le nouveau mot de passe doit comporter au moins {{ limit }} caractères."
+
+suggestion:
+    name_blank: "Veuillez saisir le nom."
+    name_max: "Le nom ne doit pas dépasser {{ limit }} caractères."
+    city_blank: "Veuillez saisir la ville."
+    city_max: "La ville ne doit pas dépasser {{ limit }} caractères."
+    cuisine_blank: "Veuillez saisir le type de restaurant."
+    cuisine_max: "La cuisine ne doit pas dépasser {{ limit }} caractères."
+    emoji_max: "L'emoji ne doit pas dépasser {{ limit }} caractères."
+    notes_max: "Les remarques ne doivent pas dépasser {{ limit }} caractères."

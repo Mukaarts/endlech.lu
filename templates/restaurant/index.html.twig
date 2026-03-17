@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Restaurants – Endlech.lu{% endblock %}
+{% block title %}{{ 'restaurant.list.title'|trans }}{% endblock %}
 
 {% block body %}
 
@@ -8,8 +8,8 @@
         {# --- HERO SECTION --- #}
         <div class="bg-linear-to-r from-cyan-600 to-purple-700 text-white py-12 shadow-md">
             <div class="container mx-auto px-4">
-                <h1 class="text-3xl font-bold mb-2">Restaurants in Luxemburg</h1>
-                <p class="text-cyan-100 text-lg">{{ total }} barrierefreie Orte entdecken.</p>
+                <h1 class="text-3xl font-bold mb-2">{{ 'restaurant.list.heading'|trans }}</h1>
+                <p class="text-cyan-100 text-lg">{{ 'restaurant.list.subtitle'|trans({'%count%': total}) }}</p>
             </div>
         </div>
 
@@ -22,78 +22,122 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
                         <div class="flex items-center gap-2 mb-6 text-purple-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                            <h3 class="font-bold text-lg">Filter</h3>
+                            <h3 class="font-bold text-lg">{{ 'filter.title'|trans }}</h3>
                         </div>
 
                         <form method="get" action="{{ path('app_restaurant_index') }}">
                             <input type="hidden" name="sort" value="{{ sort }}">
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2" for="filter-city">Ort</label>
-                                <input type="text" id="filter-city" name="city" value="{{ filters.city }}" placeholder="Stadt..." class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2" for="filter-city">{{ 'filter.city'|trans }}</label>
+                                <input type="text" id="filter-city" name="city" value="{{ filters.city }}" placeholder="{{ 'filter.city_placeholder'|trans }}" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2" for="filter-cuisine">Küche</label>
-                                <input type="text" id="filter-cuisine" name="cuisine" value="{{ filters.cuisine }}" placeholder="z.B. Italienisch" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2" for="filter-cuisine">{{ 'filter.cuisine'|trans }}</label>
+                                <input type="text" id="filter-cuisine" name="cuisine" value="{{ filters.cuisine }}" placeholder="{{ 'filter.cuisine_placeholder'|trans }}" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Status</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">{{ 'filter.status'|trans }}</label>
                                 <label class="flex items-center gap-3 mb-2 cursor-pointer group">
                                     <input type="checkbox" name="open" value="1"
                                            class="rounded text-green-600 focus:ring-green-500 border-gray-300"
                                            {{ filters.open ? 'checked' : '' }}>
-                                    <span class="text-sm text-gray-600 group-hover:text-green-700">🟢 Nur geöffnete Lokale</span>
+                                    <span class="text-sm text-gray-600 group-hover:text-green-700">🟢 {{ 'filter.only_open'|trans }}</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="checkbox" name="verified" value="1"
                                            class="rounded text-cyan-600 focus:ring-cyan-500 border-gray-300"
                                            {{ filters.verified ? 'checked' : '' }}>
-                                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">✓ Nur verifizierte Lokale</span>
+                                    <span class="text-sm text-gray-600 group-hover:text-cyan-700">✓ {{ 'filter.only_verified'|trans }}</span>
                                 </label>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Bedürfnisse</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">{{ 'filter.needs'|trans }}</label>
 
                                 <label class="flex items-center gap-3 mb-2 cursor-pointer group">
                                     <input type="checkbox" name="wheelchair" value="1"
                                            class="rounded text-purple-600 focus:ring-purple-500 border-gray-300"
                                            {{ filters.wheelchair ? 'checked' : '' }}>
-                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">♿ Rollstuhl (stufenlos)</span>
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">♿ {{ 'filter.wheelchair'|trans }}</span>
                                 </label>
 
                                 <label class="flex items-center gap-3 mb-2 cursor-pointer group">
                                     <input type="checkbox" name="toilet" value="1"
                                            class="rounded text-purple-600 focus:ring-purple-500 border-gray-300"
                                            {{ filters.toilet ? 'checked' : '' }}>
-                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🚻 Barrierefreies WC</span>
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🚻 {{ 'filter.toilet'|trans }}</span>
                                 </label>
 
                                 <label class="flex items-center gap-3 mb-2 cursor-pointer group">
                                     <input type="checkbox" name="dogs" value="1"
                                            class="rounded text-purple-600 focus:ring-purple-500 border-gray-300"
                                            {{ filters.dogs ? 'checked' : '' }}>
-                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🐕 Assistenzhund erlaubt</span>
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🐕 {{ 'filter.dogs'|trans }}</span>
                                 </label>
 
-                                <label class="flex items-center gap-3 cursor-pointer group">
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
                                     <input type="checkbox" name="lighting" value="1"
                                            class="rounded text-purple-600 focus:ring-purple-500 border-gray-300"
                                            {{ filters.lighting ? 'checked' : '' }}>
-                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">💡 Helle Beleuchtung</span>
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">💡 {{ 'filter.lighting'|trans }}</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="changing_table" value="1"
+                                           class="rounded text-purple-600 focus:ring-purple-500 border-gray-300"
+                                           {{ filters.changing_table ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🍼 {{ 'filter.changing_table'|trans }}</span>
                                 </label>
                             </div>
 
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">{{ 'filter.dietary'|trans }}</label>
+
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                    <input type="checkbox" name="vegan" value="1"
+                                           class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                                           {{ filters.vegan ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-emerald-700">🌱 {{ 'filter.vegan'|trans }}</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                    <input type="checkbox" name="vegetarian" value="1"
+                                           class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                                           {{ filters.vegetarian ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-emerald-700">🥗 {{ 'filter.vegetarian'|trans }}</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="halal" value="1"
+                                           class="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                                           {{ filters.halal ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-emerald-700">☪️ {{ 'filter.halal'|trans }}</span>
+                                </label>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">{{ 'filter.languages'|trans }}</label>
+                                {% for lang in languages %}
+                                    <label class="flex items-center gap-3 mb-2 cursor-pointer group">
+                                        <input type="checkbox" name="lang_{{ lang.value }}" value="1"
+                                               class="rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                                               {{ lang.value in filters.lang ? 'checked' : '' }}>
+                                        <span class="text-sm text-gray-600 group-hover:text-blue-700">{{ lang.flag }} {{ lang.label }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+
                             <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white font-medium py-2 rounded-lg transition">
-                                Filter anwenden
+                                {{ 'filter.apply'|trans }}
                             </button>
 
-                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.open ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) %}
+                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.changing_table ? 1 : 0) + (filters.open ? 1 : 0) + (filters.vegan ? 1 : 0) + (filters.vegetarian ? 1 : 0) + (filters.halal ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) + (filters.lang|length) %}
                             {% if activeCount > 0 %}
                                 <a href="{{ path('app_restaurant_index', {sort: sort}) }}" class="block text-center text-xs text-red-500 hover:text-red-700 mt-3 transition">
-                                    × Alle Filter zurücksetzen ({{ activeCount }})
+                                    × {{ 'filter.reset'|trans({'%count%': activeCount}) }}
                                 </a>
                             {% endif %}
                         </form>
@@ -105,29 +149,36 @@
 
                     {# Sortierung & Ergebnisanzahl #}
                     {% set filterParams = {
-                        verified:   filters.verified   ? 1 : null,
-                        wheelchair: filters.wheelchair ? 1 : null,
-                        toilet:     filters.toilet     ? 1 : null,
-                        dogs:       filters.dogs       ? 1 : null,
-                        lighting:   filters.lighting   ? 1 : null,
-                        open:       filters.open       ? 1 : null,
-                        city:       filters.city ?: null,
-                        cuisine:    filters.cuisine ?: null
+                        verified:       filters.verified       ? 1 : null,
+                        wheelchair:     filters.wheelchair     ? 1 : null,
+                        toilet:         filters.toilet         ? 1 : null,
+                        dogs:           filters.dogs           ? 1 : null,
+                        lighting:       filters.lighting       ? 1 : null,
+                        changing_table: filters.changing_table ? 1 : null,
+                        open:           filters.open           ? 1 : null,
+                        vegan:          filters.vegan          ? 1 : null,
+                        vegetarian:     filters.vegetarian     ? 1 : null,
+                        halal:          filters.halal          ? 1 : null,
+                        city:           filters.city ?: null,
+                        cuisine:        filters.cuisine ?: null
                     } %}
+                    {% for langVal in filters.lang %}
+                        {% set filterParams = filterParams|merge({('lang_' ~ langVal): 1}) %}
+                    {% endfor %}
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-800">{{ total }} Ergebnisse gefunden</h2>
+                        <h2 class="text-xl font-bold text-gray-800">{{ 'restaurant.list.results'|trans({'%count%': total}) }}</h2>
                         <div class="flex items-center gap-2">
                             <a href="{{ path('app_restaurant_index', {sort: 'rating', page: 1}|merge(filterParams)) }}"
                                class="px-3 py-1.5 text-sm rounded-lg border transition {{ sort == 'rating' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400' }}">
-                                Beste Bewertung
+                                {{ 'restaurant.list.sort_rating'|trans }}
                             </a>
                             <a href="{{ path('app_restaurant_index', {sort: 'name', page: 1}|merge(filterParams)) }}"
                                class="px-3 py-1.5 text-sm rounded-lg border transition {{ sort == 'name' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400' }}">
-                                A – Z
+                                {{ 'restaurant.list.sort_name'|trans }}
                             </a>
                             <a href="{{ path('app_restaurant_index', {sort: 'newest', page: 1}|merge(filterParams)) }}"
                                class="px-3 py-1.5 text-sm rounded-lg border transition {{ sort == 'newest' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-300 hover:border-purple-400' }}">
-                                Neueste
+                                {{ 'restaurant.list.sort_newest'|trans }}
                             </a>
                         </div>
                     </div>
@@ -135,14 +186,25 @@
                     {# Aktive Filter als Chips #}
                     {% if activeCount > 0 %}
                     <div class="flex flex-wrap gap-2 mb-4">
-                        {% if filters.open %}<span class="inline-flex items-center text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-200">🟢 Geöffnet</span>{% endif %}
-                        {% if filters.verified %}<span class="inline-flex items-center text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full border border-cyan-200">✓ Verifiziert</span>{% endif %}
-                        {% if filters.wheelchair %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">♿ Rollstuhlgerecht</span>{% endif %}
-                        {% if filters.toilet %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🚻 Barrierefreies WC</span>{% endif %}
-                        {% if filters.dogs %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🐕 Assistenzhund</span>{% endif %}
-                        {% if filters.lighting %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">💡 Helle Beleuchtung</span>{% endif %}
+                        {% if filters.open %}<span class="inline-flex items-center text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-200">🟢 {{ 'chip.open'|trans }}</span>{% endif %}
+                        {% if filters.verified %}<span class="inline-flex items-center text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full border border-cyan-200">✓ {{ 'chip.verified'|trans }}</span>{% endif %}
+                        {% if filters.wheelchair %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">♿ {{ 'chip.wheelchair'|trans }}</span>{% endif %}
+                        {% if filters.toilet %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🚻 {{ 'chip.toilet'|trans }}</span>{% endif %}
+                        {% if filters.dogs %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🐕 {{ 'chip.dogs'|trans }}</span>{% endif %}
+                        {% if filters.lighting %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">💡 {{ 'chip.lighting'|trans }}</span>{% endif %}
+                        {% if filters.changing_table %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🍼 {{ 'chip.changing_table'|trans }}</span>{% endif %}
+                        {% if filters.vegan %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">🌱 {{ 'chip.vegan'|trans }}</span>{% endif %}
+                        {% if filters.vegetarian %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">🥗 {{ 'chip.vegetarian'|trans }}</span>{% endif %}
+                        {% if filters.halal %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">☪️ {{ 'chip.halal'|trans }}</span>{% endif %}
                         {% if filters.city %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">📍 {{ filters.city }}</span>{% endif %}
                         {% if filters.cuisine %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">🍽️ {{ filters.cuisine }}</span>{% endif %}
+                        {% for langVal in filters.lang %}
+                            {% for lang in languages %}
+                                {% if lang.value == langVal %}
+                                    <span class="inline-flex items-center text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full border border-blue-200">{{ lang.flag }} {{ lang.label }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
                     </div>
                     {% endif %}
 
@@ -151,18 +213,18 @@
 
                         {% for restaurant in restaurants %}
                             <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition group flex flex-col">
-                                <div class="h-40 bg-gray-100 relative {{ restaurant.images is empty ? 'flex items-center justify-center text-gray-300 text-5xl' : '' }}">
-                                    {% if restaurant.images is not empty %}
-                                        <img src="/uploads/restaurants/{{ restaurant.images.first.filename }}"
-                                             alt="{{ restaurant.images.first.altText }}"
+                                <div class="h-40 bg-gray-100 relative {{ restaurant.coverImage is null ? 'flex items-center justify-center text-gray-300 text-5xl' : '' }}">
+                                    {% if restaurant.coverImage %}
+                                        <img src="/uploads/restaurants/{{ restaurant.coverImage.filename }}"
+                                             alt="{{ restaurant.coverImage.altText }}"
                                              class="w-full h-full object-cover">
                                     {% else %}
                                         {{ restaurant.emoji }}
                                     {% endif %}
                                     {% if restaurant.isOpen %}
-                                        <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geöffnet</span>
+                                        <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">{{ 'status.open'|trans }}</span>
                                     {% else %}
-                                        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Geschlossen</span>
+                                        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">{{ 'status.closed'|trans }}</span>
                                     {% endif %}
                                 </div>
                                 <div class="p-5 flex-grow">
@@ -182,17 +244,32 @@
                                     {# Barrierefreiheits-Icons #}
                                     <div class="flex gap-2 mt-3 flex-wrap">
                                         {% if restaurant.isWheelchairAccessible %}
-                                            <span title="Rollstuhlgerecht" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">♿</span>
+                                            <span title="{{ 'accessibility.wheelchair'|trans }}" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">♿</span>
                                         {% endif %}
                                         {% if restaurant.hasAccessibleToilet %}
-                                            <span title="Barrierefreies WC" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🚻</span>
+                                            <span title="{{ 'accessibility.toilet'|trans }}" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🚻</span>
                                         {% endif %}
                                         {% if restaurant.allowsAssistanceDogs %}
-                                            <span title="Assistenzhund erlaubt" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🐕</span>
+                                            <span title="{{ 'accessibility.dogs'|trans }}" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🐕</span>
                                         {% endif %}
                                         {% if restaurant.hasBrightLighting %}
-                                            <span title="Helle Beleuchtung" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">💡</span>
+                                            <span title="{{ 'accessibility.lighting'|trans }}" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">💡</span>
                                         {% endif %}
+                                        {% if restaurant.hasChangingTable %}
+                                            <span title="{{ 'accessibility.changing_table'|trans }}" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🍼</span>
+                                        {% endif %}
+                                        {% if restaurant.isVegan %}
+                                            <span title="{{ 'dietary.vegan'|trans }}" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">🌱</span>
+                                        {% endif %}
+                                        {% if restaurant.isVegetarian %}
+                                            <span title="{{ 'dietary.vegetarian'|trans }}" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">🥗</span>
+                                        {% endif %}
+                                        {% if restaurant.isHalal %}
+                                            <span title="{{ 'dietary.halal'|trans }}" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">☪️</span>
+                                        {% endif %}
+                                        {% for lang in restaurant.spokenLanguages %}
+                                            <span title="{{ lang.label }}" class="text-sm bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100">{{ lang.flag }}</span>
+                                        {% endfor %}
                                     </div>
 
                                     {% if restaurant.accessibilityNotes is not empty %}
@@ -214,14 +291,14 @@
                                     {% endif %}
                                 </div>
                                 <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 mt-auto">
-                                    <a href="{{ path('app_restaurant_show', {id: restaurant.id}) }}" class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-800">Details ansehen</a>
+                                    <a href="{{ path('app_restaurant_show', {id: restaurant.id}) }}" class="block text-center text-sm font-semibold text-purple-600 hover:text-purple-800">{{ 'restaurant.list.view_details'|trans }}</a>
                                 </div>
                             </article>
                         {% else %}
                             <div class="col-span-2 text-center py-16 text-gray-400">
                                 <p class="text-5xl mb-4">🍽️</p>
-                                <p class="text-lg font-medium text-gray-600">Noch keine Restaurants eingetragen.</p>
-                                <p class="text-sm mt-1">Hilf uns und schlage ein Restaurant vor!</p>
+                                <p class="text-lg font-medium text-gray-600">{{ 'restaurant.list.no_results'|trans }}</p>
+                                <p class="text-sm mt-1">{{ 'restaurant.list.no_results_help'|trans }}</p>
                             </div>
                         {% endfor %}
 
@@ -233,7 +310,7 @@
                             {% if currentPage > 1 %}
                                 <a href="{{ path('app_restaurant_index', {sort: sort, page: currentPage - 1}|merge(filterParams)) }}"
                                    class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:border-purple-400 transition text-sm">
-                                    ← Zurück
+                                    ← {{ 'pagination.previous'|trans }}
                                 </a>
                             {% endif %}
 
@@ -247,11 +324,11 @@
                             {% if currentPage < lastPage %}
                                 <a href="{{ path('app_restaurant_index', {sort: sort, page: currentPage + 1}|merge(filterParams)) }}"
                                    class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:border-purple-400 transition text-sm">
-                                    Weiter →
+                                    {{ 'pagination.next'|trans }} →
                                 </a>
                             {% endif %}
                         </nav>
-                        <p class="text-center text-sm text-gray-400 mt-3">Seite {{ currentPage }} von {{ lastPage }}</p>
+                        <p class="text-center text-sm text-gray-400 mt-3">{{ 'pagination.page_of'|trans({'%current%': currentPage, '%last%': lastPage}) }}</p>
                     {% endif %}
 
                 </main>

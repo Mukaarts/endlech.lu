@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\EventSubscriber;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+
+final class LocaleSubscriber implements EventSubscriberInterface
+{
+    private const ALLOWED_LOCALES = ['lb', 'de', 'fr', 'en'];
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            KernelEvents::REQUEST => [['onKernelRequest', 15]],
+        ];
+    }
+
+    public function onKernelRequest(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
+
+        // _locale aus Route-Parameter → Session speichern
+        $locale = $request->attributes->get('_locale');
+
+        if ($locale && in_array($locale, self::ALLOWED_LOCALES, true)) {
+            $request->getSession()->set('_locale', $locale);
+            $request->setLocale($locale);
+
+            return;
+        }
+
+        // Erstbesucher: Accept-Language Header auswerten
+        if (!$request->getSession()->has('_locale')) {
+            $preferred = $request->getPreferredLanguage(self::ALLOWED_LOCALES);
+            if ($preferred) {
+                $request->getSession()->set('_locale', $preferred);
+            }
+        }
+
+        $request->setLocale($request->getSession()->get('_locale', 'lb'));
+    }
+}

@@ -49,14 +49,33 @@ class RestaurantRepository extends ServiceEntityRepository
         if (!empty($filters['lighting'])) {
             $qb->andWhere('r.hasBrightLighting = true');
         }
+        if (!empty($filters['changing_table'])) {
+            $qb->andWhere('r.hasChangingTable = true');
+        }
         if (!empty($filters['open'])) {
             $qb->andWhere('r.isOpen = true');
+        }
+        if (!empty($filters['vegan'])) {
+            $qb->andWhere('r.isVegan = true');
+        }
+        if (!empty($filters['vegetarian'])) {
+            $qb->andWhere('r.isVegetarian = true');
+        }
+        if (!empty($filters['halal'])) {
+            $qb->andWhere('r.isHalal = true');
         }
         if (!empty($filters['city'])) {
             $qb->andWhere('r.city LIKE :city')->setParameter('city', '%'.$filters['city'].'%');
         }
         if (!empty($filters['cuisine'])) {
             $qb->andWhere('r.cuisine LIKE :cuisine')->setParameter('cuisine', '%'.$filters['cuisine'].'%');
+        }
+        if (!empty($filters['lang'])) {
+            foreach ($filters['lang'] as $i => $langValue) {
+                $param = 'lang'.$i;
+                $qb->andWhere("JSON_CONTAINS(r.spokenLanguages, :$param) = 1")
+                    ->setParameter($param, json_encode($langValue));
+            }
         }
 
         match ($sort) {

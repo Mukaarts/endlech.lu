@@ -3,17 +3,25 @@
 namespace App\Form;
 
 use App\Entity\Restaurant;
+use App\Enum\Language;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Constraints\Valid;
 
 class RestaurantType extends AbstractType
 {
@@ -21,96 +29,186 @@ class RestaurantType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Name',
-                'attr' => ['placeholder' => 'Name des Restaurants'],
+                'label' => 'form.restaurant_name',
+                'attr' => ['placeholder' => 'form.restaurant_name_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib den Namen ein.'),
-                    new Length(max: 150, maxMessage: 'Der Name darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'restaurant.name_blank'),
+                    new Length(max: 150, maxMessage: 'restaurant.name_max'),
                 ],
             ])
             ->add('city', TextType::class, [
-                'label' => 'Stadt',
-                'attr' => ['placeholder' => 'z.B. Luxembourg-Ville'],
+                'label' => 'form.city',
+                'attr' => ['placeholder' => 'form.city_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib die Stadt ein.'),
-                    new Length(max: 100, maxMessage: 'Die Stadt darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'restaurant.city_blank'),
+                    new Length(max: 100, maxMessage: 'restaurant.city_max'),
                 ],
             ])
             ->add('cuisine', TextType::class, [
-                'label' => 'Küche',
-                'attr' => ['placeholder' => 'z.B. Italienisch, Asiatisch'],
+                'label' => 'form.cuisine',
+                'attr' => ['placeholder' => 'form.cuisine_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib die Küche ein.'),
-                    new Length(max: 80, maxMessage: 'Die Küche darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'restaurant.cuisine_blank'),
+                    new Length(max: 80, maxMessage: 'restaurant.cuisine_max'),
                 ],
             ])
             ->add('emoji', TextType::class, [
-                'label' => 'Emoji',
-                'attr' => ['placeholder' => '🍽️'],
+                'label' => 'form.emoji',
+                'attr' => ['placeholder' => 'form.emoji_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib ein Emoji ein.'),
-                    new Length(max: 10, maxMessage: 'Das Emoji darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'restaurant.emoji_blank'),
+                    new Length(max: 10, maxMessage: 'restaurant.emoji_max'),
                 ],
             ])
             ->add('rating', NumberType::class, [
-                'label' => 'Bewertung (0–10)',
+                'label' => 'form.rating',
                 'required' => false,
                 'html5' => true,
-                'attr' => ['placeholder' => 'z.B. 8.5', 'step' => '0.1', 'min' => '0', 'max' => '10'],
+                'attr' => ['placeholder' => 'form.rating_placeholder', 'step' => '0.1', 'min' => '0', 'max' => '10'],
                 'constraints' => [
                     new Range(
                         min: 0,
                         max: 10,
-                        notInRangeMessage: 'Die Bewertung muss zwischen {{ min }} und {{ max }} liegen.',
+                        notInRangeMessage: 'restaurant.rating_range',
                     ),
                 ],
             ])
             ->add('isOpen', CheckboxType::class, [
-                'label' => 'Geöffnet',
+                'label' => 'form.is_open',
                 'required' => false,
             ])
             ->add('isVerified', CheckboxType::class, [
-                'label'    => 'Verifiziertes Lokal (von Endlech.lu geprüft)',
+                'label' => 'form.is_verified',
                 'required' => false,
             ])
             ->add('isWheelchairAccessible', CheckboxType::class, [
-                'label' => 'Rollstuhlgerecht',
+                'label' => 'form.wheelchair_accessible',
                 'required' => false,
             ])
             ->add('hasAccessibleToilet', CheckboxType::class, [
-                'label' => 'Barrierefreies WC',
+                'label' => 'form.accessible_toilet',
                 'required' => false,
             ])
             ->add('allowsAssistanceDogs', CheckboxType::class, [
-                'label' => 'Assistenzhund erlaubt',
+                'label' => 'form.assistance_dogs',
                 'required' => false,
             ])
             ->add('hasBrightLighting', CheckboxType::class, [
-                'label' => 'Helle Beleuchtung',
+                'label' => 'form.bright_lighting',
+                'required' => false,
+            ])
+            ->add('hasChangingTable', CheckboxType::class, [
+                'label' => 'form.changing_table',
                 'required' => false,
             ])
             ->add('acceptsCash', CheckboxType::class, [
-                'label' => 'Barzahlung',
+                'label' => 'form.accepts_cash',
                 'required' => false,
             ])
             ->add('acceptsCard', CheckboxType::class, [
-                'label' => 'Kreditkarte / EC-Karte',
+                'label' => 'form.accepts_card',
                 'required' => false,
             ])
             ->add('acceptsPayconiq', CheckboxType::class, [
-                'label' => 'Payconiq',
+                'label' => 'form.accepts_payconiq',
                 'required' => false,
             ])
+            ->add('isVegan', CheckboxType::class, [
+                'label' => 'form.vegan',
+                'required' => false,
+            ])
+            ->add('isVegetarian', CheckboxType::class, [
+                'label' => 'form.vegetarian',
+                'required' => false,
+            ])
+            ->add('isHalal', CheckboxType::class, [
+                'label' => 'form.halal',
+                'required' => false,
+            ])
+            ->add('spokenLanguages', ChoiceType::class, [
+                'label' => 'form.spoken_languages',
+                'choices' => Language::cases(),
+                'choice_value' => fn (?Language $l) => $l?->value,
+                'choice_label' => fn (Language $l) => $l->flag().' '.$l->label(),
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+            ])
+            ->add('phone', TelType::class, [
+                'label' => 'form.phone',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.phone_placeholder'],
+                'constraints' => [
+                    new Length(max: 30, maxMessage: 'restaurant.phone_max'),
+                ],
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'form.email_field',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.email_field_placeholder'],
+                'constraints' => [
+                    new Email(message: 'restaurant.email_invalid'),
+                    new Length(max: 180, maxMessage: 'restaurant.email_max'),
+                ],
+            ])
+            ->add('website', UrlType::class, [
+                'label' => 'form.website',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.website_placeholder'],
+                'constraints' => [
+                    new Url(message: 'restaurant.url_invalid'),
+                    new Length(max: 500, maxMessage: 'restaurant.url_max'),
+                ],
+            ])
+            ->add('instagramUrl', UrlType::class, [
+                'label' => 'form.instagram',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.instagram_placeholder'],
+                'constraints' => [
+                    new Url(message: 'restaurant.url_invalid'),
+                    new Length(max: 500, maxMessage: 'restaurant.url_max'),
+                ],
+            ])
+            ->add('facebookUrl', UrlType::class, [
+                'label' => 'form.facebook',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.facebook_placeholder'],
+                'constraints' => [
+                    new Url(message: 'restaurant.url_invalid'),
+                    new Length(max: 500, maxMessage: 'restaurant.url_max'),
+                ],
+            ])
+            ->add('tiktokUrl', UrlType::class, [
+                'label' => 'form.tiktok',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.tiktok_placeholder'],
+                'constraints' => [
+                    new Url(message: 'restaurant.url_invalid'),
+                    new Length(max: 500, maxMessage: 'restaurant.url_max'),
+                ],
+            ])
+            ->add('orderingOptions', CollectionType::class, [
+                'label' => 'form.ordering_options',
+                'entry_type' => OrderingOptionType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'by_reference' => false,
+                'required' => false,
+                'constraints' => [
+                    new Valid(),
+                ],
+            ])
             ->add('accessibilityNotes', CollectionType::class, [
-                'label' => 'Hinweise zur Barrierefreiheit',
+                'label' => 'form.accessibility_notes',
                 'entry_type' => TextType::class,
                 'entry_options' => [
-                    'attr' => ['placeholder' => 'z.B. ok:Eingang stufenlos oder warn:Stufe am Eingang'],
+                    'attr' => ['placeholder' => 'form.accessibility_notes_placeholder'],
                     'constraints' => [
-                        new NotBlank(message: 'Der Hinweis darf nicht leer sein.'),
+                        new NotBlank(message: 'restaurant.note_blank'),
                         new Regex(
                             pattern: '/^(ok|warn):.+$/',
-                            message: 'Format: "ok:Text" oder "warn:Text"',
+                            message: 'restaurant.note_format',
                         ),
                     ],
                 ],

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Language;
 use App\Repository\RestaurantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -46,6 +47,9 @@ class Restaurant
     private bool $hasBrightLighting = false;
 
     #[ORM\Column]
+    private bool $hasChangingTable = false;
+
+    #[ORM\Column]
     private bool $acceptsCash = false;
 
     #[ORM\Column]
@@ -53,6 +57,15 @@ class Restaurant
 
     #[ORM\Column]
     private bool $acceptsPayconiq = false;
+
+    #[ORM\Column]
+    private bool $isVegan = false;
+
+    #[ORM\Column]
+    private bool $isVegetarian = false;
+
+    #[ORM\Column]
+    private bool $isHalal = false;
 
     #[ORM\Column]
     private bool $isVerified = false;
@@ -66,19 +79,46 @@ class Restaurant
 
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
+    private array $spokenLanguages = [];
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $phone = null;
+
+    #[ORM\Column(length: 180, nullable: true)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $website = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $instagramUrl = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $facebookUrl = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $tiktokUrl = null;
+
+    /** @var list<string> */
+    #[ORM\Column(type: 'json')]
     private array $accessibilityNotes = [];
 
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: RestaurantImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['uploadedAt' => 'ASC'])]
+    #[ORM\OrderBy(['sortOrder' => 'ASC'])]
     private Collection $images;
+
+    /** @var Collection<int, OrderingOption> */
+    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: OrderingOption::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $orderingOptions;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->images = new ArrayCollection();
+        $this->orderingOptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,6 +246,18 @@ class Restaurant
         return $this;
     }
 
+    public function hasChangingTable(): bool
+    {
+        return $this->hasChangingTable;
+    }
+
+    public function setHasChangingTable(bool $hasChangingTable): static
+    {
+        $this->hasChangingTable = $hasChangingTable;
+
+        return $this;
+    }
+
     public function acceptsCash(): bool
     {
         return $this->acceptsCash;
@@ -238,6 +290,64 @@ class Restaurant
     public function setAcceptsPayconiq(bool $acceptsPayconiq): static
     {
         $this->acceptsPayconiq = $acceptsPayconiq;
+
+        return $this;
+    }
+
+    public function isVegan(): bool
+    {
+        return $this->isVegan;
+    }
+
+    public function setIsVegan(bool $isVegan): static
+    {
+        $this->isVegan = $isVegan;
+
+        return $this;
+    }
+
+    public function isVegetarian(): bool
+    {
+        return $this->isVegetarian;
+    }
+
+    public function setIsVegetarian(bool $isVegetarian): static
+    {
+        $this->isVegetarian = $isVegetarian;
+
+        return $this;
+    }
+
+    public function isHalal(): bool
+    {
+        return $this->isHalal;
+    }
+
+    public function setIsHalal(bool $isHalal): static
+    {
+        $this->isHalal = $isHalal;
+
+        return $this;
+    }
+
+    /** @return Language[] */
+    public function getSpokenLanguages(): array
+    {
+        return array_filter(
+            array_map(
+                static fn (string $value) => Language::tryFrom($value),
+                $this->spokenLanguages,
+            ),
+        );
+    }
+
+    /** @param Language[]|string[] $languages */
+    public function setSpokenLanguages(array $languages): static
+    {
+        $this->spokenLanguages = array_map(
+            static fn (Language|string $l) => $l instanceof Language ? $l->value : $l,
+            $languages,
+        );
 
         return $this;
     }
@@ -297,9 +407,124 @@ class Restaurant
         return $this;
     }
 
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): static
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getInstagramUrl(): ?string
+    {
+        return $this->instagramUrl;
+    }
+
+    public function setInstagramUrl(?string $instagramUrl): static
+    {
+        $this->instagramUrl = $instagramUrl;
+
+        return $this;
+    }
+
+    public function getFacebookUrl(): ?string
+    {
+        return $this->facebookUrl;
+    }
+
+    public function setFacebookUrl(?string $facebookUrl): static
+    {
+        $this->facebookUrl = $facebookUrl;
+
+        return $this;
+    }
+
+    public function getTiktokUrl(): ?string
+    {
+        return $this->tiktokUrl;
+    }
+
+    public function setTiktokUrl(?string $tiktokUrl): static
+    {
+        $this->tiktokUrl = $tiktokUrl;
+
+        return $this;
+    }
+
+    public function hasContactInfo(): bool
+    {
+        return $this->phone || $this->email || $this->website || $this->instagramUrl || $this->facebookUrl || $this->tiktokUrl;
+    }
+
     /** @return Collection<int, RestaurantImage> */
     public function getImages(): Collection
     {
         return $this->images;
+    }
+
+    public function getCoverImage(): ?RestaurantImage
+    {
+        return $this->images->isEmpty() ? null : $this->images->first();
+    }
+
+    /** @return Collection<int, RestaurantImage> */
+    public function getGalleryImages(): Collection
+    {
+        return $this->images->filter(fn (RestaurantImage $image) => $image !== $this->images->first());
+    }
+
+    /** @return Collection<int, OrderingOption> */
+    public function getOrderingOptions(): Collection
+    {
+        return $this->orderingOptions;
+    }
+
+    public function addOrderingOption(OrderingOption $option): static
+    {
+        if (!$this->orderingOptions->contains($option)) {
+            $this->orderingOptions->add($option);
+            $option->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderingOption(OrderingOption $option): static
+    {
+        if ($this->orderingOptions->removeElement($option)) {
+            if ($option->getRestaurant() === $this) {
+                $option->setRestaurant(null);
+            }
+        }
+
+        return $this;
     }
 }

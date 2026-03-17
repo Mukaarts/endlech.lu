@@ -10,11 +10,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/community')]
 final class CommunityController extends AbstractController
 {
-    #[Route('/vorschlagen', name: 'community_vorschlagen', methods: ['GET', 'POST'])]
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
+    #[Route('/suggest', name: 'community_vorschlagen', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function vorschlagen(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -22,7 +27,7 @@ final class CommunityController extends AbstractController
         $user = $this->getUser();
 
         if (!$user->isVerified()) {
-            $this->addFlash('error', 'Bitte bestätige zuerst deine E-Mail-Adresse, um Restaurants vorschlagen zu können.');
+            $this->addFlash('error', $this->translator->trans('flash.suggest_verify_first'));
 
             return $this->redirectToRoute('app_verify_notice');
         }
@@ -36,7 +41,7 @@ final class CommunityController extends AbstractController
             $entityManager->persist($suggestion);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Danke für deinen Vorschlag! Wir prüfen ihn so bald wie möglich.');
+            $this->addFlash('success', $this->translator->trans('flash.suggest_success'));
 
             return $this->redirectToRoute('community_danke');
         }
@@ -46,7 +51,7 @@ final class CommunityController extends AbstractController
         ]);
     }
 
-    #[Route('/danke', name: 'community_danke')]
+    #[Route('/thanks', name: 'community_danke')]
     public function danke(): Response
     {
         return $this->render('community/danke.html.twig');

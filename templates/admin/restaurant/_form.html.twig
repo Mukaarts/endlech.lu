@@ -4,7 +4,7 @@
 
     {# --- Grunddaten --- #}
     <fieldset class="space-y-5">
-        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Grunddaten</legend>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.basic_data'|trans }}</legend>
 
         {# Name #}
         <div>
@@ -44,63 +44,173 @@
 
     {# --- Status --- #}
     <fieldset>
-        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Status</legend>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.status'|trans }}</legend>
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.isOpen, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">Restaurant ist geöffnet</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">{{ 'admin.form.is_open'|trans }}</span>
         </label>
         <label class="flex items-center gap-3 cursor-pointer group mt-3">
             {{ form_widget(form.isVerified, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-cyan-700">✓ Verifiziertes Lokal (von Endlech.lu persönlich geprüft)</span>
+            <span class="text-sm text-gray-600 group-hover:text-cyan-700">✓ {{ 'admin.form.is_verified'|trans }}</span>
         </label>
     </fieldset>
 
     {# --- Barrierefreiheit --- #}
     <fieldset class="space-y-3">
-        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Barrierefreiheit</legend>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.accessibility'|trans }}</legend>
 
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.isWheelchairAccessible, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">♿ Rollstuhlgerecht (stufenloser Zugang)</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">♿ {{ 'admin.form.wheelchair'|trans }}</span>
         </label>
 
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.hasAccessibleToilet, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">🚻 Barrierefreies WC</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">🚻 {{ 'admin.form.toilet'|trans }}</span>
         </label>
 
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.allowsAssistanceDogs, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">🐕 Assistenzhund erlaubt</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">🐕 {{ 'admin.form.dogs'|trans }}</span>
         </label>
 
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.hasBrightLighting, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">💡 Helle Beleuchtung</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">💡 {{ 'admin.form.lighting'|trans }}</span>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.hasChangingTable, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">🍼 {{ 'admin.form.changing_table'|trans }}</span>
         </label>
     </fieldset>
 
     {# --- Zahlungsmethoden --- #}
     <fieldset class="space-y-3">
-        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Zahlungsmethoden</legend>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.payment'|trans }}</legend>
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.acceptsCash, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">💵 Barzahlung</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">💵 {{ 'admin.form.cash'|trans }}</span>
         </label>
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.acceptsCard, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">💳 Kreditkarte / EC-Karte</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">💳 {{ 'admin.form.card'|trans }}</span>
         </label>
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.acceptsPayconiq, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">📱 Payconiq</span>
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">📱 {{ 'admin.form.payconiq'|trans }}</span>
         </label>
+    </fieldset>
+
+    {# --- Ernährungsoptionen --- #}
+    <fieldset class="space-y-3">
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.dietary'|trans }}</legend>
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.isVegan, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">🌱 {{ 'admin.form.vegan'|trans }}</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.isVegetarian, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">🥗 {{ 'admin.form.vegetarian'|trans }}</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.isHalal, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">☪️ {{ 'admin.form.halal'|trans }}</span>
+        </label>
+    </fieldset>
+
+    {# --- Gesprochene Sprachen --- #}
+    <fieldset class="space-y-3">
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.spoken_languages'|trans }}</legend>
+        {% for child in form.spokenLanguages %}
+            <label class="flex items-center gap-3 cursor-pointer group">
+                {{ form_widget(child, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+                <span class="text-sm text-gray-600 group-hover:text-purple-700">{{ child.vars.label }}</span>
+            </label>
+        {% endfor %}
+    </fieldset>
+
+    {# --- Kontaktdaten & Social Media --- #}
+    <fieldset class="space-y-5">
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.contact'|trans }}</legend>
+
+        {# Telefon & E-Mail (2-Spalten) #}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.phone, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.phone, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                {{ form_errors(form.phone, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+            </div>
+            <div>
+                {{ form_label(form.email, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.email, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                {{ form_errors(form.email, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+            </div>
+        </div>
+
+        {# Webseite (volle Breite) #}
+        <div>
+            {{ form_label(form.website, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.website, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+            {{ form_errors(form.website, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+        </div>
+
+        {# Instagram / Facebook / TikTok (3-Spalten) #}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                {{ form_label(form.instagramUrl, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.instagramUrl, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                {{ form_errors(form.instagramUrl, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+            </div>
+            <div>
+                {{ form_label(form.facebookUrl, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.facebookUrl, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                {{ form_errors(form.facebookUrl, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+            </div>
+            <div>
+                {{ form_label(form.tiktokUrl, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.tiktokUrl, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                {{ form_errors(form.tiktokUrl, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+            </div>
+        </div>
+    </fieldset>
+
+    {# --- Bestelloptionen (dynamische Collection) --- #}
+    <fieldset>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.ordering'|trans }}</legend>
+        <p class="text-xs text-gray-400 mb-3">{{ 'admin.form.ordering_hint'|trans }}</p>
+
+        <div data-controller="collection-form"
+             data-collection-form-prototype-value="{{ form_widget(form.orderingOptions.vars.prototype)|e('html_attr') }}">
+
+            <div data-collection-form-target="entries" class="space-y-3">
+                {% for option in form.orderingOptions %}
+                    <div class="flex items-center gap-2" data-collection-form-target="entry">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
+                            {{ form_widget(option.platform, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                            {{ form_widget(option.url, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                        </div>
+                        <button type="button" data-action="collection-form#removeEntry"
+                                class="text-red-500 hover:text-red-700 text-sm font-bold px-2 py-1 shrink-0 transition">
+                            ✕
+                        </button>
+                    </div>
+                    {{ form_errors(option.platform, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+                    {{ form_errors(option.url, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+                {% endfor %}
+            </div>
+
+            <button type="button" data-action="collection-form#addEntry"
+                    class="mt-3 text-sm font-semibold text-purple-600 hover:text-purple-800 transition">
+                {{ 'admin.form.add_ordering'|trans }}
+            </button>
+        </div>
     </fieldset>
 
     {# --- Hinweise zur Barrierefreiheit (dynamische Collection) --- #}
     <fieldset>
-        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Hinweise zur Barrierefreiheit</legend>
-        <p class="text-xs text-gray-400 mb-3">Format: <code class="bg-gray-100 px-1 rounded">ok:Text</code> oder <code class="bg-gray-100 px-1 rounded">warn:Text</code></p>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.accessibility_notes'|trans }}</legend>
+        <p class="text-xs text-gray-400 mb-3">{{ 'admin.form.notes_hint'|trans }}</p>
 
         <div data-controller="collection-form"
              data-collection-form-prototype-value="{{ form_widget(form.accessibilityNotes.vars.prototype, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}})|e('html_attr') }}">
@@ -120,7 +230,7 @@
 
             <button type="button" data-action="collection-form#addEntry"
                     class="mt-3 text-sm font-semibold text-purple-600 hover:text-purple-800 transition">
-                + Hinweis hinzufügen
+                {{ 'admin.form.add_note'|trans }}
             </button>
         </div>
     </fieldset>
@@ -131,7 +241,7 @@
             {{ button_label }}
         </button>
         <a href="{{ path('admin_restaurant_index') }}" class="text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
-            Abbrechen
+            {{ 'admin.form.cancel'|trans }}
         </a>
     </div>
 
