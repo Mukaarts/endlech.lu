@@ -1,0 +1,41 @@
+restaurant:
+    name_blank: "Bitte gib den Namen ein."
+    name_max: "Der Name darf maximal {{ limit }} Zeichen lang sein."
+    city_blank: "Bitte gib die Stadt ein."
+    city_max: "Die Stadt darf maximal {{ limit }} Zeichen lang sein."
+    cuisine_blank: "Bitte gib die Küche ein."
+    cuisine_max: "Die Küche darf maximal {{ limit }} Zeichen lang sein."
+    emoji_blank: "Bitte gib ein Emoji ein."
+    emoji_max: "Das Emoji darf maximal {{ limit }} Zeichen lang sein."
+    rating_range: "Die Bewertung muss zwischen {{ min }} und {{ max }} liegen."
+    phone_max: "Die Telefonnummer darf maximal {{ limit }} Zeichen lang sein."
+    email_invalid: "Bitte gib eine gültige E-Mail-Adresse ein."
+    email_max: "Die E-Mail darf maximal {{ limit }} Zeichen lang sein."
+    url_invalid: "Bitte gib eine gültige URL ein."
+    url_max: "Die URL darf maximal {{ limit }} Zeichen lang sein."
+    note_blank: "Der Hinweis darf nicht leer sein."
+    note_format: "Format: \"ok:Text\" oder \"warn:Text\""
+
+user:
+    email_unique: "Diese E-Mail-Adresse wird bereits verwendet."
+    name_blank: "Bitte gib deinen Namen ein."
+    name_min: "Der Name muss mindestens {{ limit }} Zeichen lang sein."
+    email_blank: "Bitte gib deine E-Mail-Adresse ein."
+    email_invalid: "Bitte gib eine gültige E-Mail-Adresse ein."
+    password_blank: "Bitte gib ein Passwort ein."
+    password_min: "Das Passwort muss mindestens {{ limit }} Zeichen lang sein."
+
+ordering:
+    platform_blank: "Bitte wähle eine Plattform."
+    url_blank: "Bitte gib eine URL oder Telefonnummer ein."
+    url_max: "Die URL darf maximal {{ limit }} Zeichen lang sein."
+
+suggestion:
+    name_blank: "Bitte gib den Namen ein."
+    name_max: "Der Name darf maximal {{ limit }} Zeichen lang sein."
+    city_blank: "Bitte gib die Stadt ein."
+    city_max: "Die Stadt darf maximal {{ limit }} Zeichen lang sein."
+    cuisine_blank: "Bitte gib die Art des Restaurants ein."
+    cuisine_max: "Die Küche darf maximal {{ limit }} Zeichen lang sein."
+    emoji_max: "Das Emoji darf maximal {{ limit }} Zeichen lang sein."
+    notes_max: "Die Hinweise dürfen maximal {{ limit }} Zeichen lang sein."

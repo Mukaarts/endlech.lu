@@ -1,0 +1,41 @@
+restaurant:
+    name_blank: "Please enter the name."
+    name_max: "The name must not exceed {{ limit }} characters."
+    city_blank: "Please enter the city."
+    city_max: "The city must not exceed {{ limit }} characters."
+    cuisine_blank: "Please enter the cuisine."
+    cuisine_max: "The cuisine must not exceed {{ limit }} characters."
+    emoji_blank: "Please enter an emoji."
+    emoji_max: "The emoji must not exceed {{ limit }} characters."
+    rating_range: "The rating must be between {{ min }} and {{ max }}."
+    phone_max: "The phone number must not exceed {{ limit }} characters."
+    email_invalid: "Please enter a valid email address."
+    email_max: "The email must not exceed {{ limit }} characters."
+    url_invalid: "Please enter a valid URL."
+    url_max: "The URL must not exceed {{ limit }} characters."
+    note_blank: "The note must not be empty."
+    note_format: "Format: \"ok:Text\" or \"warn:Text\""
+
+user:
+    email_unique: "This email address is already in use."
+    name_blank: "Please enter your name."
+    name_min: "The name must be at least {{ limit }} characters long."
+    email_blank: "Please enter your email address."
+    email_invalid: "Please enter a valid email address."
+    password_blank: "Please enter a password."
+    password_min: "The password must be at least {{ limit }} characters long."
+
+ordering:
+    platform_blank: "Please select a platform."
+    url_blank: "Please enter a URL or phone number."
+    url_max: "The URL must not exceed {{ limit }} characters."
+
+suggestion:
+    name_blank: "Please enter the name."
+    name_max: "The name must not exceed {{ limit }} characters."
+    city_blank: "Please enter the city."
+    city_max: "The city must not exceed {{ limit }} characters."
+    cuisine_blank: "Please enter the type of restaurant."
+    cuisine_max: "The cuisine must not exceed {{ limit }} characters."
+    emoji_max: "The emoji must not exceed {{ limit }} characters."
+    notes_max: "The notes must not exceed {{ limit }} characters."

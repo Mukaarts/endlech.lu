@@ -14,10 +14,14 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class RegistrationController extends AbstractController
 {
-    #[Route('/registrieren', name: 'app_register')]
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+    #[Route('/register', name: 'app_register')]
     public function register(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
@@ -46,7 +50,7 @@ final class RegistrationController extends AbstractController
 
             $email = (new TemplatedEmail())
                 ->to($user->getEmail())
-                ->subject('Bestätige deine E-Mail-Adresse')
+                ->subject($this->translator->trans('email.verify_subject'))
                 ->htmlTemplate('email/verification.html.twig')
                 ->context([
                     'user' => $user,
@@ -56,12 +60,12 @@ final class RegistrationController extends AbstractController
             try {
                 $mailer->send($email);
             } catch (TransportExceptionInterface) {
-                $this->addFlash('warning', 'Registrierung erfolgreich, aber die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte versuche es später erneut.');
+                $this->addFlash('warning', $this->translator->trans('flash.register_email_failed'));
 
                 return $this->redirectToRoute('app_verify_notice');
             }
 
-            $this->addFlash('success', 'Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach und bestätige deine Adresse.');
+            $this->addFlash('success', $this->translator->trans('flash.register_success'));
 
             return $this->redirectToRoute('app_verify_notice');
         }

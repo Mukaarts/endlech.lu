@@ -1,13 +1,13 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block admin_title %}Restaurants{% endblock %}
+{% block admin_title %}{{ 'admin.nav.restaurants'|trans }}{% endblock %}
 
 {% block admin_body %}
 <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">Restaurants verwalten</h2>
+    <h2 class="text-2xl font-bold text-gray-800">{{ 'admin.restaurant.manage'|trans }}</h2>
     <a href="{{ path('admin_restaurant_new') }}"
        class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
-        + Neues Restaurant
+        {{ 'admin.restaurant.new_button'|trans }}
     </a>
 </div>
 
@@ -16,17 +16,17 @@
         <table class="w-full text-sm text-left">
             <thead class="bg-gray-50 border-b border-gray-200">
                 <tr>
-                    <th class="px-4 py-3 font-semibold text-gray-600">ID</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Name</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Stadt</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Küche</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Bewertung</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Barrierefreiheit</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Ernährung</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Bestellung</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Verifiziert</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600 text-right">Aktionen</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.id'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.name'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.city'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.cuisine'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.rating'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.status'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.accessibility'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.dietary'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.ordering'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">{{ 'admin.restaurant.table.verified'|trans }}</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600 text-right">{{ 'admin.restaurant.table.actions'|trans }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -47,25 +47,25 @@
                     </td>
                     <td class="px-4 py-3">
                         {% if restaurant.isOpen %}
-                            <span class="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-bold border border-green-100">Geöffnet</span>
+                            <span class="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-bold border border-green-100">{{ 'status.open'|trans }}</span>
                         {% else %}
-                            <span class="bg-red-50 text-red-700 px-2 py-0.5 rounded text-xs font-bold border border-red-100">Geschlossen</span>
+                            <span class="bg-red-50 text-red-700 px-2 py-0.5 rounded text-xs font-bold border border-red-100">{{ 'status.closed'|trans }}</span>
                         {% endif %}
                     </td>
                     <td class="px-4 py-3">
                         <div class="flex gap-1">
-                            {% if restaurant.isWheelchairAccessible %}<span title="Rollstuhlgerecht">♿</span>{% endif %}
-                            {% if restaurant.hasAccessibleToilet %}<span title="Barrierefreies WC">🚻</span>{% endif %}
-                            {% if restaurant.allowsAssistanceDogs %}<span title="Assistenzhund">🐕</span>{% endif %}
-                            {% if restaurant.hasBrightLighting %}<span title="Helle Beleuchtung">💡</span>{% endif %}
-                            {% if restaurant.hasChangingTable %}<span title="Wickeltisch">🍼</span>{% endif %}
+                            {% if restaurant.isWheelchairAccessible %}<span title="{{ 'accessibility.wheelchair'|trans }}">♿</span>{% endif %}
+                            {% if restaurant.hasAccessibleToilet %}<span title="{{ 'accessibility.toilet'|trans }}">🚻</span>{% endif %}
+                            {% if restaurant.allowsAssistanceDogs %}<span title="{{ 'accessibility.dogs'|trans }}">🐕</span>{% endif %}
+                            {% if restaurant.hasBrightLighting %}<span title="{{ 'accessibility.lighting'|trans }}">💡</span>{% endif %}
+                            {% if restaurant.hasChangingTable %}<span title="{{ 'accessibility.changing_table'|trans }}">🍼</span>{% endif %}
                         </div>
                     </td>
                     <td class="px-4 py-3">
                         <div class="flex gap-1">
-                            {% if restaurant.isVegan %}<span title="Vegan">🌱</span>{% endif %}
-                            {% if restaurant.isVegetarian %}<span title="Vegetarisch">🥗</span>{% endif %}
-                            {% if restaurant.isHalal %}<span title="Halal">☪️</span>{% endif %}
+                            {% if restaurant.isVegan %}<span title="{{ 'dietary.vegan'|trans }}">🌱</span>{% endif %}
+                            {% if restaurant.isVegetarian %}<span title="{{ 'dietary.vegetarian'|trans }}">🥗</span>{% endif %}
+                            {% if restaurant.isHalal %}<span title="{{ 'dietary.halal'|trans }}">☪️</span>{% endif %}
                         </div>
                     </td>
                     <td class="px-4 py-3">
@@ -74,7 +74,7 @@
                                 {% for option in restaurant.orderingOptions %}
                                     {% set platform = option.platformEnum %}
                                     {% if platform %}
-                                        <span title="{{ platform.label }}">{{ platform.emoji }}</span>
+                                        <span title="{{ platform.transKey|trans }}">{{ platform.emoji }}</span>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -86,7 +86,7 @@
                         <form method="post" action="{{ path('admin_restaurant_toggle_verified', {id: restaurant.id}) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('toggle-verified-' ~ restaurant.id) }}">
                             <button type="submit"
-                                    title="{{ restaurant.isVerified ? 'Verifizierung aufheben' : 'Als verifiziert markieren' }}"
+                                    title="{{ restaurant.isVerified ? 'admin.restaurant.unverify_title'|trans : 'admin.restaurant.verify_title'|trans }}"
                                     class="p-1.5 rounded-lg transition {{ restaurant.isVerified ? 'text-cyan-600 bg-cyan-50 hover:bg-red-50 hover:text-red-500' : 'text-gray-300 hover:bg-cyan-50 hover:text-cyan-600' }}">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd"/>
@@ -98,13 +98,13 @@
                         <div class="flex justify-end gap-2">
                             <a href="{{ path('admin_restaurant_edit', {id: restaurant.id}) }}"
                                class="text-purple-600 hover:text-purple-800 font-semibold text-xs transition">
-                                Bearbeiten
+                                {{ 'admin.restaurant.edit_action'|trans }}
                             </a>
                             <form method="post" action="{{ path('admin_restaurant_delete', {id: restaurant.id}) }}"
-                                  onsubmit="return confirm('Restaurant \u00ab{{ restaurant.name|e('js') }}\u00bb wirklich löschen?');">
+                                  onsubmit="return confirm('{{ 'admin.restaurant.delete_confirm'|trans({'%name%': restaurant.name|e('js')}) }}');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete-restaurant-' ~ restaurant.id) }}">
                                 <button type="submit" class="text-red-600 hover:text-red-800 font-semibold text-xs transition">
-                                    Löschen
+                                    {{ 'admin.restaurant.delete_action'|trans }}
                                 </button>
                             </form>
                         </div>
@@ -113,7 +113,7 @@
                 {% else %}
                 <tr>
                     <td colspan="11" class="px-4 py-8 text-center text-gray-400">
-                        Noch keine Restaurants vorhanden.
+                        {{ 'admin.restaurant.no_restaurants'|trans }}
                     </td>
                 </tr>
                 {% endfor %}
@@ -122,5 +122,5 @@
     </div>
 </div>
 
-<p class="text-sm text-gray-400 mt-4">{{ restaurants|length }} Restaurant{{ restaurants|length != 1 ? 's' : '' }} insgesamt</p>
+<p class="text-sm text-gray-400 mt-4">{{ restaurants|length == 1 ? 'admin.restaurant.count_one'|trans({'%count%': restaurants|length}) : 'admin.restaurant.count_other'|trans({'%count%': restaurants|length}) }}</p>
 {% endblock %}

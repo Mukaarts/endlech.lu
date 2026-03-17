@@ -18,21 +18,21 @@ class OrderingOptionType extends AbstractType
     {
         $builder
             ->add('platform', ChoiceType::class, [
-                'label' => 'Plattform',
+                'label' => 'form.platform',
                 'choices' => OrderingPlatform::cases(),
                 'choice_value' => fn (OrderingPlatform|string|null $p) => $p instanceof OrderingPlatform ? $p->value : $p,
                 'choice_label' => fn (OrderingPlatform|string $p) => $p instanceof OrderingPlatform ? $p->emoji().' '.$p->label() : $p,
-                'placeholder' => 'Plattform wählen...',
+                'placeholder' => 'form.platform_placeholder',
                 'constraints' => [
-                    new NotBlank(message: 'Bitte wähle eine Plattform.'),
+                    new NotBlank(message: 'ordering.platform_blank'),
                 ],
             ])
             ->add('url', TextType::class, [
-                'label' => 'URL / Telefonnummer',
-                'attr' => ['placeholder' => 'https://... oder +352...'],
+                'label' => 'form.url',
+                'attr' => ['placeholder' => 'form.url_placeholder'],
                 'constraints' => [
-                    new NotBlank(message: 'Bitte gib eine URL oder Telefonnummer ein.'),
-                    new Length(max: 500, maxMessage: 'Die URL darf maximal {{ limit }} Zeichen lang sein.'),
+                    new NotBlank(message: 'ordering.url_blank'),
+                    new Length(max: 500, maxMessage: 'ordering.url_max'),
                 ],
             ]);
     }

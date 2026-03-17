@@ -11,6 +11,11 @@ enum Language: string
     case PT = 'pt';
     case OTHER = 'other';
 
+    public function transKey(): string
+    {
+        return 'language.' . $this->value;
+    }
+
     public function label(): string
     {
         return match ($this) {
