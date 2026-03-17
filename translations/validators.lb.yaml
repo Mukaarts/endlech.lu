@@ -30,6 +30,13 @@ ordering:
     url_blank: "Gëff w.e.g. eng URL oder Telefonsnummer an."
     url_max: "D'URL dierf maximal {{ limit }} Zeechen laang sinn."
 
+profile:
+    avatar_max_size: "D'Profilbild dierf maximal {{ limit }} grouss sinn."
+    avatar_mime_type: "Luet w.e.g. e Bild am Format JPG, PNG oder WebP erop."
+    current_password_blank: "Gëff w.e.g. däin aktuellt Passwuert an."
+    new_password_blank: "Gëff w.e.g. en neit Passwuert an."
+    new_password_min: "Dat neit Passwuert muss mindestens {{ limit }} Zeechen laang sinn."
+
 suggestion:
     name_blank: "Gëff w.e.g. den Numm an."
     name_max: "Den Numm dierf maximal {{ limit }} Zeechen laang sinn."

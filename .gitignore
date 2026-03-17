@@ -27,4 +27,5 @@ yarn-error.log
 ###> endlech uploads ###
 /public/uploads/
 !/public/uploads/restaurants/.gitkeep
+!/public/uploads/avatars/.gitkeep
 ###< endlech uploads ###

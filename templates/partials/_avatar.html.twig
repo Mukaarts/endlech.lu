@@ -1,0 +1,17 @@
+{# Avatar-Partial: Profilbild oder Initialen-Fallback #}
+{# Parameter: user (User-Entity), size ('sm', 'md', 'lg') #}
+{% set sizes = {
+    'sm': 'w-8 h-8 text-xs',
+    'md': 'w-16 h-16 text-xl',
+    'lg': 'w-24 h-24 text-3xl',
+} %}
+{% set sizeClass = sizes[size|default('md')] %}
+
+{% if user.avatarUrl %}
+    <img src="{{ asset(user.avatarUrl) }}" alt="{{ user.name }}"
+         class="{{ sizeClass }} rounded-full object-cover ring-2 ring-purple-100">
+{% else %}
+    <span class="{{ sizeClass }} rounded-full bg-purple-100 text-purple-600 font-bold flex items-center justify-center ring-2 ring-purple-100 select-none">
+        {{ user.name|first|upper }}
+    </span>
+{% endif %}

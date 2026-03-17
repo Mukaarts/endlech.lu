@@ -54,6 +54,8 @@ templates/
 ├── email/
 │   ├── base.html.twig       # Base email layout (header, footer, branding)
 │   └── verification.html.twig # Email verification template (extends base)
+├── profile/
+│   └── index.html.twig  # /profile – user profile page (edit info, avatar, password)
 └── restaurant/
     ├── index.html.twig  # /restaurants – paginated & sortable restaurant list
     └── show.html.twig   # /restaurants/{id} – restaurant detail view (incl. contact & social media)
@@ -71,6 +73,7 @@ tests/                   # PHPUnit tests (empty - MVP)
 translations/            # i18n files (empty - MVP)
 public/                  # Web root (index.php front controller)
 public/uploads/restaurants/ # Uploaded restaurant images (gitignored except .gitkeep)
+public/uploads/avatars/    # Uploaded user avatars (gitignored except .gitkeep)
 ```
 
 ## Common Commands
@@ -154,6 +157,10 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `admin_restaurant_image_upload`| `/admin/restaurants/{id}/fotos` | `AdminRestaurantController::uploadImage()` |
 | `admin_restaurant_image_delete`| `/admin/restaurants/{id}/fotos/{imageId}/loeschen` | `AdminRestaurantController::deleteImage()` |
 | `admin_restaurant_image_sort`| `/admin/restaurants/{id}/fotos/sortieren` | `AdminRestaurantController::sortImages()` |
+| `app_profile`           | `/profile`     | `ProfileController::index()`        |
+| `app_profile_edit`      | `/profile/edit` | `ProfileController::edit()`        |
+| `app_profile_password`  | `/profile/password` | `ProfileController::changePassword()` |
+| `app_profile_avatar_delete` | `/profile/avatar/delete` | `ProfileController::deleteAvatar()` |
 
 `/restaurants` accepts query params:
 - `?sort=rating` (default) – sorted by rating DESC
@@ -181,6 +188,15 @@ Felder: id, filename (VARCHAR 255), altText (VARCHAR 255 nullable), restaurant (
 Collection auf Restaurant: `$images` (OneToMany, cascade persist+remove, orphanRemoval, OrderBy sortOrder ASC).
 Helper auf Restaurant: `getCoverImage(): ?RestaurantImage` (erstes Bild), `getGalleryImages(): Collection` (alle außer Cover).
 Service: `ImageUploadService` – Upload nach `public/uploads/restaurants/`, Löschung inkl. Dateisystem, `reorderAfterDelete()` für konsekutive Sortierung.
+
+## Entity: User — Avatar (Issue #54)
+Zusätzliches Feld: `avatarFilename` (VARCHAR 255 nullable).
+Helper: `getAvatarUrl(): ?string` — gibt `/uploads/avatars/{filename}` zurück oder `null`.
+Service: `AvatarUploadService` — Upload nach `public/uploads/avatars/`, Löschung inkl. Dateisystem.
+Form: `ProfileType` (Name, E-Mail, Avatar-Upload), `ChangePasswordType` (aktuelles + neues PW).
+Controller: `ProfileController` — 4 Routen (`app_profile`, `app_profile_edit`, `app_profile_password`, `app_profile_avatar_delete`).
+Template: `templates/profile/index.html.twig`, `templates/partials/_avatar.html.twig`.
+Migration: `Version20260317000000`.
 
 ## Entity: OrderingOption (Issue #43)
 Felder: id (int, PK), platform (VARCHAR 20 – Werte aus `App\Enum\OrderingPlatform`), url (VARCHAR 500), restaurant (ManyToOne Restaurant, CASCADE DELETE).

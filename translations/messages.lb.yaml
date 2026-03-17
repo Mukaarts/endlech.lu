@@ -6,6 +6,7 @@ nav:
     logout: "Ofmellen"
     login: "Umellen"
     join: "Matmaachen"
+    profile: "Mäi Profil"
 
 footer:
     tagline: "D'Plattform fir barrierefrä Gastronomie zu Lëtzebuerg. Zesumme fir méi Inklusioun."
@@ -419,6 +420,10 @@ flash:
     suggest_success: "Merci fir däi Virschlag! Mir préifen en esou séier wéi méiglech."
     suggestion_approved: "„%name%\u201C gouf ugeholl an als Restaurant derbäigesat."
     suggestion_rejected: "Virschlag „%name%\u201C gouf ofgeleent."
+    profile_updated: "Profil erfollegräich aktualiséiert."
+    profile_password_changed: "Passwuert erfollegräich geännert."
+    profile_wrong_password: "Dat aktuellt Passwuert ass net korrekt."
+    profile_avatar_deleted: "Profilbild erfollegräich ewechgeholl."
 
 email:
     verify_subject: "Bestäteg deng E-Mail-Adress"
@@ -514,6 +519,24 @@ form:
     suggestion_emoji: "Emoji (optional)"
     suggestion_notes: "Weider Hiweiser zur Barrierefreiheet (optional)"
     suggestion_notes_placeholder: "z.B. Agang ouni Trapen, Parkplaz fir Rollstullfuerer virgesinn ..."
+
+profile:
+    title: "Mäi Profil – Endlech.lu"
+    heading: "Mäi Profil"
+    subtitle: "Verwalte deng perséinlech Donnéeën"
+    member_since: "Member säit %date%"
+    section_info: "Perséinlech Donnéeën"
+    section_password: "Passwuert änneren"
+    form:
+        avatar: "Profilbild"
+        avatar_hint: "JPG, PNG oder WebP, max. 2 MB"
+        current_password: "Aktuellt Passwuert"
+        new_password: "Neit Passwuert"
+        new_password_confirm: "Neit Passwuert bestätegen"
+        save: "Ännerungen späicheren"
+        change_password: "Passwuert änneren"
+        delete_avatar: "Profilbild ewechhuelen"
+        delete_avatar_confirm: "Profilbild wierklech ewechhuelen?"
 
 verified:
     badge: "Verifizéiert"
