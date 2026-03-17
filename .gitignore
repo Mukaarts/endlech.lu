@@ -28,3 +28,7 @@ yarn-error.log
 /public/uploads/*
 !/public/uploads/team/
 ###< endlech uploads ###
+
+###> claude ###
+/.claude/
+###< claude ###
