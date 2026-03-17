@@ -25,7 +25,6 @@ yarn-error.log
 ###< symfony/asset-mapper ###
 
 ###> endlech uploads ###
-/public/uploads/
-!/public/uploads/restaurants/.gitkeep
-!/public/uploads/avatars/.gitkeep
+/public/uploads/*
+!/public/uploads/team/
 ###< endlech uploads ###
