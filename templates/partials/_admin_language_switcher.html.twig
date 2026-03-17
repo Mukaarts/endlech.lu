@@ -1,0 +1,46 @@
+{# Language Switcher für Admin-Bereich (session-basiert) #}
+{% set current_locale = app.request.locale %}
+
+{% set locales = {
+    'lb': 'LB',
+    'de': 'DE',
+    'fr': 'FR',
+    'en': 'EN'
+} %}
+
+<div class="relative" data-controller="language-switcher">
+    <button
+        type="button"
+        class="flex items-center gap-1.5 text-sm font-medium text-gray-400 hover:text-white transition px-2 py-1 rounded-md hover:bg-gray-700"
+        data-action="click->language-switcher#toggle"
+        data-language-switcher-target="button"
+        aria-expanded="false"
+        aria-haspopup="true"
+    >
+        <span class="uppercase">{{ current_locale }}</span>
+        <svg class="w-3.5 h-3.5 transition-transform" data-language-switcher-target="arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+
+    <div
+        class="absolute right-0 mt-1 w-28 bg-gray-700 rounded-lg shadow-lg border border-gray-600 py-1 z-50 hidden"
+        data-language-switcher-target="menu"
+        data-action="click@window->language-switcher#close"
+    >
+        {% for locale, label in locales %}
+            {% if locale != current_locale %}
+                <a
+                    href="{{ path('admin_set_locale', {'locale': locale}) }}"
+                    class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white transition"
+                >
+                    {{ label }}
+                </a>
+            {% else %}
+                <span class="block px-4 py-2 text-sm font-semibold text-cyan-400">
+                    {{ label }}
+                </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

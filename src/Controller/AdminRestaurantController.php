@@ -16,11 +16,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
 final class AdminRestaurantController extends AbstractController
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
     #[Route('', name: 'admin_dashboard')]
     public function dashboard(RestaurantRepository $restaurantRepository, RestaurantSuggestionRepository $suggestionRepository): Response
     {
@@ -50,7 +54,7 @@ final class AdminRestaurantController extends AbstractController
             $entityManager->persist($restaurant);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Restaurant erfolgreich erstellt.');
+            $this->addFlash('success', $this->translator->trans('flash.restaurant_created'));
 
             return $this->redirectToRoute('admin_restaurant_index');
         }
@@ -79,7 +83,7 @@ final class AdminRestaurantController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'Restaurant erfolgreich aktualisiert.');
+            $this->addFlash('success', $this->translator->trans('flash.restaurant_updated'));
 
             return $this->redirectToRoute('admin_restaurant_index');
         }
@@ -98,16 +102,16 @@ final class AdminRestaurantController extends AbstractController
                 $restaurant->setIsVerified(false);
                 $restaurant->setVerifiedAt(null);
                 $restaurant->setVerifiedBy(null);
-                $this->addFlash('success', 'Verifizierung für „' . $restaurant->getName() . '" aufgehoben.');
+                $this->addFlash('success', $this->translator->trans('flash.verification_revoked', ['%name%' => $restaurant->getName()]));
             } else {
                 $restaurant->setIsVerified(true);
                 $restaurant->setVerifiedAt(new \DateTimeImmutable());
                 $restaurant->setVerifiedBy($this->getUser());
-                $this->addFlash('success', '„' . $restaurant->getName() . '" als verifiziert markiert.');
+                $this->addFlash('success', $this->translator->trans('flash.verification_granted', ['%name%' => $restaurant->getName()]));
             }
             $em->flush();
         } else {
-            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+            $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
         }
 
         return $this->redirectToRoute('admin_restaurant_index');
@@ -120,9 +124,9 @@ final class AdminRestaurantController extends AbstractController
             $entityManager->remove($restaurant);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Restaurant erfolgreich gelöscht.');
+            $this->addFlash('success', $this->translator->trans('flash.restaurant_deleted'));
         } else {
-            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+            $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
         }
 
         return $this->redirectToRoute('admin_restaurant_index');
@@ -132,7 +136,7 @@ final class AdminRestaurantController extends AbstractController
     public function uploadImage(Restaurant $restaurant, Request $request, ImageUploadService $imageUploadService): Response
     {
         if (!$this->isCsrfTokenValid('upload-images-' . $restaurant->getId(), $request->request->getString('_token'))) {
-            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+            $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
 
             return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
         }
@@ -149,9 +153,9 @@ final class AdminRestaurantController extends AbstractController
         }
 
         if ($uploaded > 0) {
-            $this->addFlash('success', $uploaded.' Foto(s) erfolgreich hochgeladen.');
+            $this->addFlash('success', $this->translator->trans('flash.photo_uploaded', ['%count%' => $uploaded]));
         } else {
-            $this->addFlash('error', 'Keine gültigen Dateien gefunden.');
+            $this->addFlash('error', $this->translator->trans('flash.no_valid_files'));
         }
 
         return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
@@ -161,7 +165,7 @@ final class AdminRestaurantController extends AbstractController
     public function deleteImage(Restaurant $restaurant, int $imageId, Request $request, RestaurantImageRepository $imageRepository, ImageUploadService $imageUploadService): Response
     {
         if (!$this->isCsrfTokenValid('delete-image-' . $imageId, $request->request->getString('_token'))) {
-            $this->addFlash('error', 'Ungültiges CSRF-Token. Bitte versuche es erneut.');
+            $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
 
             return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);
         }
@@ -169,9 +173,9 @@ final class AdminRestaurantController extends AbstractController
         $image = $imageRepository->find($imageId);
         if ($image && $image->getRestaurant() === $restaurant) {
             $imageUploadService->delete($image);
-            $this->addFlash('success', 'Foto erfolgreich gelöscht.');
+            $this->addFlash('success', $this->translator->trans('flash.photo_deleted'));
         } else {
-            $this->addFlash('error', 'Foto nicht gefunden.');
+            $this->addFlash('error', $this->translator->trans('flash.photo_not_found'));
         }
 
         return $this->redirectToRoute('admin_restaurant_edit', ['id' => $restaurant->getId()]);

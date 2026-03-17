@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class KriterienController extends AbstractController
 {
-    #[Route('/kriterien', name: 'app_kriterien')]
+    #[Route('/criteria', name: 'app_kriterien')]
     public function index(): Response
     {
         return $this->render('kriterien/index.html.twig');

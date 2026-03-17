@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ app.request.locale }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@
                     <tr>
                         <td style="padding: 24px 32px; border-top: 1px solid #f3f4f6; text-align: center;">
                             <p style="margin: 0; color: #9ca3af; font-size: 11px;">
-                                &copy; {{ 'now'|date('Y') }} Endlech.lu - Made with love in Luxembourg
+                                &copy; {{ 'now'|date('Y') }} Endlech.lu - {{ 'email.footer'|trans }}
                             </p>
                         </td>
                     </tr>

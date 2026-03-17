@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Über uns | Endlech.lu{% endblock %}
+{% block title %}{{ 'about.title'|trans }}{% endblock %}
 
 {% block body %}
     {# Hero #}
     <section class="bg-linear-to-r from-cyan-600 to-purple-700 text-white py-16">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Über uns</h1>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">{{ 'about.heading'|trans }}</h1>
             <p class="text-lg md:text-xl text-white/85 max-w-2xl mx-auto">
-                Die Geschichte hinter Endlech.lu — einer Plattform, die lange überfällig war.
+                {{ 'about.subtitle'|trans }}
             </p>
         </div>
     </section>
@@ -28,30 +28,27 @@
                     </div>
                     {# Info #}
                     <div class="flex-1 text-center sm:text-left">
-                        <p class="text-xs font-semibold text-cyan-600 uppercase tracking-widest mb-1">Gründer</p>
+                        <p class="text-xs font-semibold text-cyan-600 uppercase tracking-widest mb-1">{{ 'about.founder'|trans }}</p>
                         <h2 class="text-2xl font-bold text-gray-900 mb-1">Michael Ferreira</h2>
                         <p class="text-gray-700 leading-relaxed mb-4">
-                            Ich bin Michael, 30 Jahre alt und seit Geburt mit SMA2 (Spinale Muskelatrophie Typ 2)
-                            beeinträchtigt. Als leidenschaftlicher Programmierer und Fotograf weiß ich aus eigener
-                            Erfahrung, wie wichtig echte Barrierefreiheit im Alltag ist — und genau das treibt
-                            mich bei Endlech.lu an.
+                            {{ 'about.founder_bio'|trans }}
                         </p>
                         <div class="flex flex-wrap justify-center sm:justify-start gap-2 mb-4">
                             <span class="inline-flex items-center gap-1.5 bg-cyan-50 text-cyan-700 text-sm font-medium px-3 py-1 rounded-full border border-cyan-200">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                30 Jahre
+                                {{ 'about.tag_age'|trans }}
                             </span>
                             <span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 text-sm font-medium px-3 py-1 rounded-full border border-purple-200">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                                SMA2
+                                {{ 'about.tag_sma'|trans }}
                             </span>
                             <span class="inline-flex items-center gap-1.5 bg-cyan-50 text-cyan-700 text-sm font-medium px-3 py-1 rounded-full border border-cyan-200">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                                Programmierer
+                                {{ 'about.tag_programmer'|trans }}
                             </span>
                             <span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 text-sm font-medium px-3 py-1 rounded-full border border-purple-200">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                Fotograf
+                                {{ 'about.tag_photographer'|trans }}
                             </span>
                         </div>
                         <div class="flex flex-wrap justify-center sm:justify-start gap-3">
@@ -75,13 +72,10 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Die Geschichte von Endlech.lu</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ 'about.story_title'|trans }}</h2>
 
                 <p class="text-gray-700 leading-relaxed mb-8">
-                    Endlech.lu war eigentlich schon seit Jahren überfällig. Die Idee hatte ich schon
-                    als Jugendlicher — ein Ort, an dem Menschen mit eingeschränkter Mobilität unkompliziert
-                    barrierefreie Restaurants in Luxemburg finden können. Etwas, das es so einfach und
-                    übersichtlich schlicht noch nicht gab.
+                    {{ 'about.story_intro'|trans }}
                 </p>
 
                 {# Timeline #}
@@ -99,10 +93,9 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-semibold text-cyan-600 uppercase tracking-wide mb-1">2018</p>
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">Planung beginnt</h3>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ 'about.timeline_2018_title'|trans }}</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Die Idee reifte zur konkreten Entscheidung: Ich wollte die Plattform wirklich
-                                bauen. 2018 begann ich, das Projekt ernsthaft zu planen.
+                                {{ 'about.timeline_2018_text'|trans }}
                             </p>
                         </div>
 
@@ -114,10 +107,9 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-semibold text-purple-600 uppercase tracking-wide mb-1">2020 – 2021</p>
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">Aktive Entwicklung</h3>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ 'about.timeline_2020_title'|trans }}</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Gemeinsam mit einem Freund und Partner begann ich, die Plattform aktiv
-                                umzusetzen. Wir teilten die Vision und arbeiteten mit echtem Elan daran.
+                                {{ 'about.timeline_2020_text'|trans }}
                             </p>
                         </div>
 
@@ -129,10 +121,9 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">2022 – 2024</p>
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">Unfreiwillige Pause</h3>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ 'about.timeline_2022_title'|trans }}</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Leider klappte es mit dem Partner nicht, und alleine fehlte mir schlicht die
-                                Zeit. Das Projekt musste ich schweren Herzens auf Eis legen.
+                                {{ 'about.timeline_2022_text'|trans }}
                             </p>
                         </div>
 
@@ -144,10 +135,9 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-semibold text-cyan-600 uppercase tracking-wide mb-1">Ende 2025</p>
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">Neustart</h3>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ 'about.timeline_2025_title'|trans }}</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Ende 2025 habe ich beschlossen, wieder anzufangen — und es diesmal
-                                durchzuziehen. Endlech.lu ist jetzt live.
+                                {{ 'about.timeline_2025_text'|trans }}
                             </p>
                         </div>
 
@@ -157,15 +147,13 @@
 
             {# Mission #}
             <div class="mt-8 bg-linear-to-r from-cyan-600 to-purple-700 rounded-2xl p-8 text-white text-center">
-                <h2 class="text-2xl font-bold mb-3">Unsere Mission</h2>
+                <h2 class="text-2xl font-bold mb-3">{{ 'about.mission_title'|trans }}</h2>
                 <p class="text-white/90 leading-relaxed max-w-xl mx-auto">
-                    Barrierefreiheit soll kein Zufall sein. Mit Endlech.lu wollen wir Menschen mit
-                    eingeschränkter Mobilität helfen, Restaurants in Luxemburg zu finden, die wirklich
-                    zugänglich sind — geprüft von der Community, für die Community.
+                    {{ 'about.mission_text'|trans }}
                 </p>
                 <a href="{{ path('app_restaurant_index') }}"
                    class="inline-block mt-6 bg-white text-purple-700 font-semibold px-8 py-3 rounded-full shadow hover:shadow-md hover:-translate-y-0.5 transition">
-                    Restaurants entdecken
+                    {{ 'about.mission_cta'|trans }}
                 </a>
             </div>
 

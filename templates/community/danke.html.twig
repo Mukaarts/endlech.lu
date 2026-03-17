@@ -1,25 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Danke für deinen Vorschlag – Endlech.lu{% endblock %}
+{% block title %}{{ 'community.thanks.title'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container mx-auto px-4 py-20 max-w-xl text-center">
 
     <div class="text-7xl mb-6">🎉</div>
-    <h1 class="text-3xl font-bold text-gray-900 mb-4">Danke für deinen Vorschlag!</h1>
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ 'community.thanks.heading'|trans }}</h1>
     <p class="text-gray-600 text-lg mb-8">
-        Wir haben deinen Vorschlag erhalten und werden ihn so bald wie möglich prüfen.
-        Wenn er genehmigt wird, erscheint das Restaurant in unserer Liste.
+        {{ 'community.thanks.text'|trans }}
     </p>
 
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="{{ path('community_vorschlagen') }}"
            class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold px-6 py-3 rounded-full shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
-            Weiteres Restaurant vorschlagen
+            {{ 'community.thanks.suggest_another'|trans }}
         </a>
         <a href="{{ path('app_restaurant_index') }}"
            class="bg-white hover:bg-gray-50 text-gray-700 font-bold px-6 py-3 rounded-full border border-gray-300 shadow-sm hover:shadow-md transition">
-            Restaurants entdecken
+            {{ 'community.thanks.discover'|trans }}
         </a>
     </div>
 

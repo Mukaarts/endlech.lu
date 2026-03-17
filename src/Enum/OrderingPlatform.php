@@ -11,6 +11,11 @@ enum OrderingPlatform: string
     case WEBSITE = 'website';
     case OTHER = 'other';
 
+    public function transKey(): string
+    {
+        return 'ordering_platform.' . $this->value;
+    }
+
     public function label(): string
     {
         return match ($this) {
@@ -33,6 +38,11 @@ enum OrderingPlatform: string
             self::WEBSITE => '🌐',
             self::OTHER => '📦',
         };
+    }
+
+    public function actionTransKey(): string
+    {
+        return 'ordering_action.' . $this->value;
     }
 
     public function actionLabel(): string

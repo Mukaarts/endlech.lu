@@ -1,32 +1,32 @@
 {% extends 'email/base.html.twig' %}
 
-{% block title %}E-Mail bestätigen{% endblock %}
+{% block title %}{{ 'email.verify_title'|trans }}{% endblock %}
 
 {% block body %}
     <h2 style="margin: 0 0 16px; color: #111827; font-size: 20px; font-weight: 700;">
-        Hallo {{ user.name }}!
+        {{ 'email.verify_greeting'|trans({'%name%': user.name}) }}
     </h2>
 
     <p style="margin: 0 0 24px; color: #6b7280; font-size: 14px; line-height: 1.6;">
-        Vielen Dank für deine Registrierung bei Endlech.lu. Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Button klickst:
+        {{ 'email.verify_text'|trans }}
     </p>
 
     <table role="presentation" style="width: 100%; border: 0;">
         <tr>
             <td style="text-align: center; padding: 8px 0 24px;">
                 <a href="{{ verifyUrl }}" style="display: inline-block; background-color: #7c3aed; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;">
-                    E-Mail bestätigen
+                    {{ 'email.verify_button'|trans }}
                 </a>
             </td>
         </tr>
     </table>
 
     <p style="margin: 0 0 8px; color: #9ca3af; font-size: 12px;">
-        Dieser Link ist 24 Stunden gültig. Falls du dich nicht bei Endlech.lu registriert hast, kannst du diese E-Mail ignorieren.
+        {{ 'email.verify_expiry'|trans }}
     </p>
 
     <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-        Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:<br>
+        {{ 'email.verify_fallback'|trans }}<br>
         <a href="{{ verifyUrl }}" style="color: #7c3aed; word-break: break-all;">{{ verifyUrl }}</a>
     </p>
 {% endblock %}
