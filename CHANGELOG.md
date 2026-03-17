@@ -8,6 +8,7 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 ## [Unreleased]
 
 ### Added
+- **About-Seite aktualisiert (Issue #56):** Neuer Meilenstein „März 2026 — Erste Live-Version" in der Timeline. Gründer-Foto vorbereitet (Fallback auf Initialen). Übersetzungen in 4 Sprachen aktualisiert.
 - **Benutzerprofil (Issue #54):** Profilseite für eingeloggte Nutzer zum Anzeigen/Bearbeiten von Name, E-Mail und Profilbild. Passwort-Änderung mit Prüfung des aktuellen Passworts. Avatar-Upload (JPG/PNG/WebP, max. 2 MB) mit Initialen-Fallback. Avatar + Profil-Link in der Navigation. i18n in allen 4 Sprachen (lb, de, fr, en).
 - **Titelbild / Cover-Foto (Issue #44):** Das erste Bild eines Restaurants dient automatisch als Cover-Foto. Drag & Drop Sortierung im Admin-Panel (SortableJS). Cover-Foto als Hero-Bild auf Detailseite und Thumbnail in Listenansicht & Homepage.
 - **Wickeltisch-Filter (Issue #41):** Neues Barrierefreiheits-Kriterium `hasChangingTable`. Kachel auf Detailseite, Filter-Checkbox in Sidebar, Badge auf Restaurant-Karten.

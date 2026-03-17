@@ -40,6 +40,7 @@ Current development status of the platform.
 - [x] **Detail Page:** Individual view with address and additional information.
 - [x] **Payment Methods:** Display of accepted payment methods (cash, card, Payconiq) per restaurant.
 - [x] **Filters:** Filter by accessibility criteria (wheelchair, toilet, dogs, lighting, changing table), open status, city, and cuisine type.
+- [x] **About Us:** Updated About page with project timeline and March 2026 launch milestone.
 - [x] **Photo Gallery:** Image upload per restaurant with lightbox gallery (GLightbox) on detail page and thumbnail on list view.
 - [x] **Spoken Languages:** Display of spoken languages per restaurant with flag badges and filter support.
 - [x] **Dietary Options:** Display of dietary options (vegan, vegetarian, halal) per restaurant with filter support.
