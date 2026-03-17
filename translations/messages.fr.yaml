@@ -6,6 +6,7 @@ nav:
     logout: "Déconnexion"
     login: "Connexion"
     join: "Rejoindre"
+    profile: "Mon profil"
 
 footer:
     tagline: "La plateforme pour la gastronomie accessible au Luxembourg. Ensemble pour plus d'inclusion."
@@ -419,6 +420,10 @@ flash:
     suggest_success: "Merci pour votre proposition ! Nous la vérifierons dès que possible."
     suggestion_approved: "« %name% » a été approuvé et ajouté comme restaurant."
     suggestion_rejected: "Proposition « %name% » a été rejetée."
+    profile_updated: "Profil mis à jour avec succès."
+    profile_password_changed: "Mot de passe modifié avec succès."
+    profile_wrong_password: "Le mot de passe actuel est incorrect."
+    profile_avatar_deleted: "Photo de profil supprimée avec succès."
 
 email:
     verify_subject: "Confirmez votre adresse e-mail"
@@ -514,6 +519,24 @@ form:
     suggestion_emoji: "Emoji (optionnel)"
     suggestion_notes: "Notes supplémentaires sur l'accessibilité (optionnel)"
     suggestion_notes_placeholder: "p.ex. Entrée de plain-pied, parking pour fauteuils roulants disponible ..."
+
+profile:
+    title: "Mon profil – Endlech.lu"
+    heading: "Mon profil"
+    subtitle: "Gérez vos données personnelles"
+    member_since: "Membre depuis le %date%"
+    section_info: "Données personnelles"
+    section_password: "Modifier le mot de passe"
+    form:
+        avatar: "Photo de profil"
+        avatar_hint: "JPG, PNG ou WebP, max. 2 Mo"
+        current_password: "Mot de passe actuel"
+        new_password: "Nouveau mot de passe"
+        new_password_confirm: "Confirmer le nouveau mot de passe"
+        save: "Enregistrer les modifications"
+        change_password: "Modifier le mot de passe"
+        delete_avatar: "Supprimer la photo de profil"
+        delete_avatar_confirm: "Voulez-vous vraiment supprimer la photo de profil ?"
 
 verified:
     badge: "Vérifié"

@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $verificationTokenExpiresAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarFilename = null;
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
@@ -166,6 +169,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->verificationTokenExpiresAt = new \DateTimeImmutable('+24 hours');
 
         return $this->verificationToken;
+    }
+
+    public function getAvatarFilename(): ?string
+    {
+        return $this->avatarFilename;
+    }
+
+    public function setAvatarFilename(?string $avatarFilename): static
+    {
+        $this->avatarFilename = $avatarFilename;
+
+        return $this;
+    }
+
+    public function getAvatarUrl(): ?string
+    {
+        return $this->avatarFilename ? '/uploads/avatars/' . $this->avatarFilename : null;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

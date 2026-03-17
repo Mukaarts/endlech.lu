@@ -30,6 +30,13 @@ ordering:
     url_blank: "Bitte gib eine URL oder Telefonnummer ein."
     url_max: "Die URL darf maximal {{ limit }} Zeichen lang sein."
 
+profile:
+    avatar_max_size: "Das Profilbild darf maximal {{ limit }} groß sein."
+    avatar_mime_type: "Bitte lade ein Bild im Format JPG, PNG oder WebP hoch."
+    current_password_blank: "Bitte gib dein aktuelles Passwort ein."
+    new_password_blank: "Bitte gib ein neues Passwort ein."
+    new_password_min: "Das neue Passwort muss mindestens {{ limit }} Zeichen lang sein."
+
 suggestion:
     name_blank: "Bitte gib den Namen ein."
     name_max: "Der Name darf maximal {{ limit }} Zeichen lang sein."

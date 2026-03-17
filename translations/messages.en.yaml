@@ -6,6 +6,7 @@ nav:
     logout: "Log Out"
     login: "Login"
     join: "Join Us"
+    profile: "My Profile"
 
 footer:
     tagline: "The platform for accessible dining in Luxembourg. Together for more inclusion."
@@ -419,6 +420,10 @@ flash:
     suggest_success: "Thank you for your suggestion! We'll review it as soon as possible."
     suggestion_approved: "\"%name%\" has been approved and added as a restaurant."
     suggestion_rejected: "Suggestion \"%name%\" has been rejected."
+    profile_updated: "Profile updated successfully."
+    profile_password_changed: "Password changed successfully."
+    profile_wrong_password: "The current password is incorrect."
+    profile_avatar_deleted: "Profile picture removed successfully."
 
 email:
     verify_subject: "Confirm your email address"
@@ -514,6 +519,24 @@ form:
     suggestion_emoji: "Emoji (optional)"
     suggestion_notes: "Additional accessibility notes (optional)"
     suggestion_notes_placeholder: "e.g. Step-free entrance, wheelchair parking available ..."
+
+profile:
+    title: "My Profile – Endlech.lu"
+    heading: "My Profile"
+    subtitle: "Manage your personal information"
+    member_since: "Member since %date%"
+    section_info: "Personal Information"
+    section_password: "Change Password"
+    form:
+        avatar: "Profile Picture"
+        avatar_hint: "JPG, PNG or WebP, max. 2 MB"
+        current_password: "Current Password"
+        new_password: "New Password"
+        new_password_confirm: "Confirm New Password"
+        save: "Save Changes"
+        change_password: "Change Password"
+        delete_avatar: "Remove Profile Picture"
+        delete_avatar_confirm: "Really remove profile picture?"
 
 verified:
     badge: "Verified"

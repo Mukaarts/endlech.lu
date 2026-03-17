@@ -30,6 +30,13 @@ ordering:
     url_blank: "Veuillez saisir une URL ou un numéro de téléphone."
     url_max: "L'URL ne doit pas dépasser {{ limit }} caractères."
 
+profile:
+    avatar_max_size: "La photo de profil ne doit pas dépasser {{ limit }}."
+    avatar_mime_type: "Veuillez télécharger une image au format JPG, PNG ou WebP."
+    current_password_blank: "Veuillez saisir votre mot de passe actuel."
+    new_password_blank: "Veuillez saisir un nouveau mot de passe."
+    new_password_min: "Le nouveau mot de passe doit comporter au moins {{ limit }} caractères."
+
 suggestion:
     name_blank: "Veuillez saisir le nom."
     name_max: "Le nom ne doit pas dépasser {{ limit }} caractères."

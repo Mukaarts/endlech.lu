@@ -6,6 +6,7 @@ nav:
     logout: "Abmelden"
     login: "Login"
     join: "Mitmachen"
+    profile: "Mein Profil"
 
 footer:
     tagline: "Die Plattform für barrierefreie Gastronomie in Luxemburg. Gemeinsam für mehr Inklusion."
@@ -419,6 +420,10 @@ flash:
     suggest_success: "Danke für deinen Vorschlag! Wir prüfen ihn so bald wie möglich."
     suggestion_approved: "„%name%\u201C wurde genehmigt und als Restaurant hinzugefügt."
     suggestion_rejected: "Vorschlag „%name%\u201C wurde abgelehnt."
+    profile_updated: "Profil erfolgreich aktualisiert."
+    profile_password_changed: "Passwort erfolgreich geändert."
+    profile_wrong_password: "Das aktuelle Passwort ist nicht korrekt."
+    profile_avatar_deleted: "Profilbild erfolgreich entfernt."
 
 email:
     verify_subject: "Bestätige deine E-Mail-Adresse"
@@ -514,6 +519,24 @@ form:
     suggestion_emoji: "Emoji (optional)"
     suggestion_notes: "Weitere Hinweise zur Barrierefreiheit (optional)"
     suggestion_notes_placeholder: "z.B. Eingang stufenlos, Parkplatz für Rollstuhlfahrer vorhanden ..."
+
+profile:
+    title: "Mein Profil – Endlech.lu"
+    heading: "Mein Profil"
+    subtitle: "Verwalte deine persönlichen Daten"
+    member_since: "Mitglied seit %date%"
+    section_info: "Persönliche Daten"
+    section_password: "Passwort ändern"
+    form:
+        avatar: "Profilbild"
+        avatar_hint: "JPG, PNG oder WebP, max. 2 MB"
+        current_password: "Aktuelles Passwort"
+        new_password: "Neues Passwort"
+        new_password_confirm: "Neues Passwort bestätigen"
+        save: "Änderungen speichern"
+        change_password: "Passwort ändern"
+        delete_avatar: "Profilbild entfernen"
+        delete_avatar_confirm: "Profilbild wirklich entfernen?"
 
 verified:
     badge: "Verifiziert"
