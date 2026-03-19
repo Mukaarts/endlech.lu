@@ -6,7 +6,6 @@ use App\Entity\Restaurant;
 use App\Form\RestaurantType;
 use App\Repository\RestaurantImageRepository;
 use App\Repository\RestaurantRepository;
-use App\Repository\RestaurantSuggestionRepository;
 use App\Service\ImageUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,15 +23,6 @@ final class AdminRestaurantController extends AbstractController
 {
     public function __construct(private readonly TranslatorInterface $translator)
     {
-    }
-    #[Route('', name: 'admin_dashboard')]
-    public function dashboard(RestaurantRepository $restaurantRepository, RestaurantSuggestionRepository $suggestionRepository): Response
-    {
-        return $this->render('admin/dashboard.html.twig', [
-            'restaurantCount' => $restaurantRepository->count(),
-            'pendingSuggestionCount' => $suggestionRepository->countPending(),
-            'verifiedCount' => $restaurantRepository->countVerified(),
-        ]);
     }
 
     #[Route('/restaurants', name: 'admin_restaurant_index')]

@@ -99,4 +99,26 @@ class RestaurantRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function countCreatedSince(\DateTimeImmutable $since): int
+    {
+        return (int) $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->where('r.createdAt >= :since')
+            ->setParameter('since', $since)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return Restaurant[]
+     */
+    public function findRecent(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
