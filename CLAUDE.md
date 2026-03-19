@@ -199,6 +199,15 @@ Controller: `ProfileController` — 4 Routen (`app_profile`, `app_profile_edit`,
 Template: `templates/profile/index.html.twig`, `templates/partials/_avatar.html.twig`.
 Migration: `Version20260317000000`.
 
+## Restaurant: submittedBy (Issue #63)
+Feld: `submittedBy` (ManyToOne User, nullable, SET NULL) — der Nutzer, der das Restaurant eingereicht hat.
+Getter/Setter: `getSubmittedBy()`, `setSubmittedBy()`.
+Repository: `RestaurantRepository::findBySubmitter(User $user): Restaurant[]` — alle Restaurants eines Einreichers, sortiert nach `createdAt DESC`.
+Profil-Template: Sektion "Meine Einreichungen" in `templates/profile/index.html.twig` — zeigt Emoji, Name (Link), Stadt, Datum, Verifizierungsstatus.
+Suggestion-Approval: `AdminSuggestionController::approve()` setzt `submittedBy` automatisch aus `suggestion.suggestedBy`.
+Migration: `Version20260319000000`.
+Fixtures: Admin → 3 verifizierte, User → 3 unverifizierte, Rest → null.
+
 ## Entity: OrderingOption (Issue #43)
 Felder: id (int, PK), platform (VARCHAR 20 – Werte aus `App\Enum\OrderingPlatform`), url (VARCHAR 500), restaurant (ManyToOne Restaurant, CASCADE DELETE).
 Collection auf Restaurant: `$orderingOptions` (OneToMany, cascade persist+remove, orphanRemoval).

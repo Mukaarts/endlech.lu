@@ -319,6 +319,16 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             ],
         ];
 
+        // Zuordnung: Restaurant-Name → Submitter-Referenz
+        $submitterMap = [
+            'Pizzeria Bella Vista' => UserFixtures::REFERENCE_ADMIN,
+            'Sushi Zen'            => UserFixtures::REFERENCE_ADMIN,
+            'Green Bowl'           => UserFixtures::REFERENCE_ADMIN,
+            'Umami Corner'         => UserFixtures::REFERENCE_USER,
+            'Burger & Co.'         => UserFixtures::REFERENCE_USER,
+            'Café Nordstad'        => UserFixtures::REFERENCE_USER,
+        ];
+
         foreach ($restaurants as $data) {
             $restaurant = new Restaurant();
             $restaurant->setName($data['name']);
@@ -352,6 +362,10 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             if ($isVerified) {
                 $restaurant->setVerifiedAt(new \DateTimeImmutable('2026-01-15'));
                 $restaurant->setVerifiedBy($this->getReference(UserFixtures::REFERENCE_ADMIN, User::class));
+            }
+
+            if (isset($submitterMap[$data['name']])) {
+                $restaurant->setSubmittedBy($this->getReference($submitterMap[$data['name']], User::class));
             }
 
             foreach ($data['orderingOptions'] ?? [] as [$platform, $url]) {

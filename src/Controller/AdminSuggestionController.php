@@ -56,6 +56,7 @@ final class AdminSuggestionController extends AbstractController
         $restaurant->setHasAccessibleToilet($suggestion->hasAccessibleToilet());
         $restaurant->setAllowsAssistanceDogs($suggestion->allowsAssistanceDogs());
         $restaurant->setHasBrightLighting($suggestion->hasBrightLighting());
+        $restaurant->setSubmittedBy($suggestion->getSuggestedBy());
 
         $suggestion->setStatus(RestaurantSuggestion::STATUS_APPROVED);
 

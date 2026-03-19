@@ -77,6 +77,10 @@ class Restaurant
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $verifiedBy = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $submittedBy = null;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $spokenLanguages = [];
@@ -403,6 +407,18 @@ class Restaurant
     public function setVerifiedBy(?User $verifiedBy): static
     {
         $this->verifiedBy = $verifiedBy;
+
+        return $this;
+    }
+
+    public function getSubmittedBy(): ?User
+    {
+        return $this->submittedBy;
+    }
+
+    public function setSubmittedBy(?User $submittedBy): static
+    {
+        $this->submittedBy = $submittedBy;
 
         return $this;
     }

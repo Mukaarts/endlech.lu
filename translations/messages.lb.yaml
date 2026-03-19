@@ -552,6 +552,10 @@ profile:
     member_since: "Member säit %date%"
     section_info: "Perséinlech Donnéeën"
     section_password: "Passwuert änneren"
+    section_submissions: "Meng Abgaben"
+    submitted_on: "Agereecht den %date%"
+    submission_pending: "Aussteend"
+    no_submissions: "Du hues nach keng Restauranten agereecht. Schlo e Restaurant vir an et erschéngt hei, soubal et ugeholl gëtt!"
     form:
         avatar: "Profilbild"
         avatar_hint: "JPG, PNG oder WebP, max. 2 MB"

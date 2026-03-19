@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Restaurant;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -118,6 +119,19 @@ class RestaurantRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('r')
             ->orderBy('r.createdAt', 'DESC')
             ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Restaurant[]
+     */
+    public function findBySubmitter(User $user): array
+    {
+        return $this->createQueryBuilder('r')
+            ->where('r.submittedBy = :user')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\ChangePasswordType;
 use App\Form\ProfileType;
+use App\Repository\RestaurantRepository;
 use App\Service\AvatarUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ final class ProfileController extends AbstractController
 {
     public function __construct(
         private readonly TranslatorInterface $translator,
+        private readonly RestaurantRepository $restaurantRepository,
     ) {
     }
 
@@ -38,6 +40,7 @@ final class ProfileController extends AbstractController
         return $this->render('profile/index.html.twig', [
             'profileForm' => $profileForm,
             'passwordForm' => $passwordForm,
+            'submittedRestaurants' => $this->restaurantRepository->findBySubmitter($this->getUser()),
         ]);
     }
 
@@ -68,6 +71,7 @@ final class ProfileController extends AbstractController
         return $this->render('profile/index.html.twig', [
             'profileForm' => $profileForm,
             'passwordForm' => $passwordForm,
+            'submittedRestaurants' => $this->restaurantRepository->findBySubmitter($this->getUser()),
         ]);
     }
 
@@ -103,6 +107,7 @@ final class ProfileController extends AbstractController
         return $this->render('profile/index.html.twig', [
             'profileForm' => $profileForm,
             'passwordForm' => $passwordForm,
+            'submittedRestaurants' => $this->restaurantRepository->findBySubmitter($this->getUser()),
         ]);
     }
 
