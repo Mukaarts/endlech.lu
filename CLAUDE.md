@@ -70,7 +70,7 @@ assets/
 
 migrations/              # Doctrine migrations (DoctrineMigrations namespace)
 tests/                   # PHPUnit tests (empty - MVP)
-translations/            # i18n files (empty - MVP)
+translations/            # i18n files (de, en, fr, lb)
 public/                  # Web root (index.php front controller)
 public/images/platforms/    # SVG logos for delivery platforms (Uber Eats, Deliveroo, etc.)
 public/uploads/restaurants/ # Uploaded restaurant images (gitignored except .gitkeep)
@@ -149,7 +149,7 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `app_login`             | `/login`       | `SecurityController::login()`       |
 | `app_register`          | `/register`    | `RegistrationController::register()`|
 | `app_logout`            | `/logout`      | `SecurityController::logout()`      |
-| `admin_dashboard`       | `/admin`       | `AdminRestaurantController::dashboard()` |
+| `admin_dashboard`       | `/admin`       | `AdminDashboardController::dashboard()` |
 | `admin_restaurant_index`| `/admin/restaurants` | `AdminRestaurantController::index()` |
 | `admin_restaurant_new`  | `/admin/restaurants/neu` | `AdminRestaurantController::new()` |
 | `admin_restaurant_edit` | `/admin/restaurants/{id}/bearbeiten` | `AdminRestaurantController::edit()` |
