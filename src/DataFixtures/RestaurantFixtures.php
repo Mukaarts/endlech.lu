@@ -131,6 +131,9 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'email'                  => 'reservierung@lejardin.lu',
                 'website'                => 'https://www.lejardin.lu',
                 'facebookUrl'            => 'https://facebook.com/lejardinbrasserie',
+                'orderingOptions'        => [
+                    [OrderingPlatform::WOLT, 'https://wolt.com/lu/restaurant/le-jardin-brasserie'],
+                ],
             ],
             [
                 'name'                   => 'Steakhaus Moselle',
@@ -206,6 +209,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'orderingOptions'        => [
                     [OrderingPlatform::DELIVEROO, 'https://deliveroo.lu/menu/luxembourg/sushi-zen'],
                     [OrderingPlatform::JUST_EAT, 'https://www.just-eat.lu/menu/sushi-zen'],
+                    [OrderingPlatform::GOOSTY, 'https://goosty.lu/sushi-zen'],
                 ],
             ],
             [
@@ -256,6 +260,9 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'email'                  => 'ciao@trattoriaroma.lu',
                 'website'                => 'https://www.trattoriaroma.lu',
                 'instagramUrl'           => 'https://instagram.com/trattoriaroma.lu',
+                'orderingOptions'        => [
+                    [OrderingPlatform::WEDELY, 'https://wedely.com/trattoria-roma'],
+                ],
             ],
             [
                 'name'                   => 'Green Bowl',
