@@ -19,6 +19,42 @@
             </div>
         </div>
 
+        {# Meine Einreichungen #}
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+            <h2 class="text-lg font-bold text-gray-900 mb-6">{{ 'profile.section_submissions'|trans }}</h2>
+
+            {% if submittedRestaurants is not empty %}
+                <div class="space-y-4">
+                    {% for restaurant in submittedRestaurants %}
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="text-2xl flex-shrink-0">{{ restaurant.emoji }}</span>
+                                <div class="min-w-0">
+                                    <a href="{{ path('app_restaurant_show', {id: restaurant.id}) }}" class="text-sm font-semibold text-purple-700 hover:text-purple-900 transition truncate block">
+                                        {{ restaurant.name }}
+                                    </a>
+                                    <p class="text-xs text-gray-500 mt-0.5">
+                                        {{ restaurant.city }} · {{ 'profile.submitted_on'|trans({'%date%': restaurant.createdAt|date('d.m.Y')}) }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0 ml-4">
+                                {% if restaurant.isVerified %}
+                                    {% include 'partials/_verified_badge.html.twig' with {size: 'sm'} %}
+                                {% else %}
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                        ⏳ {{ 'profile.submission_pending'|trans }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-sm text-gray-500">{{ 'profile.no_submissions'|trans }}</p>
+            {% endif %}
+        </div>
+
         {# Profil-Formular #}
         <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
             <h2 class="text-lg font-bold text-gray-900 mb-6">{{ 'profile.section_info'|trans }}</h2>

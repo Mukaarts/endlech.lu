@@ -552,6 +552,10 @@ profile:
     member_since: "Membre depuis le %date%"
     section_info: "Données personnelles"
     section_password: "Modifier le mot de passe"
+    section_submissions: "Mes contributions"
+    submitted_on: "Soumis le %date%"
+    submission_pending: "En attente"
+    no_submissions: "Vous n'avez encore soumis aucun restaurant. Proposez un restaurant et il apparaîtra ici une fois approuvé !"
     form:
         avatar: "Photo de profil"
         avatar_hint: "JPG, PNG ou WebP, max. 2 Mo"

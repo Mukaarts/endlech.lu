@@ -552,6 +552,10 @@ profile:
     member_since: "Member since %date%"
     section_info: "Personal Information"
     section_password: "Change Password"
+    section_submissions: "My Submissions"
+    submitted_on: "Submitted on %date%"
+    submission_pending: "Pending"
+    no_submissions: "You haven't submitted any restaurants yet. Suggest a restaurant and it will appear here once approved!"
     form:
         avatar: "Profile Picture"
         avatar_hint: "JPG, PNG or WebP, max. 2 MB"

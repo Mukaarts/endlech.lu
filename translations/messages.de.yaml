@@ -552,6 +552,10 @@ profile:
     member_since: "Mitglied seit %date%"
     section_info: "Persönliche Daten"
     section_password: "Passwort ändern"
+    section_submissions: "Meine Einreichungen"
+    submitted_on: "Eingereicht am %date%"
+    submission_pending: "Ausstehend"
+    no_submissions: "Du hast noch keine Restaurants eingereicht. Schlage ein Restaurant vor und es erscheint hier, sobald es genehmigt wird!"
     form:
         avatar: "Profilbild"
         avatar_hint: "JPG, PNG oder WebP, max. 2 MB"
