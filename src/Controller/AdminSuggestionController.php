@@ -64,6 +64,21 @@ final class AdminSuggestionController extends AbstractController
         $restaurant->setHasAccessibleToilet($suggestion->hasAccessibleToilet());
         $restaurant->setAllowsAssistanceDogs($suggestion->allowsAssistanceDogs());
         $restaurant->setHasBrightLighting($suggestion->hasBrightLighting());
+        $restaurant->setHasChangingTable($suggestion->hasChangingTable());
+        $restaurant->setHasDisabledParking($suggestion->hasDisabledParking());
+        $restaurant->setAcceptsCash($suggestion->acceptsCash());
+        $restaurant->setAcceptsCard($suggestion->acceptsCard());
+        $restaurant->setAcceptsPayconiq($suggestion->acceptsPayconiq());
+        $restaurant->setIsVegan($suggestion->isVegan());
+        $restaurant->setIsVegetarian($suggestion->isVegetarian());
+        $restaurant->setIsHalal($suggestion->isHalal());
+        $restaurant->setSpokenLanguages($suggestion->getSpokenLanguages());
+        $restaurant->setPhone($suggestion->getPhone());
+        $restaurant->setEmail($suggestion->getEmail());
+        $restaurant->setWebsite($suggestion->getWebsite());
+        $restaurant->setInstagramUrl($suggestion->getInstagramUrl());
+        $restaurant->setFacebookUrl($suggestion->getFacebookUrl());
+        $restaurant->setTiktokUrl($suggestion->getTiktokUrl());
         $restaurant->setSubmittedBy($suggestion->getSuggestedBy());
 
         $suggestion->setStatus(RestaurantSuggestion::STATUS_APPROVED);
