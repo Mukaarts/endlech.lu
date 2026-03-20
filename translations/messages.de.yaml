@@ -153,6 +153,7 @@ restaurant:
         verified_title: "Von Endlech.lu persönlich vor Ort geprüft"
         verified_text: "Die Barrierefreiheitsangaben dieses Lokals wurden von unserem Team persönlich verifiziert."
         verified_date: "Geprüft am %date%."
+        rating_badge_title: "Bewertung: %rating% von 10"
 
 filter:
     title: "Filter"

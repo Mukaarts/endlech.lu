@@ -153,6 +153,7 @@ restaurant:
         verified_title: "Personally verified on-site by Endlech.lu"
         verified_text: "The accessibility information for this venue has been personally verified by our team."
         verified_date: "Verified on %date%."
+        rating_badge_title: "Rating: %rating% out of 10"
 
 filter:
     title: "Filter"
