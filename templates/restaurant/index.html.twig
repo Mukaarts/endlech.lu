@@ -279,9 +279,6 @@
                                         {% if restaurant.isHalal %}
                                             <span title="{{ 'dietary.halal'|trans }}" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">☪️</span>
                                         {% endif %}
-                                        {% for lang in restaurant.spokenLanguages %}
-                                            <span title="{{ lang.label }}" class="text-sm bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100">{{ lang.flag }}</span>
-                                        {% endfor %}
                                     </div>
 
                                     {% if restaurant.accessibilityNotes is not empty %}

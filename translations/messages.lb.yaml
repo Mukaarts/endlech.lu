@@ -153,6 +153,7 @@ restaurant:
         verified_title: "Vun Endlech.lu perséinlech virun Ort gepréift"
         verified_text: "D'Barrierefreiheetsangaben vun dësem Lokal goufe vun eisem Team perséinlech verifizéiert."
         verified_date: "Gepréift den %date%."
+        rating_badge_title: "Bewäertung: %rating% vun 10"
 
 filter:
     title: "Filter"

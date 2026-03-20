@@ -1,0 +1,27 @@
+{# Rating & Sprach-Badges für Hero-Bereich #}
+{% if restaurant.rating is not null or restaurant.spokenLanguages is not empty %}
+    <div class="flex items-center {{ centered|default(false) ? 'justify-center' : '' }} gap-2 mt-3 flex-wrap">
+        {# Rating-Badge (farbcodiert) #}
+        {% if restaurant.rating is not null %}
+            {% if restaurant.rating >= 7 %}
+                {% set ratingClass = 'bg-green-500 text-white' %}
+            {% elseif restaurant.rating >= 4 %}
+                {% set ratingClass = 'bg-amber-500 text-white' %}
+            {% else %}
+                {% set ratingClass = 'bg-red-500 text-white' %}
+            {% endif %}
+            <span class="inline-flex items-center gap-1 {{ ratingClass }} text-sm font-bold px-3 py-1 rounded-full shadow-sm"
+                  title="{{ 'restaurant.detail.rating_badge_title'|trans({'%rating%': restaurant.rating}) }}">
+                ⭐ {{ restaurant.rating }}/10
+            </span>
+        {% endif %}
+
+        {# Sprach-Flag-Badges #}
+        {% for lang in restaurant.spokenLanguages %}
+            <span class="inline-flex items-center bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-2.5 py-1 rounded-full border border-white/30"
+                  title="{{ lang.label }}">
+                {{ lang.flag }}
+            </span>
+        {% endfor %}
+    </div>
+{% endif %}

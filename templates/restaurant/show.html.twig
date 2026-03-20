@@ -37,6 +37,7 @@
                     {% endif %}
                     {% include 'partials/_verified_badge.html.twig' with {restaurant: restaurant, size: 'lg'} %}
                 </div>
+                {% include 'partials/_hero_badges.html.twig' with {restaurant: restaurant} %}
             </div>
         </div>
         {% else %}
@@ -64,6 +65,7 @@
                     {% endif %}
                     {% include 'partials/_verified_badge.html.twig' with {restaurant: restaurant, size: 'lg'} %}
                 </div>
+                {% include 'partials/_hero_badges.html.twig' with {restaurant: restaurant, centered: true} %}
             </div>
         </div>
         {% endif %}
@@ -90,17 +92,6 @@
                     </p>
                 </div>
             </div>
-            {% endif %}
-
-            {# --- BEWERTUNG --- #}
-            {% if restaurant.rating is not null %}
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                    <h2 class="text-lg font-bold text-gray-800 mb-3">{{ 'restaurant.detail.rating'|trans }}</h2>
-                    <div class="flex items-center gap-3">
-                        <div class="bg-cyan-50 text-cyan-700 px-4 py-2 rounded-lg text-2xl font-bold border border-cyan-100">{{ restaurant.rating }}</div>
-                        <span class="text-gray-500 text-sm">{{ 'restaurant.detail.of_10'|trans }}</span>
-                    </div>
-                </div>
             {% endif %}
 
             {# --- ÖFFNUNGSZEITEN --- #}
@@ -370,20 +361,6 @@
                             </a>
                         {% endif %}
 
-                    </div>
-                </div>
-            {% endif %}
-
-            {# --- GESPROCHENE SPRACHEN --- #}
-            {% if restaurant.spokenLanguages is not empty %}
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4">{{ 'languages.title'|trans }}</h2>
-                    <div class="flex flex-wrap gap-2">
-                        {% for lang in restaurant.spokenLanguages %}
-                            <span class="inline-flex items-center gap-1.5 text-sm bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full border border-blue-100 font-medium">
-                                {{ lang.flag }} {{ lang.label }}
-                            </span>
-                        {% endfor %}
                     </div>
                 </div>
             {% endif %}
