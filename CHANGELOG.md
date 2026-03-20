@@ -8,6 +8,7 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 ## [Unreleased]
 
 ### Added
+- **Behindertenparkplatz (Issue #66):** Neues Barrierefreiheits-Kriterium `hasDisabledParking` (🅿️). Filter-Checkbox in Sidebar, Badge auf Restaurant-Karten, Kachel auf Detailseite, Icon in Admin-Tabelle, Checkbox im Admin-Formular. Übersetzungen in 4 Sprachen (de, en, fr, lb). 5 Fixture-Restaurants mit Parkplatz.
 - **Profil: Eingereichte Restaurants (Issue #63):** Neue Sektion "Meine Einreichungen" auf der Profilseite zeigt vom Nutzer eingereichte Restaurants mit Verifizierungsstatus. Neues `submittedBy`-Feld auf der Restaurant-Entity (ManyToOne User, SET NULL). Bei Genehmigung eines Community-Vorschlags wird der Einreicher automatisch gesetzt. Übersetzungen in 4 Sprachen (de, en, fr, lb).
 - **Admin Dashboard Statistiken (Issue #62):** Erweitertes Dashboard mit 7 Stat-Karten (Restaurants, Verifizierte, Offene Vorschläge, Benutzer, Restaurants diesen Monat, Benutzer diesen Monat, Fotos). Tabellen für zuletzt hinzugefügte Restaurants und zuletzt registrierte Benutzer. Neuer `AdminStatsService` für zentralisierte Statistik-Abfragen. Dashboard-Route in eigenen `AdminDashboardController` ausgelagert. Übersetzungen in 4 Sprachen (de, en, fr, lb).
 - **Neue Lieferplattformen (Issue #67):** Wolt, Wedely und Goosty als Bestelloptionen. SVG-Logos für Marken-Plattformen auf der Detailseite. Emoji-Fallback für generische Optionen (Telefon, Webseite, Andere).

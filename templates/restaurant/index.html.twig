@@ -85,11 +85,18 @@
                                     <span class="text-sm text-gray-600 group-hover:text-purple-700">💡 {{ 'filter.lighting'|trans }}</span>
                                 </label>
 
-                                <label class="flex items-center gap-3 cursor-pointer group">
+                                <label class="flex items-center gap-3 mb-2 cursor-pointer group">
                                     <input type="checkbox" name="changing_table" value="1"
                                            class="rounded text-purple-600 focus:ring-purple-500 border-gray-300"
                                            {{ filters.changing_table ? 'checked' : '' }}>
                                     <span class="text-sm text-gray-600 group-hover:text-purple-700">🍼 {{ 'filter.changing_table'|trans }}</span>
+                                </label>
+
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="disabled_parking" value="1"
+                                           class="rounded text-purple-600 focus:ring-purple-500 border-gray-300"
+                                           {{ filters.disabled_parking ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-600 group-hover:text-purple-700">🅿️ {{ 'filter.disabled_parking'|trans }}</span>
                                 </label>
                             </div>
 
@@ -134,7 +141,7 @@
                                 {{ 'filter.apply'|trans }}
                             </button>
 
-                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.changing_table ? 1 : 0) + (filters.open ? 1 : 0) + (filters.vegan ? 1 : 0) + (filters.vegetarian ? 1 : 0) + (filters.halal ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) + (filters.lang|length) %}
+                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.changing_table ? 1 : 0) + (filters.disabled_parking ? 1 : 0) + (filters.open ? 1 : 0) + (filters.vegan ? 1 : 0) + (filters.vegetarian ? 1 : 0) + (filters.halal ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) + (filters.lang|length) %}
                             {% if activeCount > 0 %}
                                 <a href="{{ path('app_restaurant_index', {sort: sort}) }}" class="block text-center text-xs text-red-500 hover:text-red-700 mt-3 transition">
                                     × {{ 'filter.reset'|trans({'%count%': activeCount}) }}
@@ -154,8 +161,9 @@
                         toilet:         filters.toilet         ? 1 : null,
                         dogs:           filters.dogs           ? 1 : null,
                         lighting:       filters.lighting       ? 1 : null,
-                        changing_table: filters.changing_table ? 1 : null,
-                        open:           filters.open           ? 1 : null,
+                        changing_table:   filters.changing_table   ? 1 : null,
+                        disabled_parking: filters.disabled_parking ? 1 : null,
+                        open:             filters.open             ? 1 : null,
                         vegan:          filters.vegan          ? 1 : null,
                         vegetarian:     filters.vegetarian     ? 1 : null,
                         halal:          filters.halal          ? 1 : null,
@@ -193,6 +201,7 @@
                         {% if filters.dogs %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🐕 {{ 'chip.dogs'|trans }}</span>{% endif %}
                         {% if filters.lighting %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">💡 {{ 'chip.lighting'|trans }}</span>{% endif %}
                         {% if filters.changing_table %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🍼 {{ 'chip.changing_table'|trans }}</span>{% endif %}
+                        {% if filters.disabled_parking %}<span class="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full border border-purple-200">🅿️ {{ 'chip.disabled_parking'|trans }}</span>{% endif %}
                         {% if filters.vegan %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">🌱 {{ 'chip.vegan'|trans }}</span>{% endif %}
                         {% if filters.vegetarian %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">🥗 {{ 'chip.vegetarian'|trans }}</span>{% endif %}
                         {% if filters.halal %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">☪️ {{ 'chip.halal'|trans }}</span>{% endif %}
@@ -257,6 +266,9 @@
                                         {% endif %}
                                         {% if restaurant.hasChangingTable %}
                                             <span title="{{ 'accessibility.changing_table'|trans }}" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🍼</span>
+                                        {% endif %}
+                                        {% if restaurant.hasDisabledParking %}
+                                            <span title="{{ 'accessibility.disabled_parking'|trans }}" class="text-sm bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">🅿️</span>
                                         {% endif %}
                                         {% if restaurant.isVegan %}
                                             <span title="{{ 'dietary.vegan'|trans }}" class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-100">🌱</span>

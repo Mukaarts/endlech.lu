@@ -101,6 +101,10 @@ class RestaurantType extends AbstractType
                 'label' => 'form.changing_table',
                 'required' => false,
             ])
+            ->add('hasDisabledParking', CheckboxType::class, [
+                'label' => 'form.disabled_parking',
+                'required' => false,
+            ])
             ->add('acceptsCash', CheckboxType::class, [
                 'label' => 'form.accepts_cash',
                 'required' => false,

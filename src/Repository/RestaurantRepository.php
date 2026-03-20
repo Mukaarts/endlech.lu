@@ -53,6 +53,9 @@ class RestaurantRepository extends ServiceEntityRepository
         if (!empty($filters['changing_table'])) {
             $qb->andWhere('r.hasChangingTable = true');
         }
+        if (!empty($filters['disabled_parking'])) {
+            $qb->andWhere('r.hasDisabledParking = true');
+        }
         if (!empty($filters['open'])) {
             $qb->andWhere('r.isOpen = true');
         }
