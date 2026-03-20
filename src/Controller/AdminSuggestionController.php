@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Restaurant;
 use App\Entity\RestaurantSuggestion;
+use App\Repository\CuisineRepository;
 use App\Repository\RestaurantSuggestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +40,7 @@ final class AdminSuggestionController extends AbstractController
     }
 
     #[Route('/{id}/genehmigen', name: 'admin_suggestion_approve', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function approve(RestaurantSuggestion $suggestion, Request $request, EntityManagerInterface $entityManager): Response
+    public function approve(RestaurantSuggestion $suggestion, Request $request, EntityManagerInterface $entityManager, CuisineRepository $cuisineRepository): Response
     {
         if (!$this->isCsrfTokenValid('approve-suggestion-' . $suggestion->getId(), $request->request->getString('_token'))) {
             $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
@@ -50,8 +51,15 @@ final class AdminSuggestionController extends AbstractController
         $restaurant = new Restaurant();
         $restaurant->setName($suggestion->getName());
         $restaurant->setCity($suggestion->getCity());
-        $restaurant->setCuisine($suggestion->getCuisine());
         $restaurant->setEmoji($suggestion->getEmoji());
+
+        $cuisineNames = array_map('trim', explode(',', $suggestion->getCuisine()));
+        foreach ($cuisineNames as $cuisineName) {
+            if ($cuisineName !== '') {
+                $cuisine = $cuisineRepository->findOrCreateByName($cuisineName);
+                $restaurant->addCuisine($cuisine);
+            }
+        }
         $restaurant->setIsWheelchairAccessible($suggestion->isWheelchairAccessible());
         $restaurant->setHasAccessibleToilet($suggestion->hasAccessibleToilet());
         $restaurant->setAllowsAssistanceDogs($suggestion->allowsAssistanceDogs());

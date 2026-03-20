@@ -2,9 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Cuisine;
 use App\Entity\OpeningHour;
 use App\Entity\Restaurant;
 use App\Enum\Language;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -24,10 +26,15 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\Valid;
 
 class RestaurantType extends AbstractType
 {
+    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -47,12 +54,17 @@ class RestaurantType extends AbstractType
                     new Length(max: 100, maxMessage: 'restaurant.city_max'),
                 ],
             ])
-            ->add('cuisine', TextType::class, [
-                'label' => 'form.cuisine',
-                'attr' => ['placeholder' => 'form.cuisine_placeholder'],
-                'constraints' => [
-                    new NotBlank(message: 'restaurant.cuisine_blank'),
-                    new Length(max: 80, maxMessage: 'restaurant.cuisine_max'),
+            ->add('cuisines', EntityType::class, [
+                'class' => Cuisine::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'required' => false,
+                'by_reference' => false,
+                'label' => 'form.cuisines',
+                'attr' => [
+                    'data-controller' => 'tom-select',
+                    'data-tom-select-url-value' => $this->urlGenerator->generate('api_cuisine_search'),
+                    'data-tom-select-create-url-value' => $this->urlGenerator->generate('api_cuisine_create'),
                 ],
             ])
             ->add('emoji', TextType::class, [

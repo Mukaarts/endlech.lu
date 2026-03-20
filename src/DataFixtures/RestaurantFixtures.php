@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Cuisine;
 use App\Entity\OpeningHour;
 use App\Entity\OrderingOption;
 use App\Entity\Restaurant;
@@ -16,7 +17,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
 {
     public function getDependencies(): array
     {
-        return [UserFixtures::class];
+        return [UserFixtures::class, CuisineFixtures::class];
     }
 
     public function load(ObjectManager $manager): void
@@ -25,7 +26,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Pizzeria Bella Vista',
                 'city'                   => 'Luxembourg-Ville',
-                'cuisine'                => 'Italienisch',
+                'cuisines'               => ['italienisch', 'pizza'],
                 'emoji'                  => '🍕',
                 'latitude'               => '49.61167200',
                 'longitude'              => '6.13194400',
@@ -60,7 +61,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Umami Corner',
                 'city'                   => 'Esch-Belval',
-                'cuisine'                => 'Asiatisch',
+                'cuisines'               => ['asiatisch'],
                 'emoji'                  => '🍜',
                 'latitude'               => '49.50200000',
                 'longitude'              => '5.94700000',
@@ -85,7 +86,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Burger & Co.',
                 'city'                   => 'Dudelange',
-                'cuisine'                => 'Fast Food',
+                'cuisines'               => ['fast-food', 'burger'],
                 'emoji'                  => '🍔',
                 'latitude'               => '49.48050000',
                 'longitude'              => '6.08780000',
@@ -119,7 +120,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Le Jardin Brasserie',
                 'city'                   => 'Kirchberg',
-                'cuisine'                => 'Französisch',
+                'cuisines'               => ['franzosisch', 'mediterran'],
                 'emoji'                  => '🥂',
                 'latitude'               => '49.62800000',
                 'longitude'              => '6.16100000',
@@ -150,7 +151,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Steakhaus Moselle',
                 'city'                   => 'Grevenmacher',
-                'cuisine'                => 'Steak & Grill',
+                'cuisines'               => ['steak-grill'],
                 'emoji'                  => '🥩',
                 'latitude'               => '49.67900000',
                 'longitude'              => '6.44100000',
@@ -175,7 +176,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Café Nordstad',
                 'city'                   => 'Diekirch',
-                'cuisine'                => 'Café & Bistro',
+                'cuisines'               => ['cafe-bistro'],
                 'emoji'                  => '☕',
                 'latitude'               => '49.86800000',
                 'longitude'              => '6.15900000',
@@ -200,7 +201,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Sushi Zen',
                 'city'                   => 'Strassen',
-                'cuisine'                => 'Japanisch',
+                'cuisines'               => ['japanisch', 'sushi'],
                 'emoji'                  => '🍣',
                 'latitude'               => '49.62100000',
                 'longitude'              => '6.07400000',
@@ -235,7 +236,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Wäinhaus am Markt',
                 'city'                   => 'Remich',
-                'cuisine'                => 'Luxemburgisch',
+                'cuisines'               => ['luxemburgisch'],
                 'emoji'                  => '🍷',
                 'latitude'               => '49.54500000',
                 'longitude'              => '6.36700000',
@@ -262,7 +263,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Trattoria Roma',
                 'city'                   => 'Ettelbruck',
-                'cuisine'                => 'Italienisch',
+                'cuisines'               => ['italienisch', 'pizza'],
                 'emoji'                  => '🍝',
                 'latitude'               => '49.84700000',
                 'longitude'              => '6.10400000',
@@ -293,7 +294,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Green Bowl',
                 'city'                   => 'Cloche d\'Or',
-                'cuisine'                => 'Vegetarisch & Vegan',
+                'cuisines'               => ['vegetarisch', 'vegan'],
                 'emoji'                  => '🥗',
                 'latitude'               => '49.58300000',
                 'longitude'              => '6.12500000',
@@ -327,7 +328,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             [
                 'name'                   => 'Brasserie du Grund',
                 'city'                   => 'Luxembourg-Grund',
-                'cuisine'                => 'Luxemburgisch',
+                'cuisines'               => ['luxemburgisch'],
                 'emoji'                  => '🍺',
                 'latitude'               => '49.60800000',
                 'longitude'              => '6.13400000',
@@ -365,7 +366,9 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             $restaurant = new Restaurant();
             $restaurant->setName($data['name']);
             $restaurant->setCity($data['city']);
-            $restaurant->setCuisine($data['cuisine']);
+            foreach ($data['cuisines'] ?? [] as $cuisineSlug) {
+                $restaurant->addCuisine($this->getReference('cuisine_' . $cuisineSlug, Cuisine::class));
+            }
             $restaurant->setEmoji($data['emoji']);
             $restaurant->setRating($data['rating']);
             $restaurant->setIsWheelchairAccessible($data['isWheelchairAccessible']);
