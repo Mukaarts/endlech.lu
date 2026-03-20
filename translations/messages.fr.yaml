@@ -55,6 +55,21 @@ home:
         text: "Aidez-nous à élargir la plateforme et à rendre le Luxembourg plus accessible."
         button: "Proposer un restaurant"
 
+opening_hours:
+    title: "Horaires d'ouverture"
+    today: "Aujourd'hui"
+    closed: "Fermé"
+    no_hours: "Aucun horaire d'ouverture indiqué"
+    opens_at: "Ouvre %day% à %time%"
+    opens_today_at: "Ouvre aujourd'hui à %time%"
+    day_1: "Lundi"
+    day_2: "Mardi"
+    day_3: "Mercredi"
+    day_4: "Jeudi"
+    day_5: "Vendredi"
+    day_6: "Samedi"
+    day_7: "Dimanche"
+
 status:
     open: "Ouvert"
     closed: "Fermé"
@@ -379,6 +394,8 @@ admin:
         accessibility_notes: "Notes sur l'accessibilité"
         notes_hint: "Format : ok:Texte ou warn:Texte"
         add_note: "+ Ajouter une note"
+        opening_hours: "Horaires d'ouverture"
+        opening_hours_hint: "Entrez les horaires d'ouverture pour chaque jour. Cochez 'Fermé' pour les jours de repos."
         cancel: "Annuler"
     suggestion:
         title: "Propositions de restaurants"

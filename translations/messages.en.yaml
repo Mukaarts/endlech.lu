@@ -55,6 +55,21 @@ home:
         text: "Help us expand the platform and make Luxembourg more accessible."
         button: "Suggest a Restaurant"
 
+opening_hours:
+    title: "Opening Hours"
+    today: "Today"
+    closed: "Closed"
+    no_hours: "No opening hours specified"
+    opens_at: "Opens %day% at %time%"
+    opens_today_at: "Opens today at %time%"
+    day_1: "Monday"
+    day_2: "Tuesday"
+    day_3: "Wednesday"
+    day_4: "Thursday"
+    day_5: "Friday"
+    day_6: "Saturday"
+    day_7: "Sunday"
+
 status:
     open: "Open"
     closed: "Closed"
@@ -379,6 +394,8 @@ admin:
         accessibility_notes: "Accessibility Notes"
         notes_hint: "Format: ok:Text or warn:Text"
         add_note: "+ Add note"
+        opening_hours: "Opening Hours"
+        opening_hours_hint: "Enter the opening hours for each day. Check 'Closed' for rest days."
         cancel: "Cancel"
     suggestion:
         title: "Restaurant Suggestions"

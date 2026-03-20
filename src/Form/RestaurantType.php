@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\OpeningHour;
 use App\Entity\Restaurant;
 use App\Enum\Language;
 use Symfony\Component\Form\AbstractType;
@@ -11,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
@@ -72,10 +75,6 @@ class RestaurantType extends AbstractType
                         notInRangeMessage: 'restaurant.rating_range',
                     ),
                 ],
-            ])
-            ->add('isOpen', CheckboxType::class, [
-                'label' => 'form.is_open',
-                'required' => false,
             ])
             ->add('isVerified', CheckboxType::class, [
                 'label' => 'form.is_verified',
@@ -203,6 +202,16 @@ class RestaurantType extends AbstractType
                     new Valid(),
                 ],
             ])
+            ->add('openingHours', CollectionType::class, [
+                'label' => 'admin.form.opening_hours',
+                'entry_type' => OpeningHourType::class,
+                'allow_add' => false,
+                'allow_delete' => false,
+                'by_reference' => false,
+                'constraints' => [
+                    new Valid(),
+                ],
+            ])
             ->add('accessibilityNotes', CollectionType::class, [
                 'label' => 'form.accessibility_notes',
                 'entry_type' => TextType::class,
@@ -221,6 +230,28 @@ class RestaurantType extends AbstractType
                 'prototype' => true,
                 'required' => false,
             ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            /** @var Restaurant|null $restaurant */
+            $restaurant = $event->getData();
+            if ($restaurant === null) {
+                return;
+            }
+
+            $existingDays = [];
+            foreach ($restaurant->getOpeningHours() as $oh) {
+                $existingDays[$oh->getDayOfWeek()] = true;
+            }
+
+            for ($day = 1; $day <= 7; ++$day) {
+                if (!isset($existingDays[$day])) {
+                    $oh = new OpeningHour();
+                    $oh->setDayOfWeek($day);
+                    $oh->setIsClosed(true);
+                    $restaurant->addOpeningHour($oh);
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

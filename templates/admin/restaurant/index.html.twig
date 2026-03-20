@@ -46,7 +46,7 @@
                         {% endif %}
                     </td>
                     <td class="px-4 py-3">
-                        {% if restaurant.isOpen %}
+                        {% if restaurant|is_open_now %}
                             <span class="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-bold border border-green-100">{{ 'status.open'|trans }}</span>
                         {% else %}
                             <span class="bg-red-50 text-red-700 px-2 py-0.5 rounded text-xs font-bold border border-red-100">{{ 'status.closed'|trans }}</span>

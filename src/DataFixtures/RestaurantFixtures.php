@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\OpeningHour;
 use App\Entity\OrderingOption;
 use App\Entity\Restaurant;
 use App\Entity\User;
@@ -27,7 +28,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Italienisch',
                 'emoji'                  => '🍕',
                 'rating'                 => 9.8,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => true,
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
@@ -48,6 +48,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'website'                => 'https://www.bellavista.lu',
                 'instagramUrl'           => 'https://instagram.com/bellavista.lu',
                 'facebookUrl'            => 'https://facebook.com/bellavista.lu',
+                'openingHours'           => [[1, '11:00', '22:00'], [2, '11:00', '22:00'], [3, '11:00', '22:00'], [4, '11:00', '22:00'], [5, '11:00', '22:00'], [6, '11:00', '22:00'], [7, '12:00', '21:00']],
                 'orderingOptions'        => [
                     [OrderingPlatform::UBER_EATS, 'https://www.ubereats.com/lu/store/pizzeria-bella-vista'],
                     [OrderingPlatform::WEBSITE, 'https://www.bellavista.lu'],
@@ -60,7 +61,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Asiatisch',
                 'emoji'                  => '🍜',
                 'rating'                 => null,
-                'isOpen'                 => false,
                 'isWheelchairAccessible' => false,
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
@@ -84,7 +84,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Fast Food',
                 'emoji'                  => '🍔',
                 'rating'                 => 8.5,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => true,
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
@@ -105,6 +104,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'instagramUrl'           => 'https://instagram.com/burgerandco.lu',
                 'facebookUrl'            => 'https://facebook.com/burgerandco.lu',
                 'tiktokUrl'              => 'https://tiktok.com/@burgerandco.lu',
+                'openingHours'           => [[1, '11:00', '23:00'], [2, '11:00', '23:00'], [3, '11:00', '23:00'], [4, '11:00', '23:00'], [5, '11:00', '23:00'], [6, '11:00', '23:00'], [7, '11:00', '23:00']],
                 'orderingOptions'        => [
                     [OrderingPlatform::JUST_EAT, 'https://www.just-eat.lu/menu/burger-and-co'],
                     [OrderingPlatform::PHONE, '+352 27 98 76 54'],
@@ -116,7 +116,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Französisch',
                 'emoji'                  => '🥂',
                 'rating'                 => 9.1,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => true,
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
@@ -135,6 +134,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'email'                  => 'reservierung@lejardin.lu',
                 'website'                => 'https://www.lejardin.lu',
                 'facebookUrl'            => 'https://facebook.com/lejardinbrasserie',
+                'openingHours'           => [[2, '12:00', '14:30'], [3, '12:00', '14:30'], [4, '12:00', '14:30'], [5, '12:00', '14:30'], [6, '12:00', '14:30']],
                 'orderingOptions'        => [
                     [OrderingPlatform::WOLT, 'https://wolt.com/lu/restaurant/le-jardin-brasserie'],
                 ],
@@ -145,7 +145,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Steak & Grill',
                 'emoji'                  => '🥩',
                 'rating'                 => 8.0,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => false,
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
@@ -161,6 +160,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'accessibilityNotes'     => ['warn:Zwei Stufen am Eingang', 'ok:Helle Innenbeleuchtung'],
                 'spokenLanguages'        => [Language::LU, Language::DE, Language::FR],
                 'phone'                  => '+352 75 11 22 33',
+                'openingHours'           => [[2, '17:00', '23:00'], [3, '17:00', '23:00'], [4, '17:00', '23:00'], [5, '17:00', '23:00'], [6, '17:00', '23:00'], [7, '12:00', '21:00']],
             ],
             [
                 'name'                   => 'Café Nordstad',
@@ -168,7 +168,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Café & Bistro',
                 'emoji'                  => '☕',
                 'rating'                 => 7.4,
-                'isOpen'                 => false,
                 'isWheelchairAccessible' => true,
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
@@ -192,7 +191,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Japanisch',
                 'emoji'                  => '🍣',
                 'rating'                 => 9.4,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => true,
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => false,
@@ -213,6 +211,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'website'                => 'https://www.sushizen.lu',
                 'instagramUrl'           => 'https://instagram.com/sushizen.lu',
                 'facebookUrl'            => 'https://facebook.com/sushizen.lu',
+                'openingHours'           => [[1, '11:30', '22:00'], [2, '11:30', '22:00'], [3, '11:30', '22:00'], [4, '11:30', '22:00'], [5, '11:30', '23:00'], [6, '11:30', '23:00'], [7, '12:00', '21:00']],
                 'orderingOptions'        => [
                     [OrderingPlatform::DELIVEROO, 'https://deliveroo.lu/menu/luxembourg/sushi-zen'],
                     [OrderingPlatform::JUST_EAT, 'https://www.just-eat.lu/menu/sushi-zen'],
@@ -225,7 +224,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Luxemburgisch',
                 'emoji'                  => '🍷',
                 'rating'                 => 8.8,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => false,
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
@@ -243,6 +241,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'phone'                  => '+352 23 66 77 88',
                 'website'                => 'https://www.wainhaus.lu',
                 'facebookUrl'            => 'https://facebook.com/wainhausammarkt',
+                'openingHours'           => [[2, '18:00', '01:00'], [3, '18:00', '01:00'], [4, '18:00', '01:00'], [5, '18:00', '01:00'], [6, '18:00', '01:00']],
             ],
             [
                 'name'                   => 'Trattoria Roma',
@@ -250,7 +249,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Italienisch',
                 'emoji'                  => '🍝',
                 'rating'                 => 8.2,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => true,
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => true,
@@ -269,6 +267,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'email'                  => 'ciao@trattoriaroma.lu',
                 'website'                => 'https://www.trattoriaroma.lu',
                 'instagramUrl'           => 'https://instagram.com/trattoriaroma.lu',
+                'openingHours'           => [[2, '11:00', '22:00'], [3, '11:00', '22:00'], [4, '11:00', '22:00'], [5, '11:00', '22:00'], [6, '11:00', '22:00'], [7, '11:00', '22:00']],
                 'orderingOptions'        => [
                     [OrderingPlatform::WEDELY, 'https://wedely.com/trattoria-roma'],
                 ],
@@ -279,7 +278,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Vegetarisch & Vegan',
                 'emoji'                  => '🥗',
                 'rating'                 => 9.0,
-                'isOpen'                 => true,
                 'isWheelchairAccessible' => true,
                 'hasAccessibleToilet'    => true,
                 'allowsAssistanceDogs'   => true,
@@ -300,6 +298,7 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'instagramUrl'           => 'https://instagram.com/greenbowl.lu',
                 'facebookUrl'            => 'https://facebook.com/greenbowl.lu',
                 'tiktokUrl'              => 'https://tiktok.com/@greenbowl.lu',
+                'openingHours'           => [[1, '10:00', '20:00'], [2, '10:00', '20:00'], [3, '10:00', '20:00'], [4, '10:00', '20:00'], [5, '10:00', '20:00'], [6, '10:00', '18:00']],
                 'orderingOptions'        => [
                     [OrderingPlatform::UBER_EATS, 'https://www.ubereats.com/lu/store/green-bowl'],
                     [OrderingPlatform::WEBSITE, 'https://www.greenbowl.lu/order'],
@@ -311,7 +310,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 'cuisine'                => 'Luxemburgisch',
                 'emoji'                  => '🍺',
                 'rating'                 => 7.9,
-                'isOpen'                 => false,
                 'isWheelchairAccessible' => false,
                 'hasAccessibleToilet'    => false,
                 'allowsAssistanceDogs'   => false,
@@ -347,7 +345,6 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
             $restaurant->setCuisine($data['cuisine']);
             $restaurant->setEmoji($data['emoji']);
             $restaurant->setRating($data['rating']);
-            $restaurant->setIsOpen($data['isOpen']);
             $restaurant->setIsWheelchairAccessible($data['isWheelchairAccessible']);
             $restaurant->setHasAccessibleToilet($data['hasAccessibleToilet']);
             $restaurant->setAllowsAssistanceDogs($data['allowsAssistanceDogs']);
@@ -385,6 +382,15 @@ class RestaurantFixtures extends Fixture implements DependentFixtureInterface
                 $option->setPlatform($platform);
                 $option->setUrl($url);
                 $restaurant->addOrderingOption($option);
+            }
+
+            foreach ($data['openingHours'] ?? [] as [$day, $open, $close]) {
+                $oh = new OpeningHour();
+                $oh->setDayOfWeek($day);
+                $oh->setOpenTime(new \DateTime($open));
+                $oh->setCloseTime(new \DateTime($close));
+                $oh->setIsClosed(false);
+                $restaurant->addOpeningHour($oh);
             }
 
             $manager->persist($restaurant);

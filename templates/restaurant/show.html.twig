@@ -18,11 +18,22 @@
             <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 pb-8 text-white">
                 <h1 class="text-3xl font-bold mb-2">{{ restaurant.name }}</h1>
                 <p class="text-white/80 text-lg">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
+                {% set isOpen = restaurant|is_open_now %}
                 <div class="flex items-center gap-3 mt-3 flex-wrap">
-                    {% if restaurant.isOpen %}
+                    {% if isOpen %}
                         <span class="inline-block bg-green-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">{{ 'status.open'|trans }}</span>
                     {% else %}
                         <span class="inline-block bg-red-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">{{ 'status.closed'|trans }}</span>
+                        {% set nextOpen = next_opening_time(restaurant) %}
+                        {% if nextOpen %}
+                            <span class="text-white/80 text-sm">
+                                {% if nextOpen.dayOfWeek == todayDayOfWeek %}
+                                    {{ 'opening_hours.opens_today_at'|trans({'%time%': nextOpen.time|date('H:i')}) }}
+                                {% else %}
+                                    {{ 'opening_hours.opens_at'|trans({'%day%': ('opening_hours.day_' ~ nextOpen.dayOfWeek)|trans, '%time%': nextOpen.time|date('H:i')}) }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
                     {% endif %}
                     {% include 'partials/_verified_badge.html.twig' with {restaurant: restaurant, size: 'lg'} %}
                 </div>
@@ -34,11 +45,22 @@
                 <div class="text-7xl mb-4">{{ restaurant.emoji }}</div>
                 <h1 class="text-3xl font-bold mb-2">{{ restaurant.name }}</h1>
                 <p class="text-cyan-100 text-lg">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
+                {% set isOpen = restaurant|is_open_now %}
                 <div class="flex items-center justify-center gap-3 mt-4 flex-wrap">
-                    {% if restaurant.isOpen %}
+                    {% if isOpen %}
                         <span class="inline-block bg-green-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">{{ 'status.open'|trans }}</span>
                     {% else %}
                         <span class="inline-block bg-red-500 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">{{ 'status.closed'|trans }}</span>
+                        {% set nextOpen = next_opening_time(restaurant) %}
+                        {% if nextOpen %}
+                            <span class="text-cyan-100 text-sm">
+                                {% if nextOpen.dayOfWeek == todayDayOfWeek %}
+                                    {{ 'opening_hours.opens_today_at'|trans({'%time%': nextOpen.time|date('H:i')}) }}
+                                {% else %}
+                                    {{ 'opening_hours.opens_at'|trans({'%day%': ('opening_hours.day_' ~ nextOpen.dayOfWeek)|trans, '%time%': nextOpen.time|date('H:i')}) }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
                     {% endif %}
                     {% include 'partials/_verified_badge.html.twig' with {restaurant: restaurant, size: 'lg'} %}
                 </div>
@@ -80,6 +102,9 @@
                     </div>
                 </div>
             {% endif %}
+
+            {# --- ÖFFNUNGSZEITEN --- #}
+            {% include 'partials/_opening_hours.html.twig' with {restaurant: restaurant, todayDayOfWeek: todayDayOfWeek} %}
 
             {# --- BARRIEREFREIHEIT (Accessibility Features) --- #}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
