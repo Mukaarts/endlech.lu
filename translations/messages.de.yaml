@@ -55,6 +55,21 @@ home:
         text: "Hilf uns, die Plattform zu erweitern und Luxemburg barrierefreier zu machen."
         button: "Restaurant vorschlagen"
 
+opening_hours:
+    title: "Öffnungszeiten"
+    today: "Heute"
+    closed: "Geschlossen"
+    no_hours: "Keine Öffnungszeiten angegeben"
+    opens_at: "Öffnet %day% um %time%"
+    opens_today_at: "Öffnet heute um %time%"
+    day_1: "Montag"
+    day_2: "Dienstag"
+    day_3: "Mittwoch"
+    day_4: "Donnerstag"
+    day_5: "Freitag"
+    day_6: "Samstag"
+    day_7: "Sonntag"
+
 status:
     open: "Geöffnet"
     closed: "Geschlossen"
@@ -379,6 +394,8 @@ admin:
         accessibility_notes: "Hinweise zur Barrierefreiheit"
         notes_hint: "Format: ok:Text oder warn:Text"
         add_note: "+ Hinweis hinzufügen"
+        opening_hours: "Öffnungszeiten"
+        opening_hours_hint: "Gib die Öffnungszeiten für jeden Tag ein. Aktiviere 'Geschlossen' für Ruhetage."
         cancel: "Abbrechen"
     suggestion:
         title: "Restaurant-Vorschläge"

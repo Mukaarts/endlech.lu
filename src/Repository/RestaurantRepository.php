@@ -24,6 +24,8 @@ class RestaurantRepository extends ServiceEntityRepository
     public function findTopRated(int $limit = 6): array
     {
         return $this->createQueryBuilder('r')
+            ->leftJoin('r.openingHours', 'oh')
+            ->addSelect('oh')
             ->orderBy('r.rating', 'DESC')
             ->addOrderBy('r.name', 'ASC')
             ->setMaxResults($limit)
@@ -33,7 +35,9 @@ class RestaurantRepository extends ServiceEntityRepository
 
     public function findPaginated(string $sort = 'rating', int $page = 1, int $limit = 6, array $filters = []): Paginator
     {
-        $qb = $this->createQueryBuilder('r');
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.openingHours', 'oh')
+            ->addSelect('oh');
 
         if (!empty($filters['verified'])) {
             $qb->andWhere('r.isVerified = true');
@@ -57,7 +61,23 @@ class RestaurantRepository extends ServiceEntityRepository
             $qb->andWhere('r.hasDisabledParking = true');
         }
         if (!empty($filters['open'])) {
-            $qb->andWhere('r.isOpen = true');
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Luxembourg'));
+            $currentTime = $now->format('H:i:s');
+            $currentDay = (int) $now->format('N');
+            $previousDay = $currentDay === 1 ? 7 : $currentDay - 1;
+
+            $qb->leftJoin('r.openingHours', 'oh_today', 'WITH', 'oh_today.dayOfWeek = :currentDay')
+                ->leftJoin('r.openingHours', 'oh_yesterday', 'WITH', 'oh_yesterday.dayOfWeek = :previousDay')
+                ->andWhere(
+                    '(oh_today.isClosed = false AND oh_today.openTime <= oh_today.closeTime AND oh_today.openTime <= :currentTime AND oh_today.closeTime > :currentTime)' .
+                    ' OR ' .
+                    '(oh_today.isClosed = false AND oh_today.openTime > oh_today.closeTime AND oh_today.openTime <= :currentTime)' .
+                    ' OR ' .
+                    '(oh_yesterday.isClosed = false AND oh_yesterday.openTime > oh_yesterday.closeTime AND oh_yesterday.closeTime > :currentTime)'
+                )
+                ->setParameter('currentDay', $currentDay)
+                ->setParameter('previousDay', $previousDay)
+                ->setParameter('currentTime', $currentTime);
         }
         if (!empty($filters['vegan'])) {
             $qb->andWhere('r.isVegan = true');

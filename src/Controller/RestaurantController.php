@@ -66,8 +66,11 @@ final class RestaurantController extends AbstractController
     #[Route('/restaurants/{id}', name: 'app_restaurant_show', requirements: ['id' => '\d+'])]
     public function show(Restaurant $restaurant): Response
     {
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Luxembourg'));
+
         return $this->render('restaurant/show.html.twig', [
             'restaurant' => $restaurant,
+            'todayDayOfWeek' => (int) $now->format('N'),
         ]);
     }
 }

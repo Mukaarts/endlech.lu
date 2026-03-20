@@ -209,6 +209,19 @@ Suggestion-Approval: `AdminSuggestionController::approve()` setzt `submittedBy` 
 Migration: `Version20260319000000`.
 Fixtures: Admin → 3 verifizierte, User → 3 unverifizierte, Rest → null.
 
+## Entity: OpeningHour (Issue #64)
+Felder: id, dayOfWeek (INT 1-7), openTime (TIME nullable), closeTime (TIME nullable), isClosed (BOOL), restaurant (ManyToOne CASCADE DELETE).
+UNIQUE: (restaurant_id, day_of_week).
+Collection auf Restaurant: `$openingHours` (OneToMany, cascade, orphanRemoval, OrderBy dayOfWeek ASC).
+Helper auf Restaurant: `getOpeningHourForDay(int $day): ?OpeningHour`.
+Service: `OpeningHoursService` — `isOpenNow()`, `isOpenAt()`, `getNextOpeningTime()`. Zeitzone: Europe/Luxembourg.
+Twig Extension: `OpeningHoursExtension` — Filter `restaurant|is_open_now`, Funktion `next_opening_time(restaurant)`.
+Form: `OpeningHourType` in CollectionType (fixed 7 Einträge, PRE_SET_DATA Listener füllt fehlende Tage auf).
+Stimulus: `opening_hours_form_controller.ts` — deaktiviert Zeitfelder bei "Geschlossen".
+Template: `templates/partials/_opening_hours.html.twig` — Wochenplan mit hervorgehobenem heutigem Tag.
+Filter: `?open=1` nutzt SQL JOIN mit TIME-Vergleich (inkl. Nachtschicht-Übertrag).
+Migration: `Version20260321000000` — erstellt `opening_hour` Tabelle, entfernt `is_open` Spalte.
+
 ## Entity: OrderingOption (Issue #43)
 Felder: id (int, PK), platform (VARCHAR 20 – Werte aus `App\Enum\OrderingPlatform`), url (VARCHAR 500), restaurant (ManyToOne Restaurant, CASCADE DELETE).
 Collection auf Restaurant: `$orderingOptions` (OneToMany, cascade persist+remove, orphanRemoval).

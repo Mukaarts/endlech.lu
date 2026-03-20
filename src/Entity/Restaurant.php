@@ -32,9 +32,6 @@ class Restaurant
     private ?float $rating = null;
 
     #[ORM\Column]
-    private bool $isOpen = false;
-
-    #[ORM\Column]
     private bool $isWheelchairAccessible = false;
 
     #[ORM\Column]
@@ -121,11 +118,17 @@ class Restaurant
     #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: OrderingOption::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $orderingOptions;
 
+    /** @var Collection<int, OpeningHour> */
+    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: OpeningHour::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['dayOfWeek' => 'ASC'])]
+    private Collection $openingHours;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->images = new ArrayCollection();
         $this->orderingOptions = new ArrayCollection();
+        $this->openingHours = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -189,18 +192,6 @@ class Restaurant
     public function setRating(?float $rating): static
     {
         $this->rating = $rating;
-
-        return $this;
-    }
-
-    public function isOpen(): bool
-    {
-        return $this->isOpen;
-    }
-
-    public function setIsOpen(bool $isOpen): static
-    {
-        $this->isOpen = $isOpen;
 
         return $this;
     }
@@ -557,5 +548,43 @@ class Restaurant
         }
 
         return $this;
+    }
+
+    /** @return Collection<int, OpeningHour> */
+    public function getOpeningHours(): Collection
+    {
+        return $this->openingHours;
+    }
+
+    public function addOpeningHour(OpeningHour $openingHour): static
+    {
+        if (!$this->openingHours->contains($openingHour)) {
+            $this->openingHours->add($openingHour);
+            $openingHour->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpeningHour(OpeningHour $openingHour): static
+    {
+        if ($this->openingHours->removeElement($openingHour)) {
+            if ($openingHour->getRestaurant() === $this) {
+                $openingHour->setRestaurant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getOpeningHourForDay(int $day): ?OpeningHour
+    {
+        foreach ($this->openingHours as $oh) {
+            if ($oh->getDayOfWeek() === $day) {
+                return $oh;
+            }
+        }
+
+        return null;
     }
 }

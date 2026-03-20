@@ -55,6 +55,21 @@ home:
         text: "Hëllef eis, d'Plattform ze erweideren an d'Lëtzebuerg méi barrierefrä ze maachen."
         button: "Restaurant virschloen"
 
+opening_hours:
+    title: "Öffnungszäiten"
+    today: "Haut"
+    closed: "Zou"
+    no_hours: "Keng Öffnungszäiten uginn"
+    opens_at: "Mécht %day% um %time% op"
+    opens_today_at: "Mécht haut um %time% op"
+    day_1: "Méindeg"
+    day_2: "Dënschdeg"
+    day_3: "Mëttwoch"
+    day_4: "Donneschdeg"
+    day_5: "Freideg"
+    day_6: "Samschdeg"
+    day_7: "Sonndeg"
+
 status:
     open: "Op"
     closed: "Zou"
@@ -379,6 +394,8 @@ admin:
         accessibility_notes: "Hiweiser zur Barrierefreiheet"
         notes_hint: "Format: ok:Text oder warn:Text"
         add_note: "+ Hiweis derbäisetzen"
+        opening_hours: "Öffnungszäiten"
+        opening_hours_hint: "Gëff d'Öffnungszäiten fir all Dag an. Aktivéier 'Zou' fir Roudeg."
         cancel: "Ofbriechen"
     suggestion:
         title: "Restaurant-Virschléi"
