@@ -28,9 +28,9 @@ src/
 ├── Controller/          # Route controllers (attribute-based routing)
 ├── DataFixtures/        # Doctrine fixtures (restaurant data + user test data)
 ├── DTO/                 # Data Transfer Objects (NearbyStop)
-├── Entity/              # Doctrine entities (User, Restaurant, RestaurantImage, OrderingOption)
+├── Entity/              # Doctrine entities (User, Restaurant, RestaurantImage, OrderingOption, Cuisine)
 ├── Enum/                # PHP Backed Enums (Language, OrderingPlatform)
-├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository)
+├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository, CuisineRepository)
 └── Kernel.php           # Symfony kernel
 
 config/
@@ -163,6 +163,8 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `app_profile_edit`      | `/profile/edit` | `ProfileController::edit()`        |
 | `app_profile_password`  | `/profile/password` | `ProfileController::changePassword()` |
 | `app_profile_avatar_delete` | `/profile/avatar/delete` | `ProfileController::deleteAvatar()` |
+| `api_cuisine_search`  | `/api/cuisines/search` | `CuisineApiController::search()` |
+| `api_cuisine_create`  | `/api/cuisines`        | `CuisineApiController::create()` |
 
 `/restaurants` accepts query params:
 - `?sort=rating` (default) – sorted by rating DESC
@@ -178,13 +180,25 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 - `?disabled_parking=1` – filter to restaurants with disabled parking
 - `?open=1` – filter to currently open restaurants
 - `?city=Strassen` – filter by city name (LIKE search)
-- `?cuisine=Italienisch` – filter by cuisine type (LIKE search)
+- `?cuisine[]=1&cuisine[]=2` – filter by cuisine IDs (ManyToMany JOIN)
 - `?lang_de=1&lang_fr=1` – filter by spoken languages (AND: restaurant speaks all selected)
 - `?vegan=1` – filter to restaurants with vegan options
 - `?vegetarian=1` – filter to restaurants with vegetarian options
 - `?halal=1` – filter to restaurants with halal options
 
 All filter params are combinable. `RestaurantRepository::findPaginated(string $sort, int $page, int $limit, array $filters)` handles all filtering.
+
+## Entity: Cuisine (Issue #77)
+Felder: id (int, PK), name (VARCHAR 80, unique), slug (VARCHAR 100, unique).
+`__toString()` → `$this->name` (nötig für Symfony EntityType).
+Repository: `CuisineRepository` — `findAllSorted()`, `search(string $query, int $limit)`, `findOrCreateByName(string $name)`.
+Relation: Restaurant hat `$cuisines` (ManyToMany, cascade persist, JoinTable `restaurant_cuisine`).
+Helper auf Restaurant: `getCuisineNames(): string` — kommagetrennte Namen.
+API: `CuisineApiController` — `GET /api/cuisines/search?q=…` (JSON), `POST /api/cuisines` (erstellt neue Cuisine). Beide Admin-only.
+Form: `EntityType` mit Tom Select Stimulus-Controller für Autocomplete + Inline-Create.
+Stimulus: `tom_select_controller.ts` — Tom Select mit `remove_button`-Plugin, Load + Create Callbacks.
+Fixtures: `CuisineFixtures` — 20 vordefinierte Küchen-Typen.
+Migration: `Version20260323000000` — erstellt `cuisine` + `restaurant_cuisine` Tabellen, migriert Daten, entfernt `cuisine` VARCHAR-Spalte.
 
 ## Entity: RestaurantImage
 Felder: id, filename (VARCHAR 255), altText (VARCHAR 255 nullable), restaurant (ManyToOne Restaurant, CASCADE DELETE), uploadedAt (DateTimeImmutable), sortOrder (INT, default 0).

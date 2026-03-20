@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Restaurant;
 use App\Enum\Language;
+use App\Repository\CuisineRepository;
 use App\Repository\RestaurantRepository;
 use App\Service\PublicTransportService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,7 @@ final class RestaurantController extends AbstractController
     private const LIMIT = 6;
 
     #[Route('/restaurants', name: 'app_restaurant_index')]
-    public function index(Request $request, RestaurantRepository $restaurantRepository): Response
+    public function index(Request $request, RestaurantRepository $restaurantRepository, CuisineRepository $cuisineRepository): Response
     {
         $sort = $request->query->getString('sort', 'rating');
         if (!in_array($sort, ['rating', 'name', 'newest'], true)) {
@@ -45,7 +46,7 @@ final class RestaurantController extends AbstractController
             'vegetarian' => $request->query->getBoolean('vegetarian', false),
             'halal'      => $request->query->getBoolean('halal', false),
             'city'       => trim($request->query->getString('city', '')),
-            'cuisine'    => trim($request->query->getString('cuisine', '')),
+            'cuisine'    => array_filter(array_map('intval', $request->query->all('cuisine'))),
             'lang'       => $langValues,
         ];
 
@@ -61,6 +62,7 @@ final class RestaurantController extends AbstractController
             'sort' => $sort,
             'filters' => $filters,
             'languages' => Language::cases(),
+            'allCuisines' => $cuisineRepository->findAllSorted(),
         ]);
     }
 

@@ -37,7 +37,7 @@
                         {{ restaurant.emoji }} {{ restaurant.name }}
                     </td>
                     <td class="px-4 py-3 text-gray-600">{{ restaurant.city }}</td>
-                    <td class="px-4 py-3 text-gray-600">{{ restaurant.cuisine }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ restaurant.cuisineNames ?: '—' }}</td>
                     <td class="px-4 py-3">
                         {% if restaurant.rating is not null %}
                             <span class="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded text-xs font-bold border border-cyan-100">{{ restaurant.rating }}</span>

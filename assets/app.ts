@@ -9,6 +9,9 @@ import './stimulus_bootstrap';
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
 
+// Tom Select CSS für Autocomplete-Selects
+import 'tom-select/dist/css/tom-select.css';
+
 // GLightbox – Lightbox für Restaurant-Fotos
 import GLightbox from 'glightbox';
 import 'glightbox/dist/css/glightbox.css';

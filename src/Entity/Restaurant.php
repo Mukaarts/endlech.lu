@@ -22,8 +22,10 @@ class Restaurant
     #[ORM\Column(length: 100)]
     private string $city = '';
 
-    #[ORM\Column(length: 80)]
-    private string $cuisine = '';
+    /** @var Collection<int, Cuisine> */
+    #[ORM\ManyToMany(targetEntity: Cuisine::class, cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'restaurant_cuisine')]
+    private Collection $cuisines;
 
     #[ORM\Column(length: 10)]
     private string $emoji = '🍽️';
@@ -135,6 +137,7 @@ class Restaurant
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->cuisines = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->orderingOptions = new ArrayCollection();
         $this->openingHours = new ArrayCollection();
@@ -169,16 +172,31 @@ class Restaurant
         return $this;
     }
 
-    public function getCuisine(): string
+    /** @return Collection<int, Cuisine> */
+    public function getCuisines(): Collection
     {
-        return $this->cuisine;
+        return $this->cuisines;
     }
 
-    public function setCuisine(string $cuisine): static
+    public function addCuisine(Cuisine $cuisine): static
     {
-        $this->cuisine = $cuisine;
+        if (!$this->cuisines->contains($cuisine)) {
+            $this->cuisines->add($cuisine);
+        }
 
         return $this;
+    }
+
+    public function removeCuisine(Cuisine $cuisine): static
+    {
+        $this->cuisines->removeElement($cuisine);
+
+        return $this;
+    }
+
+    public function getCuisineNames(): string
+    {
+        return implode(', ', $this->cuisines->map(fn (Cuisine $c) => $c->getName())->toArray());
     }
 
     public function getEmoji(): string

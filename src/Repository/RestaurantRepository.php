@@ -26,6 +26,8 @@ class RestaurantRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('r')
             ->leftJoin('r.openingHours', 'oh')
             ->addSelect('oh')
+            ->leftJoin('r.cuisines', 'c')
+            ->addSelect('c')
             ->orderBy('r.rating', 'DESC')
             ->addOrderBy('r.name', 'ASC')
             ->setMaxResults($limit)
@@ -37,7 +39,9 @@ class RestaurantRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.openingHours', 'oh')
-            ->addSelect('oh');
+            ->addSelect('oh')
+            ->leftJoin('r.cuisines', 'c')
+            ->addSelect('c');
 
         if (!empty($filters['verified'])) {
             $qb->andWhere('r.isVerified = true');
@@ -92,7 +96,9 @@ class RestaurantRepository extends ServiceEntityRepository
             $qb->andWhere('r.city LIKE :city')->setParameter('city', '%'.$filters['city'].'%');
         }
         if (!empty($filters['cuisine'])) {
-            $qb->andWhere('r.cuisine LIKE :cuisine')->setParameter('cuisine', '%'.$filters['cuisine'].'%');
+            $qb->innerJoin('r.cuisines', 'c_filter')
+                ->andWhere('c_filter.id IN (:cuisineIds)')
+                ->setParameter('cuisineIds', $filters['cuisine']);
         }
         if (!empty($filters['lang'])) {
             foreach ($filters['lang'] as $i => $langValue) {

@@ -34,8 +34,13 @@
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2" for="filter-cuisine">{{ 'filter.cuisine'|trans }}</label>
-                                <input type="text" id="filter-cuisine" name="cuisine" value="{{ filters.cuisine }}" placeholder="{{ 'filter.cuisine_placeholder'|trans }}" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ 'filter.cuisine'|trans }}</label>
+                                <select name="cuisine[]" multiple data-controller="tom-select"
+                                        placeholder="{{ 'filter.cuisine_placeholder'|trans }}">
+                                    {% for cuisine in allCuisines %}
+                                        <option value="{{ cuisine.id }}" {{ cuisine.id in filters.cuisine ? 'selected' : '' }}>{{ cuisine.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
 
                             <div class="mb-6">
@@ -141,7 +146,7 @@
                                 {{ 'filter.apply'|trans }}
                             </button>
 
-                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.changing_table ? 1 : 0) + (filters.disabled_parking ? 1 : 0) + (filters.open ? 1 : 0) + (filters.vegan ? 1 : 0) + (filters.vegetarian ? 1 : 0) + (filters.halal ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine ? 1 : 0) + (filters.lang|length) %}
+                            {% set activeCount = (filters.verified ? 1 : 0) + (filters.wheelchair ? 1 : 0) + (filters.toilet ? 1 : 0) + (filters.dogs ? 1 : 0) + (filters.lighting ? 1 : 0) + (filters.changing_table ? 1 : 0) + (filters.disabled_parking ? 1 : 0) + (filters.open ? 1 : 0) + (filters.vegan ? 1 : 0) + (filters.vegetarian ? 1 : 0) + (filters.halal ? 1 : 0) + (filters.city ? 1 : 0) + (filters.cuisine|length) + (filters.lang|length) %}
                             {% if activeCount > 0 %}
                                 <a href="{{ path('app_restaurant_index', {sort: sort}) }}" class="block text-center text-xs text-red-500 hover:text-red-700 mt-3 transition">
                                     × {{ 'filter.reset'|trans({'%count%': activeCount}) }}
@@ -167,9 +172,11 @@
                         vegan:          filters.vegan          ? 1 : null,
                         vegetarian:     filters.vegetarian     ? 1 : null,
                         halal:          filters.halal          ? 1 : null,
-                        city:           filters.city ?: null,
-                        cuisine:        filters.cuisine ?: null
+                        city:           filters.city ?: null
                     } %}
+                    {% for cuisineId in filters.cuisine %}
+                        {% set filterParams = filterParams|merge({('cuisine[]'): cuisineId}) %}
+                    {% endfor %}
                     {% for langVal in filters.lang %}
                         {% set filterParams = filterParams|merge({('lang_' ~ langVal): 1}) %}
                     {% endfor %}
@@ -206,7 +213,13 @@
                         {% if filters.vegetarian %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">🥗 {{ 'chip.vegetarian'|trans }}</span>{% endif %}
                         {% if filters.halal %}<span class="inline-flex items-center text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full border border-emerald-200">☪️ {{ 'chip.halal'|trans }}</span>{% endif %}
                         {% if filters.city %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">📍 {{ filters.city }}</span>{% endif %}
-                        {% if filters.cuisine %}<span class="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full border border-gray-200">🍽️ {{ filters.cuisine }}</span>{% endif %}
+                        {% for cuisineId in filters.cuisine %}
+                            {% for cuisine in allCuisines %}
+                                {% if cuisine.id == cuisineId %}
+                                    <span class="inline-flex items-center text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full border border-orange-200">🍽️ {{ cuisine.name }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
                         {% for langVal in filters.lang %}
                             {% for lang in languages %}
                                 {% if lang.value == langVal %}
@@ -243,7 +256,8 @@
                                                 <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700 transition">{{ restaurant.name }}</h3>
                                                 {% include 'partials/_verified_badge.html.twig' with {restaurant: restaurant} %}
                                             </div>
-                                            <p class="text-sm text-gray-500">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
+                                            <p class="text-sm text-gray-500">{{ restaurant.city }}</p>
+                                            {% include 'partials/_cuisine_badges.html.twig' with {restaurant: restaurant} %}
                                         </div>
                                         {% if restaurant.rating is not null %}
                                             <div class="bg-cyan-50 text-cyan-700 px-2 py-1 rounded text-xs font-bold border border-cyan-100 shrink-0">{{ restaurant.rating }}</div>
