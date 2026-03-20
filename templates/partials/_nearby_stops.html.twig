@@ -1,0 +1,44 @@
+{# Nahverkehr: Barrierefreie Haltestellen in der Nähe #}
+
+{% if nearbyStops is not empty or restaurant.nearbyStopsNote %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">{{ 'nearby_stops.title'|trans }}</h2>
+
+        {# Admin-Hinweis #}
+        {% if restaurant.nearbyStopsNote %}
+            <div class="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
+                <span class="text-blue-500 text-lg shrink-0">ℹ️</span>
+                <p class="text-sm text-blue-800">{{ restaurant.nearbyStopsNote }}</p>
+            </div>
+        {% endif %}
+
+        {# Haltestellen-Liste #}
+        {% if nearbyStops is not empty %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {% for stop in nearbyStops %}
+                    <div class="flex items-start gap-3 p-4 rounded-lg bg-gray-50 border border-gray-100">
+                        <span class="text-2xl shrink-0">
+                            {% if stop.type == 'tram' %}🚊
+                            {% elseif stop.type == 'mixed' %}🚏
+                            {% else %}🚌
+                            {% endif %}
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-gray-700">{{ stop.name }}</p>
+                            {% if stop.lines is not empty %}
+                                <div class="flex flex-wrap gap-1 mt-1.5">
+                                    {% for line in stop.lines %}
+                                        <span class="inline-block text-xs font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">{{ line }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs text-gray-400 font-medium shrink-0 mt-0.5">{{ 'nearby_stops.walking'|trans({'%meters%': stop.distance}) }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elseif restaurant.hasCoordinates %}
+            <p class="text-sm text-gray-400">{{ 'nearby_stops.no_stops'|trans }}</p>
+        {% endif %}
+    </div>
+{% endif %}

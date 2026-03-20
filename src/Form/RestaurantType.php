@@ -190,6 +190,40 @@ class RestaurantType extends AbstractType
                     new Length(max: 500, maxMessage: 'restaurant.url_max'),
                 ],
             ])
+            ->add('latitude', NumberType::class, [
+                'label' => 'form.latitude',
+                'required' => false,
+                'html5' => true,
+                'attr' => ['placeholder' => 'form.latitude_placeholder', 'step' => '0.00000001'],
+                'constraints' => [
+                    new Range(
+                        min: -90,
+                        max: 90,
+                        notInRangeMessage: 'restaurant.latitude_range',
+                    ),
+                ],
+            ])
+            ->add('longitude', NumberType::class, [
+                'label' => 'form.longitude',
+                'required' => false,
+                'html5' => true,
+                'attr' => ['placeholder' => 'form.longitude_placeholder', 'step' => '0.00000001'],
+                'constraints' => [
+                    new Range(
+                        min: -180,
+                        max: 180,
+                        notInRangeMessage: 'restaurant.longitude_range',
+                    ),
+                ],
+            ])
+            ->add('nearbyStopsNote', TextType::class, [
+                'label' => 'form.nearby_stops_note',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.nearby_stops_note_placeholder'],
+                'constraints' => [
+                    new Length(max: 1000, maxMessage: 'restaurant.nearby_stops_note_max'),
+                ],
+            ])
             ->add('orderingOptions', CollectionType::class, [
                 'label' => 'form.ordering_options',
                 'entry_type' => OrderingOptionType::class,

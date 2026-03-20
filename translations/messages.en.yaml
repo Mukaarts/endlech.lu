@@ -120,6 +120,11 @@ contact:
     tiktok: "TikTok"
     follow: "Follow"
 
+nearby_stops:
+    title: "Public Transport Nearby"
+    walking: "%meters% m"
+    no_stops: "No accessible stops found nearby."
+
 ordering:
     title: "Order Online"
 
@@ -394,6 +399,8 @@ admin:
         accessibility_notes: "Accessibility Notes"
         notes_hint: "Format: ok:Text or warn:Text"
         add_note: "+ Add note"
+        location: "Location & Public Transport"
+        location_hint: "GPS coordinates enable automatic search for accessible stops nearby."
         opening_hours: "Opening Hours"
         opening_hours_hint: "Enter the opening hours for each day. Check 'Closed' for rest days."
         cancel: "Cancel"
@@ -553,6 +560,12 @@ form:
     facebook_placeholder: "e.g. https://facebook.com/restaurant"
     tiktok: "TikTok"
     tiktok_placeholder: "e.g. https://tiktok.com/@restaurant"
+    latitude: "Latitude"
+    latitude_placeholder: "e.g. 49.6117"
+    longitude: "Longitude"
+    longitude_placeholder: "e.g. 6.1319"
+    nearby_stops_note: "Public Transport Note"
+    nearby_stops_note_placeholder: "e.g. Tram stop right in front of the door"
     ordering_options: "Ordering Options"
     accessibility_notes: "Accessibility Notes"
     accessibility_notes_placeholder: "e.g. ok:Step-free entrance or warn:Step at entrance"

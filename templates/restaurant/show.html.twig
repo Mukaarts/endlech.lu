@@ -271,6 +271,9 @@
                 </div>
             {% endif %}
 
+            {# --- NAHVERKEHR (Barrierefreie Haltestellen) --- #}
+            {% include 'partials/_nearby_stops.html.twig' with {nearbyStops: nearbyStops, restaurant: restaurant} %}
+
             {# --- KONTAKT & SOCIAL MEDIA --- #}
             {% if restaurant.hasContactInfo %}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">

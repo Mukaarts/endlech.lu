@@ -120,6 +120,11 @@ contact:
     tiktok: "TikTok"
     follow: "Followen"
 
+nearby_stops:
+    title: "Ëffentlechen Transport an der Géigend"
+    walking: "%meters% m"
+    no_stops: "Keng barrierefrä Haltestellen an der Géigend fonnt."
+
 ordering:
     title: "Online bestellen"
 
@@ -394,6 +399,8 @@ admin:
         accessibility_notes: "Hiweiser zur Barrierefreiheet"
         notes_hint: "Format: ok:Text oder warn:Text"
         add_note: "+ Hiweis derbäisetzen"
+        location: "Standuert & Nahverkéier"
+        location_hint: "GPS-Koordinaten erlaben d'automatesch Sich no barrierefrä Haltestellen an der Géigend."
         opening_hours: "Öffnungszäiten"
         opening_hours_hint: "Gëff d'Öffnungszäiten fir all Dag an. Aktivéier 'Zou' fir Roudeg."
         cancel: "Ofbriechen"
@@ -553,6 +560,12 @@ form:
     facebook_placeholder: "z.B. https://facebook.com/restaurant"
     tiktok: "TikTok"
     tiktok_placeholder: "z.B. https://tiktok.com/@restaurant"
+    latitude: "Breedtegrad (Latitude)"
+    latitude_placeholder: "z.B. 49.6117"
+    longitude: "Längtegrad (Longitude)"
+    longitude_placeholder: "z.B. 6.1319"
+    nearby_stops_note: "Nahverkéiers-Hiweis"
+    nearby_stops_note_placeholder: "z.B. Tram-Haltestell direkt virun der Dier"
     ordering_options: "Bestelloptiounen"
     accessibility_notes: "Hiweiser zur Barrierefreiheet"
     accessibility_notes_placeholder: "z.B. ok:Agang ouni Trapen oder warn:Trap um Agang"
