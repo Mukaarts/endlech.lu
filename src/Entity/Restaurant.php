@@ -103,6 +103,15 @@ class Restaurant
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $tiktokUrl = null;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 8, nullable: true)]
+    private ?string $latitude = null;
+
+    #[ORM\Column(type: 'decimal', precision: 11, scale: 8, nullable: true)]
+    private ?string $longitude = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $nearbyStopsNote = null;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $accessibilityNotes = [];
@@ -499,6 +508,47 @@ class Restaurant
         $this->tiktokUrl = $tiktokUrl;
 
         return $this;
+    }
+
+    public function getLatitude(): ?string
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?string $latitude): static
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?string
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?string $longitude): static
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getNearbyStopsNote(): ?string
+    {
+        return $this->nearbyStopsNote;
+    }
+
+    public function setNearbyStopsNote(?string $nearbyStopsNote): static
+    {
+        $this->nearbyStopsNote = $nearbyStopsNote;
+
+        return $this;
+    }
+
+    public function hasCoordinates(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
     }
 
     public function hasContactInfo(): bool

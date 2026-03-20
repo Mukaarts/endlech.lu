@@ -120,6 +120,11 @@ contact:
     tiktok: "TikTok"
     follow: "Folgen"
 
+nearby_stops:
+    title: "Nahverkehr in der Nähe"
+    walking: "%meters% m"
+    no_stops: "Keine barrierefreien Haltestellen in der Nähe gefunden."
+
 ordering:
     title: "Online bestellen"
 
@@ -394,6 +399,8 @@ admin:
         accessibility_notes: "Hinweise zur Barrierefreiheit"
         notes_hint: "Format: ok:Text oder warn:Text"
         add_note: "+ Hinweis hinzufügen"
+        location: "Standort & Nahverkehr"
+        location_hint: "GPS-Koordinaten ermöglichen die automatische Suche nach barrierefreien Haltestellen in der Nähe."
         opening_hours: "Öffnungszeiten"
         opening_hours_hint: "Gib die Öffnungszeiten für jeden Tag ein. Aktiviere 'Geschlossen' für Ruhetage."
         cancel: "Abbrechen"
@@ -553,6 +560,12 @@ form:
     facebook_placeholder: "z.B. https://facebook.com/restaurant"
     tiktok: "TikTok"
     tiktok_placeholder: "z.B. https://tiktok.com/@restaurant"
+    latitude: "Breitengrad (Latitude)"
+    latitude_placeholder: "z.B. 49.6117"
+    longitude: "Längengrad (Longitude)"
+    longitude_placeholder: "z.B. 6.1319"
+    nearby_stops_note: "Nahverkehrs-Hinweis"
+    nearby_stops_note_placeholder: "z.B. Tram-Haltestelle direkt vor der Tür"
     ordering_options: "Bestelloptionen"
     accessibility_notes: "Hinweise zur Barrierefreiheit"
     accessibility_notes_placeholder: "z.B. ok:Eingang stufenlos oder warn:Stufe am Eingang"

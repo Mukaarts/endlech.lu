@@ -120,6 +120,11 @@ contact:
     tiktok: "TikTok"
     follow: "Suivre"
 
+nearby_stops:
+    title: "Transports en commun à proximité"
+    walking: "%meters% m"
+    no_stops: "Aucun arrêt accessible trouvé à proximité."
+
 ordering:
     title: "Commander en ligne"
 
@@ -394,6 +399,8 @@ admin:
         accessibility_notes: "Notes sur l'accessibilité"
         notes_hint: "Format : ok:Texte ou warn:Texte"
         add_note: "+ Ajouter une note"
+        location: "Localisation & Transports"
+        location_hint: "Les coordonnées GPS permettent la recherche automatique d'arrêts accessibles à proximité."
         opening_hours: "Horaires d'ouverture"
         opening_hours_hint: "Entrez les horaires d'ouverture pour chaque jour. Cochez 'Fermé' pour les jours de repos."
         cancel: "Annuler"
@@ -553,6 +560,12 @@ form:
     facebook_placeholder: "p.ex. https://facebook.com/restaurant"
     tiktok: "TikTok"
     tiktok_placeholder: "p.ex. https://tiktok.com/@restaurant"
+    latitude: "Latitude"
+    latitude_placeholder: "p.ex. 49.6117"
+    longitude: "Longitude"
+    longitude_placeholder: "p.ex. 6.1319"
+    nearby_stops_note: "Note transports en commun"
+    nearby_stops_note_placeholder: "p.ex. Arrêt de tram juste devant la porte"
     ordering_options: "Options de commande"
     accessibility_notes: "Notes sur l'accessibilité"
     accessibility_notes_placeholder: "p.ex. ok:Entrée de plain-pied ou warn:Marche à l'entrée"

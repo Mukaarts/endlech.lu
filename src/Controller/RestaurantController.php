@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Restaurant;
 use App\Enum\Language;
 use App\Repository\RestaurantRepository;
+use App\Service\PublicTransportService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,13 +65,22 @@ final class RestaurantController extends AbstractController
     }
 
     #[Route('/restaurants/{id}', name: 'app_restaurant_show', requirements: ['id' => '\d+'])]
-    public function show(Restaurant $restaurant): Response
+    public function show(Restaurant $restaurant, PublicTransportService $publicTransportService): Response
     {
         $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Luxembourg'));
+
+        $nearbyStops = [];
+        if ($restaurant->hasCoordinates()) {
+            $nearbyStops = $publicTransportService->findNearbyStops(
+                $restaurant->getLatitude(),
+                $restaurant->getLongitude(),
+            );
+        }
 
         return $this->render('restaurant/show.html.twig', [
             'restaurant' => $restaurant,
             'todayDayOfWeek' => (int) $now->format('N'),
+            'nearbyStops' => $nearbyStops,
         ]);
     }
 }
