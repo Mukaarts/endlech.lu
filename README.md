@@ -36,10 +36,10 @@ Current development status of the platform.
 ### 🍽️ Restaurant Finder
 - [x] **Homepage:** Landing page with hero, "How it works", top-6 restaurant preview, value proposition, and CTA.
 - [x] **List View:** Dedicated `/restaurants` page with pagination (6/page) and sorting (rating, name, newest).
-- [x] **Accessibility Icons:** Display of criteria (wheelchair, toilet, assistance dog, lighting, changing table).
+- [x] **Accessibility Icons:** Display of criteria (wheelchair, toilet, assistance dog, lighting, changing table, disabled parking).
 - [x] **Detail Page:** Individual view with address and additional information.
 - [x] **Payment Methods:** Display of accepted payment methods (cash, card, Payconiq) per restaurant.
-- [x] **Filters:** Filter by accessibility criteria (wheelchair, toilet, dogs, lighting, changing table), open status, city, and cuisine type.
+- [x] **Filters:** Filter by accessibility criteria (wheelchair, toilet, dogs, lighting, changing table, disabled parking), open status, city, and cuisine type.
 - [x] **About Us:** Updated About page with project timeline and March 2026 launch milestone.
 - [x] **Photo Gallery:** Image upload per restaurant with lightbox gallery (GLightbox) on detail page and thumbnail on list view.
 - [x] **Spoken Languages:** Display of spoken languages per restaurant with flag badges and filter support.

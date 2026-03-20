@@ -50,6 +50,9 @@ class Restaurant
     private bool $hasChangingTable = false;
 
     #[ORM\Column]
+    private bool $hasDisabledParking = false;
+
+    #[ORM\Column]
     private bool $acceptsCash = false;
 
     #[ORM\Column]
@@ -258,6 +261,18 @@ class Restaurant
     public function setHasChangingTable(bool $hasChangingTable): static
     {
         $this->hasChangingTable = $hasChangingTable;
+
+        return $this;
+    }
+
+    public function hasDisabledParking(): bool
+    {
+        return $this->hasDisabledParking;
+    }
+
+    public function setHasDisabledParking(bool $hasDisabledParking): static
+    {
+        $this->hasDisabledParking = $hasDisabledParking;
 
         return $this;
     }
