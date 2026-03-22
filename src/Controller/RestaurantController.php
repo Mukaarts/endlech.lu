@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Restaurant;
 use App\Enum\Language;
+use App\Repository\CuisineRepository;
 use App\Repository\RestaurantRepository;
+use App\Service\PublicTransportService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +17,7 @@ final class RestaurantController extends AbstractController
     private const LIMIT = 6;
 
     #[Route('/restaurants', name: 'app_restaurant_index')]
-    public function index(Request $request, RestaurantRepository $restaurantRepository): Response
+    public function index(Request $request, RestaurantRepository $restaurantRepository, CuisineRepository $cuisineRepository): Response
     {
         $sort = $request->query->getString('sort', 'rating');
         if (!in_array($sort, ['rating', 'name', 'newest'], true)) {
@@ -37,13 +39,14 @@ final class RestaurantController extends AbstractController
             'toilet'     => $request->query->getBoolean('toilet', false),
             'dogs'       => $request->query->getBoolean('dogs', false),
             'lighting'       => $request->query->getBoolean('lighting', false),
-            'changing_table' => $request->query->getBoolean('changing_table', false),
-            'open'           => $request->query->getBoolean('open', false),
+            'changing_table'   => $request->query->getBoolean('changing_table', false),
+            'disabled_parking' => $request->query->getBoolean('disabled_parking', false),
+            'open'             => $request->query->getBoolean('open', false),
             'vegan'      => $request->query->getBoolean('vegan', false),
             'vegetarian' => $request->query->getBoolean('vegetarian', false),
             'halal'      => $request->query->getBoolean('halal', false),
             'city'       => trim($request->query->getString('city', '')),
-            'cuisine'    => trim($request->query->getString('cuisine', '')),
+            'cuisine'    => array_filter(array_map('intval', $request->query->all('cuisine'))),
             'lang'       => $langValues,
         ];
 
@@ -59,14 +62,27 @@ final class RestaurantController extends AbstractController
             'sort' => $sort,
             'filters' => $filters,
             'languages' => Language::cases(),
+            'allCuisines' => $cuisineRepository->findAllSorted(),
         ]);
     }
 
     #[Route('/restaurants/{id}', name: 'app_restaurant_show', requirements: ['id' => '\d+'])]
-    public function show(Restaurant $restaurant): Response
+    public function show(Restaurant $restaurant, PublicTransportService $publicTransportService): Response
     {
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Luxembourg'));
+
+        $nearbyStops = [];
+        if ($restaurant->hasCoordinates()) {
+            $nearbyStops = $publicTransportService->findNearbyStops(
+                $restaurant->getLatitude(),
+                $restaurant->getLongitude(),
+            );
+        }
+
         return $this->render('restaurant/show.html.twig', [
             'restaurant' => $restaurant,
+            'todayDayOfWeek' => (int) $now->format('N'),
+            'nearbyStops' => $nearbyStops,
         ]);
     }
 }

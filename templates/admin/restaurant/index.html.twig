@@ -37,7 +37,7 @@
                         {{ restaurant.emoji }} {{ restaurant.name }}
                     </td>
                     <td class="px-4 py-3 text-gray-600">{{ restaurant.city }}</td>
-                    <td class="px-4 py-3 text-gray-600">{{ restaurant.cuisine }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ restaurant.cuisineNames ?: '—' }}</td>
                     <td class="px-4 py-3">
                         {% if restaurant.rating is not null %}
                             <span class="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded text-xs font-bold border border-cyan-100">{{ restaurant.rating }}</span>
@@ -46,7 +46,7 @@
                         {% endif %}
                     </td>
                     <td class="px-4 py-3">
-                        {% if restaurant.isOpen %}
+                        {% if restaurant|is_open_now %}
                             <span class="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-bold border border-green-100">{{ 'status.open'|trans }}</span>
                         {% else %}
                             <span class="bg-red-50 text-red-700 px-2 py-0.5 rounded text-xs font-bold border border-red-100">{{ 'status.closed'|trans }}</span>
@@ -59,6 +59,7 @@
                             {% if restaurant.allowsAssistanceDogs %}<span title="{{ 'accessibility.dogs'|trans }}">🐕</span>{% endif %}
                             {% if restaurant.hasBrightLighting %}<span title="{{ 'accessibility.lighting'|trans }}">💡</span>{% endif %}
                             {% if restaurant.hasChangingTable %}<span title="{{ 'accessibility.changing_table'|trans }}">🍼</span>{% endif %}
+                            {% if restaurant.hasDisabledParking %}<span title="{{ 'accessibility.disabled_parking'|trans }}">🅿️</span>{% endif %}
                         </div>
                     </td>
                     <td class="px-4 py-3">

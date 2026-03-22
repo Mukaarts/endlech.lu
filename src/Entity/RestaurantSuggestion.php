@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Language;
 use App\Repository\RestaurantSuggestionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,6 +46,52 @@ class RestaurantSuggestion
 
     #[ORM\Column]
     private bool $hasBrightLighting = false;
+
+    #[ORM\Column]
+    private bool $hasChangingTable = false;
+
+    #[ORM\Column]
+    private bool $hasDisabledParking = false;
+
+    #[ORM\Column]
+    private bool $acceptsCash = false;
+
+    #[ORM\Column]
+    private bool $acceptsCard = false;
+
+    #[ORM\Column]
+    private bool $acceptsPayconiq = false;
+
+    #[ORM\Column]
+    private bool $isVegan = false;
+
+    #[ORM\Column]
+    private bool $isVegetarian = false;
+
+    #[ORM\Column]
+    private bool $isHalal = false;
+
+    /** @var string[] */
+    #[ORM\Column(type: Types::JSON)]
+    private array $spokenLanguages = [];
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $phone = null;
+
+    #[ORM\Column(length: 180, nullable: true)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $website = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $instagramUrl = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $facebookUrl = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $tiktokUrl = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notes = null;
@@ -172,6 +219,192 @@ class RestaurantSuggestion
     public function setHasBrightLighting(bool $hasBrightLighting): static
     {
         $this->hasBrightLighting = $hasBrightLighting;
+
+        return $this;
+    }
+
+    public function hasChangingTable(): bool
+    {
+        return $this->hasChangingTable;
+    }
+
+    public function setHasChangingTable(bool $hasChangingTable): static
+    {
+        $this->hasChangingTable = $hasChangingTable;
+
+        return $this;
+    }
+
+    public function hasDisabledParking(): bool
+    {
+        return $this->hasDisabledParking;
+    }
+
+    public function setHasDisabledParking(bool $hasDisabledParking): static
+    {
+        $this->hasDisabledParking = $hasDisabledParking;
+
+        return $this;
+    }
+
+    public function acceptsCash(): bool
+    {
+        return $this->acceptsCash;
+    }
+
+    public function setAcceptsCash(bool $acceptsCash): static
+    {
+        $this->acceptsCash = $acceptsCash;
+
+        return $this;
+    }
+
+    public function acceptsCard(): bool
+    {
+        return $this->acceptsCard;
+    }
+
+    public function setAcceptsCard(bool $acceptsCard): static
+    {
+        $this->acceptsCard = $acceptsCard;
+
+        return $this;
+    }
+
+    public function acceptsPayconiq(): bool
+    {
+        return $this->acceptsPayconiq;
+    }
+
+    public function setAcceptsPayconiq(bool $acceptsPayconiq): static
+    {
+        $this->acceptsPayconiq = $acceptsPayconiq;
+
+        return $this;
+    }
+
+    public function isVegan(): bool
+    {
+        return $this->isVegan;
+    }
+
+    public function setIsVegan(bool $isVegan): static
+    {
+        $this->isVegan = $isVegan;
+
+        return $this;
+    }
+
+    public function isVegetarian(): bool
+    {
+        return $this->isVegetarian;
+    }
+
+    public function setIsVegetarian(bool $isVegetarian): static
+    {
+        $this->isVegetarian = $isVegetarian;
+
+        return $this;
+    }
+
+    public function isHalal(): bool
+    {
+        return $this->isHalal;
+    }
+
+    public function setIsHalal(bool $isHalal): static
+    {
+        $this->isHalal = $isHalal;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSpokenLanguages(): array
+    {
+        return $this->spokenLanguages;
+    }
+
+    /**
+     * @param string[] $spokenLanguages
+     */
+    public function setSpokenLanguages(array $spokenLanguages): static
+    {
+        $this->spokenLanguages = $spokenLanguages;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): static
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getInstagramUrl(): ?string
+    {
+        return $this->instagramUrl;
+    }
+
+    public function setInstagramUrl(?string $instagramUrl): static
+    {
+        $this->instagramUrl = $instagramUrl;
+
+        return $this;
+    }
+
+    public function getFacebookUrl(): ?string
+    {
+        return $this->facebookUrl;
+    }
+
+    public function setFacebookUrl(?string $facebookUrl): static
+    {
+        $this->facebookUrl = $facebookUrl;
+
+        return $this;
+    }
+
+    public function getTiktokUrl(): ?string
+    {
+        return $this->tiktokUrl;
+    }
+
+    public function setTiktokUrl(?string $tiktokUrl): static
+    {
+        $this->tiktokUrl = $tiktokUrl;
 
         return $this;
     }

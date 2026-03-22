@@ -2,13 +2,29 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.03.17-blue)
+![Version](https://img.shields.io/badge/version-2026.03.22-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
 
 ### Added
 - **Map:** Kartenansicht der Locations. *(geplant)*
+
+---
+
+## [2026.03.22] – Küchen-Typen, Öffnungszeiten & Nahverkehr
+
+### Added
+- **Cuisine Multi-Select (Issue #77):** Küchen-Typ-Auswahl mit Autocomplete und Mehrfachauswahl. Neue `Cuisine` Entity mit ManyToMany-Relation statt einfachem String-Feld. Tom Select Autocomplete im Admin-Formular zum Suchen, Auswählen und Erstellen neuer Küchen-Typen. Neue API-Endpunkte (`/api/cuisines/search`, `/api/cuisines`). Checkbox-Filter in der Restaurant-Sidebar statt Freitext. Orange Cuisine-Badges auf Restaurant-Karten, Detail- und Startseite. 20 vordefinierte Küchen-Typen in Fixtures. Migration mit automatischer Datenmigration vom alten String-Feld.
+- **Vorschlags-Wizard (Issue #76):** Multi-Step Wizard mit 5 Schritten für das Restaurant-Vorschlagsformular. 17 neue Felder auf der RestaurantSuggestion-Entity: Zahlung (acceptsCash, acceptsCard, acceptsPayconiq), Ernährung (isVegan, isVegetarian, isHalal), Sprachen (spokenLanguages), Kontakt (phone, email, website) und Social Media (instagramUrl, facebookUrl, tiktokUrl). Step-Indikator-Leiste mit automatischem Sprung zum ersten Fehler-Step. Stimulus-Controller für Step-Navigation. Alle neuen Felder werden bei Genehmigung auf das Restaurant übertragen.
+- **Hero-Badges (Issue #74):** Rating & Sprach-Badges im Hero-Bereich der Restaurant-Detailseite. Farbcodiertes Rating-Badge (grün ≥7, amber ≥4, rot <4) und Sprach-Flag-Badges mit Glaseffekt. Neues Partial `_hero_badges.html.twig`, eingebunden in beide Hero-Varianten (Cover-Foto + Emoji-Fallback). Übersetzungen in 4 Sprachen (de, en, fr, lb).
+- **Nahverkehr (Issue #65):** Barrierefreie Bus- & Tram-Haltestellen in der Nähe auf der Restaurant-Detailseite. Neue Felder `latitude`, `longitude`, `nearbyStopsNote` auf der Restaurant-Entity. PublicTransportService nutzt HAFAS API (cdt.hafas.de) mit Cache (24h) und Graceful Degradation. Template-Partial mit Haltestellen-Karten (Name, Linien-Badges, Distanz). Admin-Formular: Fieldset "Standort & Nahverkehr" mit Lat/Lng und Nahverkehrs-Hinweis. Übersetzungen in 4 Sprachen (de, en, fr, lb). Alle 11 Fixture-Restaurants mit echten Luxemburg-Koordinaten.
+- **Öffnungszeiten (Issue #64):** Strukturierte Öffnungszeiten pro Wochentag mit automatischer Berechnung des Open/Closed-Status. OpeningHour Entity, OpeningHoursService, Admin-Formular mit 7-Tage-Tabelle, Wochenplan auf Detailseite mit hervorgehobenem heutigem Tag, dynamischer Badge auf Karten und Liste. Nachtschichten und Ruhetage werden korrekt behandelt. Manueller isOpen-Boolean entfernt.
+- **Behindertenparkplatz (Issue #66):** Neues Barrierefreiheits-Kriterium `hasDisabledParking`. Filter-Checkbox in Sidebar, Badge auf Restaurant-Karten, Kachel auf Detailseite, Icon in Admin-Tabelle, Checkbox im Admin-Formular. Übersetzungen in 4 Sprachen (de, en, fr, lb). 5 Fixture-Restaurants mit Parkplatz.
+- **Profil: Eingereichte Restaurants (Issue #63):** Neue Sektion "Meine Einreichungen" auf der Profilseite zeigt vom Nutzer eingereichte Restaurants mit Verifizierungsstatus. Neues `submittedBy`-Feld auf der Restaurant-Entity (ManyToOne User, SET NULL). Bei Genehmigung eines Community-Vorschlags wird der Einreicher automatisch gesetzt. Übersetzungen in 4 Sprachen (de, en, fr, lb).
+- **Admin Dashboard Statistiken (Issue #62):** Erweitertes Dashboard mit 7 Stat-Karten (Restaurants, Verifizierte, Offene Vorschläge, Benutzer, Restaurants diesen Monat, Benutzer diesen Monat, Fotos). Tabellen für zuletzt hinzugefügte Restaurants und zuletzt registrierte Benutzer. Neuer `AdminStatsService` für zentralisierte Statistik-Abfragen. Dashboard-Route in eigenen `AdminDashboardController` ausgelagert. Übersetzungen in 4 Sprachen (de, en, fr, lb).
+- **Neue Lieferplattformen (Issue #67):** Wolt, Wedely und Goosty als Bestelloptionen. SVG-Logos für Marken-Plattformen auf der Detailseite. Emoji-Fallback für generische Optionen (Telefon, Webseite, Andere).
+- **App-Version im Footer:** Versionsnummer wird jetzt im Footer neben dem Copyright angezeigt. Neuer `app.version` Parameter als Twig-Global.
 
 ---
 

@@ -27,9 +27,10 @@ The UI language is German/Luxembourgish. The codebase comments (Makefile, templa
 src/
 ├── Controller/          # Route controllers (attribute-based routing)
 ├── DataFixtures/        # Doctrine fixtures (restaurant data + user test data)
-├── Entity/              # Doctrine entities (User, Restaurant, RestaurantImage, OrderingOption)
+├── DTO/                 # Data Transfer Objects (NearbyStop)
+├── Entity/              # Doctrine entities (User, Restaurant, RestaurantImage, OrderingOption, Cuisine)
 ├── Enum/                # PHP Backed Enums (Language, OrderingPlatform)
-├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository)
+├── Repository/          # Doctrine repositories (UserRepository, RestaurantRepository, CuisineRepository)
 └── Kernel.php           # Symfony kernel
 
 config/
@@ -70,8 +71,9 @@ assets/
 
 migrations/              # Doctrine migrations (DoctrineMigrations namespace)
 tests/                   # PHPUnit tests (empty - MVP)
-translations/            # i18n files (empty - MVP)
+translations/            # i18n files (de, en, fr, lb)
 public/                  # Web root (index.php front controller)
+public/images/platforms/    # SVG logos for delivery platforms (Uber Eats, Deliveroo, etc.)
 public/uploads/restaurants/ # Uploaded restaurant images (gitignored except .gitkeep)
 public/uploads/avatars/    # Uploaded user avatars (gitignored except .gitkeep)
 ```
@@ -148,7 +150,7 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `app_login`             | `/login`       | `SecurityController::login()`       |
 | `app_register`          | `/register`    | `RegistrationController::register()`|
 | `app_logout`            | `/logout`      | `SecurityController::logout()`      |
-| `admin_dashboard`       | `/admin`       | `AdminRestaurantController::dashboard()` |
+| `admin_dashboard`       | `/admin`       | `AdminDashboardController::dashboard()` |
 | `admin_restaurant_index`| `/admin/restaurants` | `AdminRestaurantController::index()` |
 | `admin_restaurant_new`  | `/admin/restaurants/neu` | `AdminRestaurantController::new()` |
 | `admin_restaurant_edit` | `/admin/restaurants/{id}/bearbeiten` | `AdminRestaurantController::edit()` |
@@ -161,6 +163,8 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 | `app_profile_edit`      | `/profile/edit` | `ProfileController::edit()`        |
 | `app_profile_password`  | `/profile/password` | `ProfileController::changePassword()` |
 | `app_profile_avatar_delete` | `/profile/avatar/delete` | `ProfileController::deleteAvatar()` |
+| `api_cuisine_search`  | `/api/cuisines/search` | `CuisineApiController::search()` |
+| `api_cuisine_create`  | `/api/cuisines`        | `CuisineApiController::create()` |
 
 `/restaurants` accepts query params:
 - `?sort=rating` (default) – sorted by rating DESC
@@ -173,15 +177,28 @@ Autowiring and autoconfiguration are enabled by default in `config/services.yaml
 - `?dogs=1` – filter to restaurants that allow assistance dogs
 - `?lighting=1` – filter to restaurants with bright lighting
 - `?changing_table=1` – filter to restaurants with a baby changing table
+- `?disabled_parking=1` – filter to restaurants with disabled parking
 - `?open=1` – filter to currently open restaurants
 - `?city=Strassen` – filter by city name (LIKE search)
-- `?cuisine=Italienisch` – filter by cuisine type (LIKE search)
+- `?cuisine[]=1&cuisine[]=2` – filter by cuisine IDs (ManyToMany JOIN)
 - `?lang_de=1&lang_fr=1` – filter by spoken languages (AND: restaurant speaks all selected)
 - `?vegan=1` – filter to restaurants with vegan options
 - `?vegetarian=1` – filter to restaurants with vegetarian options
 - `?halal=1` – filter to restaurants with halal options
 
 All filter params are combinable. `RestaurantRepository::findPaginated(string $sort, int $page, int $limit, array $filters)` handles all filtering.
+
+## Entity: Cuisine (Issue #77)
+Felder: id (int, PK), name (VARCHAR 80, unique), slug (VARCHAR 100, unique).
+`__toString()` → `$this->name` (nötig für Symfony EntityType).
+Repository: `CuisineRepository` — `findAllSorted()`, `search(string $query, int $limit)`, `findOrCreateByName(string $name)`.
+Relation: Restaurant hat `$cuisines` (ManyToMany, cascade persist, JoinTable `restaurant_cuisine`).
+Helper auf Restaurant: `getCuisineNames(): string` — kommagetrennte Namen.
+API: `CuisineApiController` — `GET /api/cuisines/search?q=…` (JSON), `POST /api/cuisines` (erstellt neue Cuisine). Beide Admin-only.
+Form: `EntityType` mit Tom Select Stimulus-Controller für Autocomplete + Inline-Create.
+Stimulus: `tom_select_controller.ts` — Tom Select mit `remove_button`-Plugin, Load + Create Callbacks.
+Fixtures: `CuisineFixtures` — 20 vordefinierte Küchen-Typen.
+Migration: `Version20260323000000` — erstellt `cuisine` + `restaurant_cuisine` Tabellen, migriert Daten, entfernt `cuisine` VARCHAR-Spalte.
 
 ## Entity: RestaurantImage
 Felder: id, filename (VARCHAR 255), altText (VARCHAR 255 nullable), restaurant (ManyToOne Restaurant, CASCADE DELETE), uploadedAt (DateTimeImmutable), sortOrder (INT, default 0).
@@ -198,15 +215,69 @@ Controller: `ProfileController` — 4 Routen (`app_profile`, `app_profile_edit`,
 Template: `templates/profile/index.html.twig`, `templates/partials/_avatar.html.twig`.
 Migration: `Version20260317000000`.
 
+## Restaurant: submittedBy (Issue #63)
+Feld: `submittedBy` (ManyToOne User, nullable, SET NULL) — der Nutzer, der das Restaurant eingereicht hat.
+Getter/Setter: `getSubmittedBy()`, `setSubmittedBy()`.
+Repository: `RestaurantRepository::findBySubmitter(User $user): Restaurant[]` — alle Restaurants eines Einreichers, sortiert nach `createdAt DESC`.
+Profil-Template: Sektion "Meine Einreichungen" in `templates/profile/index.html.twig` — zeigt Emoji, Name (Link), Stadt, Datum, Verifizierungsstatus.
+Suggestion-Approval: `AdminSuggestionController::approve()` setzt `submittedBy` automatisch aus `suggestion.suggestedBy`.
+Migration: `Version20260319000000`.
+Fixtures: Admin → 3 verifizierte, User → 3 unverifizierte, Rest → null.
+
+## Entity: OpeningHour (Issue #64)
+Felder: id, dayOfWeek (INT 1-7), openTime (TIME nullable), closeTime (TIME nullable), isClosed (BOOL), restaurant (ManyToOne CASCADE DELETE).
+UNIQUE: (restaurant_id, day_of_week).
+Collection auf Restaurant: `$openingHours` (OneToMany, cascade, orphanRemoval, OrderBy dayOfWeek ASC).
+Helper auf Restaurant: `getOpeningHourForDay(int $day): ?OpeningHour`.
+Service: `OpeningHoursService` — `isOpenNow()`, `isOpenAt()`, `getNextOpeningTime()`. Zeitzone: Europe/Luxembourg.
+Twig Extension: `OpeningHoursExtension` — Filter `restaurant|is_open_now`, Funktion `next_opening_time(restaurant)`.
+Form: `OpeningHourType` in CollectionType (fixed 7 Einträge, PRE_SET_DATA Listener füllt fehlende Tage auf).
+Stimulus: `opening_hours_form_controller.ts` — deaktiviert Zeitfelder bei "Geschlossen".
+Template: `templates/partials/_opening_hours.html.twig` — Wochenplan mit hervorgehobenem heutigem Tag.
+Filter: `?open=1` nutzt SQL JOIN mit TIME-Vergleich (inkl. Nachtschicht-Übertrag).
+Migration: `Version20260321000000` — erstellt `opening_hour` Tabelle, entfernt `is_open` Spalte.
+
+## Nearby Stops / Public Transport (Issue #65)
+Felder auf Restaurant: `latitude` (DECIMAL 10,8 nullable), `longitude` (DECIMAL 11,8 nullable), `nearbyStopsNote` (TEXT nullable).
+Helper: `hasCoordinates(): bool` — prüft ob lat+lng gesetzt.
+DTO: `App\DTO\NearbyStop` (readonly) — name, distance (Meter), lines (string[]), type (bus/tram/mixed).
+Service: `App\Service\PublicTransportService` — `findNearbyStops(string $lat, string $lng): NearbyStop[]`. Nutzt HAFAS API (`cdt.hafas.de`), Cache 24h, Graceful Degradation (leerer API-Key → `[]`). Parameter: `app.mobiliteit_api_key`, `app.mobiliteit_radius` (500), `app.mobiliteit_max_stops` (5).
+Env: `MOBILITEIT_API_KEY` in `.env` (leer = deaktiviert).
+Template: `templates/partials/_nearby_stops.html.twig` — Haltestellen-Karten mit Bus/Tram-Icons, Linien-Badges, Distanz.
+Form: `latitude` (NumberType, Range -90/90), `longitude` (NumberType, Range -180/180), `nearbyStopsNote` (TextType, max 1000).
+Admin-Fieldset: "Standort & Nahverkehr" in `_form.html.twig`.
+Migration: `Version20260322000000`.
+Fixtures: Alle 11 Restaurants mit echten Luxemburg-Koordinaten. Brasserie du Grund mit Beispiel-`nearbyStopsNote`.
+
 ## Entity: OrderingOption (Issue #43)
 Felder: id (int, PK), platform (VARCHAR 20 – Werte aus `App\Enum\OrderingPlatform`), url (VARCHAR 500), restaurant (ManyToOne Restaurant, CASCADE DELETE).
 Collection auf Restaurant: `$orderingOptions` (OneToMany, cascade persist+remove, orphanRemoval).
-Enum: `App\Enum\OrderingPlatform` – Cases: `uber_eats`, `deliveroo`, `just_eat`, `phone`, `website`, `other`. Helper: `label()`, `emoji()`, `actionLabel()`.
+Enum: `App\Enum\OrderingPlatform` – Cases: `uber_eats`, `deliveroo`, `just_eat`, `wolt`, `wedely`, `goosty`, `phone`, `website`, `other`. Helper: `label()`, `emoji()`, `actionLabel()`, `logoPath()` (gibt Pfad zu SVG-Logo zurück oder `null` für generische Optionen).
+SVG-Logos: `public/images/platforms/` – 6 SVG-Dateien für Marken-Plattformen (uber-eats, deliveroo, just-eat, wolt, wedely, goosty).
 Form: `OrderingOptionType` als CollectionType-Entry in `RestaurantType` (`by_reference: false`).
 Migration: `Version20260314200000`.
 
+## Entity: RestaurantSuggestion
+Felder: id, suggestedBy (ManyToOne User nullable SET NULL), name (VARCHAR 150), city (VARCHAR 100), cuisine (VARCHAR 80), emoji (VARCHAR 10, default '🍽️').
+Barrierefreiheit (6 bool): isWheelchairAccessible, hasAccessibleToilet, allowsAssistanceDogs, hasBrightLighting, hasChangingTable, hasDisabledParking.
+Zahlung (3 bool): acceptsCash, acceptsCard, acceptsPayconiq.
+Ernährung (3 bool): isVegan, isVegetarian, isHalal.
+Sprachen: spokenLanguages (JSON, default []) — Werte aus `App\Enum\Language`.
+Kontakt: phone (VARCHAR 30 nullable), email (VARCHAR 180 nullable), website (VARCHAR 500 nullable).
+Social Media: instagramUrl (VARCHAR 500 nullable), facebookUrl (VARCHAR 500 nullable), tiktokUrl (VARCHAR 500 nullable).
+Meta: notes (TEXT nullable), status (VARCHAR 20, default 'pending'), adminNote (TEXT nullable), createdAt (DateTimeImmutable).
+Status-Konstanten: STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED.
+Form: `RestaurantSuggestionType` — Multi-Step Wizard mit 5 Steps (Grunddaten, Barrierefreiheit, Ernährung & Zahlung, Kontakt & Sprachen, Notizen).
+Stimulus: `suggestion_wizard_controller.ts` — Step-Navigation mit Prev/Next/GoTo, CSS-Klassen-Toggle.
+Template: `templates/community/vorschlagen.html.twig` — 5-Step Wizard mit Step-Indikator-Leiste, Fehler-Erkennung für automatischen Step-Sprung.
+Admin: `AdminSuggestionController` — CRUD + approve (überträgt alle Felder auf neues Restaurant) + reject.
+Admin-Template: `templates/admin/suggestion/show.html.twig` — zeigt alle Felder inkl. Ernährung, Zahlung, Sprachen, Kontakt.
+Routen: `admin_suggestion_index`, `admin_suggestion_show`, `admin_suggestion_approve`, `admin_suggestion_reject`.
+Community-Route: `/community/suggest` (CommunityController).
+Migrationen: `Version20260320000000` (Basis), `Version20260324000000` (neue Felder).
+
 ### Data Fixtures
-- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`, `hasChangingTable`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), verification fields (`isVerified`, `verifiedAt`, `verifiedBy`), ordering options, and contact/social media fields (`phone`, `email`, `website`, `instagramUrl`, `facebookUrl`, `tiktokUrl`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl. 4 restaurants have ordering options: Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co. All 11 restaurants have varying contact data (not all fields filled for every restaurant).
+- Restaurant fixtures: 11 Luxembourg restaurants (`RestaurantFixtures`); each restaurant has accessibility fields (`isWheelchairAccessible`, `hasAccessibleToilet`, `allowsAssistanceDogs`, `hasBrightLighting`, `hasChangingTable`, `hasDisabledParking`), payment method fields (`acceptsCash`, `acceptsCard`, `acceptsPayconiq`), dietary fields (`isVegan`, `isVegetarian`, `isHalal`), verification fields (`isVerified`, `verifiedAt`, `verifiedBy`), ordering options, contact/social media fields (`phone`, `email`, `website`, `instagramUrl`, `facebookUrl`, `tiktokUrl`), and coordinates (`latitude`, `longitude`). 3 restaurants are verified: Pizzeria Bella Vista, Sushi Zen, Green Bowl. 7 restaurants have ordering options: Pizzeria Bella Vista, Sushi Zen, Green Bowl, Burger & Co., Le Jardin Brasserie, Trattoria Roma. Plattformen inkl. Wolt, Wedely, Goosty. All 11 restaurants have varying contact data (not all fields filled for every restaurant). All 11 restaurants have real Luxembourg coordinates. Brasserie du Grund has a `nearbyStopsNote` example.
 - User fixtures: 3 test users (`UserFixtures`) with hashed passwords via Symfony PasswordHasher
   - `admin@endlech.lu` / `admin123` — ROLE_ADMIN, verified
   - `user@endlech.lu` / `user123` — ROLE_USER, verified

@@ -2,8 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Cuisine;
+use App\Entity\OpeningHour;
 use App\Entity\Restaurant;
 use App\Enum\Language;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -11,6 +14,8 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
@@ -21,10 +26,15 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\Valid;
 
 class RestaurantType extends AbstractType
 {
+    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -44,12 +54,17 @@ class RestaurantType extends AbstractType
                     new Length(max: 100, maxMessage: 'restaurant.city_max'),
                 ],
             ])
-            ->add('cuisine', TextType::class, [
-                'label' => 'form.cuisine',
-                'attr' => ['placeholder' => 'form.cuisine_placeholder'],
-                'constraints' => [
-                    new NotBlank(message: 'restaurant.cuisine_blank'),
-                    new Length(max: 80, maxMessage: 'restaurant.cuisine_max'),
+            ->add('cuisines', EntityType::class, [
+                'class' => Cuisine::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'required' => false,
+                'by_reference' => false,
+                'label' => 'form.cuisines',
+                'attr' => [
+                    'data-controller' => 'tom-select',
+                    'data-tom-select-url-value' => $this->urlGenerator->generate('api_cuisine_search'),
+                    'data-tom-select-create-url-value' => $this->urlGenerator->generate('api_cuisine_create'),
                 ],
             ])
             ->add('emoji', TextType::class, [
@@ -73,10 +88,6 @@ class RestaurantType extends AbstractType
                     ),
                 ],
             ])
-            ->add('isOpen', CheckboxType::class, [
-                'label' => 'form.is_open',
-                'required' => false,
-            ])
             ->add('isVerified', CheckboxType::class, [
                 'label' => 'form.is_verified',
                 'required' => false,
@@ -99,6 +110,10 @@ class RestaurantType extends AbstractType
             ])
             ->add('hasChangingTable', CheckboxType::class, [
                 'label' => 'form.changing_table',
+                'required' => false,
+            ])
+            ->add('hasDisabledParking', CheckboxType::class, [
+                'label' => 'form.disabled_parking',
                 'required' => false,
             ])
             ->add('acceptsCash', CheckboxType::class, [
@@ -187,6 +202,40 @@ class RestaurantType extends AbstractType
                     new Length(max: 500, maxMessage: 'restaurant.url_max'),
                 ],
             ])
+            ->add('latitude', NumberType::class, [
+                'label' => 'form.latitude',
+                'required' => false,
+                'html5' => true,
+                'attr' => ['placeholder' => 'form.latitude_placeholder', 'step' => '0.00000001'],
+                'constraints' => [
+                    new Range(
+                        min: -90,
+                        max: 90,
+                        notInRangeMessage: 'restaurant.latitude_range',
+                    ),
+                ],
+            ])
+            ->add('longitude', NumberType::class, [
+                'label' => 'form.longitude',
+                'required' => false,
+                'html5' => true,
+                'attr' => ['placeholder' => 'form.longitude_placeholder', 'step' => '0.00000001'],
+                'constraints' => [
+                    new Range(
+                        min: -180,
+                        max: 180,
+                        notInRangeMessage: 'restaurant.longitude_range',
+                    ),
+                ],
+            ])
+            ->add('nearbyStopsNote', TextType::class, [
+                'label' => 'form.nearby_stops_note',
+                'required' => false,
+                'attr' => ['placeholder' => 'form.nearby_stops_note_placeholder'],
+                'constraints' => [
+                    new Length(max: 1000, maxMessage: 'restaurant.nearby_stops_note_max'),
+                ],
+            ])
             ->add('orderingOptions', CollectionType::class, [
                 'label' => 'form.ordering_options',
                 'entry_type' => OrderingOptionType::class,
@@ -195,6 +244,16 @@ class RestaurantType extends AbstractType
                 'prototype' => true,
                 'by_reference' => false,
                 'required' => false,
+                'constraints' => [
+                    new Valid(),
+                ],
+            ])
+            ->add('openingHours', CollectionType::class, [
+                'label' => 'admin.form.opening_hours',
+                'entry_type' => OpeningHourType::class,
+                'allow_add' => false,
+                'allow_delete' => false,
+                'by_reference' => false,
                 'constraints' => [
                     new Valid(),
                 ],
@@ -217,6 +276,28 @@ class RestaurantType extends AbstractType
                 'prototype' => true,
                 'required' => false,
             ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            /** @var Restaurant|null $restaurant */
+            $restaurant = $event->getData();
+            if ($restaurant === null) {
+                return;
+            }
+
+            $existingDays = [];
+            foreach ($restaurant->getOpeningHours() as $oh) {
+                $existingDays[$oh->getDayOfWeek()] = true;
+            }
+
+            for ($day = 1; $day <= 7; ++$day) {
+                if (!isset($existingDays[$day])) {
+                    $oh = new OpeningHour();
+                    $oh->setDayOfWeek($day);
+                    $oh->setIsClosed(true);
+                    $restaurant->addOpeningHour($oh);
+                }
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

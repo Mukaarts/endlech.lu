@@ -89,7 +89,7 @@
                             {% else %}
                                 {{ restaurant.emoji }}
                             {% endif %}
-                            {% if restaurant.isOpen %}
+                            {% if restaurant|is_open_now %}
                                 <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">{{ 'status.open'|trans }}</span>
                             {% else %}
                                 <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">{{ 'status.closed'|trans }}</span>
@@ -99,7 +99,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700 transition">{{ restaurant.name }}</h3>
-                                    <p class="text-sm text-gray-500">{{ restaurant.city }} &bull; {{ restaurant.cuisine }}</p>
+                                    <p class="text-sm text-gray-500">{{ restaurant.city }}{% if restaurant.cuisineNames %} &bull; {{ restaurant.cuisineNames }}{% endif %}</p>
                                 </div>
                                 {% if restaurant.rating is not null %}
                                     <div class="bg-cyan-50 text-cyan-700 px-2 py-1 rounded text-xs font-bold border border-cyan-100 shrink-0">{{ restaurant.rating }}</div>

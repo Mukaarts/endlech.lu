@@ -13,18 +13,18 @@
             {{ form_errors(form.name, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
         </div>
 
-        {# Stadt & Küche (2-Spalten) #}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                {{ form_label(form.city, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
-                {{ form_widget(form.city, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
-                {{ form_errors(form.city, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
-            </div>
-            <div>
-                {{ form_label(form.cuisine, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
-                {{ form_widget(form.cuisine, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
-                {{ form_errors(form.cuisine, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
-            </div>
+        {# Stadt #}
+        <div>
+            {{ form_label(form.city, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.city, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+            {{ form_errors(form.city, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+        </div>
+
+        {# Küchen-Typen (Tom Select) #}
+        <div>
+            {{ form_label(form.cuisines, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.cuisines) }}
+            {{ form_errors(form.cuisines, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
         </div>
 
         {# Emoji & Bewertung (2-Spalten) #}
@@ -46,13 +46,34 @@
     <fieldset>
         <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.status'|trans }}</legend>
         <label class="flex items-center gap-3 cursor-pointer group">
-            {{ form_widget(form.isOpen, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
-            <span class="text-sm text-gray-600 group-hover:text-purple-700">{{ 'admin.form.is_open'|trans }}</span>
-        </label>
-        <label class="flex items-center gap-3 cursor-pointer group mt-3">
             {{ form_widget(form.isVerified, {'attr': {'class': 'rounded text-cyan-600 focus:ring-cyan-500 border-gray-300'}}) }}
             <span class="text-sm text-gray-600 group-hover:text-cyan-700">✓ {{ 'admin.form.is_verified'|trans }}</span>
         </label>
+    </fieldset>
+
+    {# --- Öffnungszeiten --- #}
+    <fieldset>
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.opening_hours'|trans }}</legend>
+        <p class="text-xs text-gray-400 mb-3">{{ 'admin.form.opening_hours_hint'|trans }}</p>
+
+        <div data-controller="opening-hours-form" class="space-y-2">
+            {% set dayNames = {1: 'opening_hours.day_1', 2: 'opening_hours.day_2', 3: 'opening_hours.day_3', 4: 'opening_hours.day_4', 5: 'opening_hours.day_5', 6: 'opening_hours.day_6', 7: 'opening_hours.day_7'} %}
+            {% for oh in form.openingHours %}
+                {{ form_widget(oh.dayOfWeek) }}
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200" data-opening-hours-form-target="row">
+                    <span class="text-sm font-semibold text-gray-700 w-24 shrink-0">{{ dayNames[oh.vars.data.dayOfWeek]|trans }}</span>
+                    <div class="flex items-center gap-2 flex-1">
+                        {{ form_widget(oh.openTime, {'attr': {'class': 'bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none w-32'}}) }}
+                        <span class="text-gray-400 text-sm">–</span>
+                        {{ form_widget(oh.closeTime, {'attr': {'class': 'bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none w-32'}}) }}
+                    </div>
+                    <label class="flex items-center gap-2 cursor-pointer group shrink-0">
+                        {{ form_widget(oh.isClosed, {'attr': {'class': 'rounded text-red-500 focus:ring-red-400 border-gray-300', 'data-action': 'opening-hours-form#toggle'}}) }}
+                        <span class="text-xs text-gray-500 group-hover:text-red-600">{{ 'opening_hours.closed'|trans }}</span>
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
     </fieldset>
 
     {# --- Barrierefreiheit --- #}
@@ -82,6 +103,11 @@
         <label class="flex items-center gap-3 cursor-pointer group">
             {{ form_widget(form.hasChangingTable, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
             <span class="text-sm text-gray-600 group-hover:text-purple-700">🍼 {{ 'admin.form.changing_table'|trans }}</span>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer group">
+            {{ form_widget(form.hasDisabledParking, {'attr': {'class': 'rounded text-purple-600 focus:ring-purple-500 border-gray-300'}}) }}
+            <span class="text-sm text-gray-600 group-hover:text-purple-700">🅿️ {{ 'admin.form.disabled_parking'|trans }}</span>
         </label>
     </fieldset>
 
@@ -172,6 +198,33 @@
                 {{ form_widget(form.tiktokUrl, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
                 {{ form_errors(form.tiktokUrl, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
             </div>
+        </div>
+    </fieldset>
+
+    {# --- Standort & Nahverkehr --- #}
+    <fieldset class="space-y-5">
+        <legend class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">{{ 'admin.form.location'|trans }}</legend>
+        <p class="text-xs text-gray-400 mb-3">{{ 'admin.form.location_hint'|trans }}</p>
+
+        {# Latitude & Longitude (2-Spalten) #}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.latitude, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.latitude, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                {{ form_errors(form.latitude, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+            </div>
+            <div>
+                {{ form_label(form.longitude, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+                {{ form_widget(form.longitude, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+                {{ form_errors(form.longitude, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
+            </div>
+        </div>
+
+        {# Nahverkehrs-Hinweis (volle Breite) #}
+        <div>
+            {{ form_label(form.nearbyStopsNote, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-1'}}) }}
+            {{ form_widget(form.nearbyStopsNote, {'attr': {'class': 'w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none transition'}}) }}
+            {{ form_errors(form.nearbyStopsNote, {'attr': {'class': 'text-red-600 text-xs mt-1'}}) }}
         </div>
     </fieldset>
 

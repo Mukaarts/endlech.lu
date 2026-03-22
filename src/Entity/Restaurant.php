@@ -22,17 +22,16 @@ class Restaurant
     #[ORM\Column(length: 100)]
     private string $city = '';
 
-    #[ORM\Column(length: 80)]
-    private string $cuisine = '';
+    /** @var Collection<int, Cuisine> */
+    #[ORM\ManyToMany(targetEntity: Cuisine::class, cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'restaurant_cuisine')]
+    private Collection $cuisines;
 
     #[ORM\Column(length: 10)]
     private string $emoji = '🍽️';
 
     #[ORM\Column(nullable: true)]
     private ?float $rating = null;
-
-    #[ORM\Column]
-    private bool $isOpen = false;
 
     #[ORM\Column]
     private bool $isWheelchairAccessible = false;
@@ -48,6 +47,9 @@ class Restaurant
 
     #[ORM\Column]
     private bool $hasChangingTable = false;
+
+    #[ORM\Column]
+    private bool $hasDisabledParking = false;
 
     #[ORM\Column]
     private bool $acceptsCash = false;
@@ -77,6 +79,10 @@ class Restaurant
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $verifiedBy = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $submittedBy = null;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $spokenLanguages = [];
@@ -99,6 +105,15 @@ class Restaurant
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $tiktokUrl = null;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 8, nullable: true)]
+    private ?string $latitude = null;
+
+    #[ORM\Column(type: 'decimal', precision: 11, scale: 8, nullable: true)]
+    private ?string $longitude = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $nearbyStopsNote = null;
+
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $accessibilityNotes = [];
@@ -114,11 +129,18 @@ class Restaurant
     #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: OrderingOption::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $orderingOptions;
 
+    /** @var Collection<int, OpeningHour> */
+    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: OpeningHour::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['dayOfWeek' => 'ASC'])]
+    private Collection $openingHours;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->cuisines = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->orderingOptions = new ArrayCollection();
+        $this->openingHours = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -150,16 +172,31 @@ class Restaurant
         return $this;
     }
 
-    public function getCuisine(): string
+    /** @return Collection<int, Cuisine> */
+    public function getCuisines(): Collection
     {
-        return $this->cuisine;
+        return $this->cuisines;
     }
 
-    public function setCuisine(string $cuisine): static
+    public function addCuisine(Cuisine $cuisine): static
     {
-        $this->cuisine = $cuisine;
+        if (!$this->cuisines->contains($cuisine)) {
+            $this->cuisines->add($cuisine);
+        }
 
         return $this;
+    }
+
+    public function removeCuisine(Cuisine $cuisine): static
+    {
+        $this->cuisines->removeElement($cuisine);
+
+        return $this;
+    }
+
+    public function getCuisineNames(): string
+    {
+        return implode(', ', $this->cuisines->map(fn (Cuisine $c) => $c->getName())->toArray());
     }
 
     public function getEmoji(): string
@@ -182,18 +219,6 @@ class Restaurant
     public function setRating(?float $rating): static
     {
         $this->rating = $rating;
-
-        return $this;
-    }
-
-    public function isOpen(): bool
-    {
-        return $this->isOpen;
-    }
-
-    public function setIsOpen(bool $isOpen): static
-    {
-        $this->isOpen = $isOpen;
 
         return $this;
     }
@@ -254,6 +279,18 @@ class Restaurant
     public function setHasChangingTable(bool $hasChangingTable): static
     {
         $this->hasChangingTable = $hasChangingTable;
+
+        return $this;
+    }
+
+    public function hasDisabledParking(): bool
+    {
+        return $this->hasDisabledParking;
+    }
+
+    public function setHasDisabledParking(bool $hasDisabledParking): static
+    {
+        $this->hasDisabledParking = $hasDisabledParking;
 
         return $this;
     }
@@ -407,6 +444,18 @@ class Restaurant
         return $this;
     }
 
+    public function getSubmittedBy(): ?User
+    {
+        return $this->submittedBy;
+    }
+
+    public function setSubmittedBy(?User $submittedBy): static
+    {
+        $this->submittedBy = $submittedBy;
+
+        return $this;
+    }
+
     public function getPhone(): ?string
     {
         return $this->phone;
@@ -479,6 +528,47 @@ class Restaurant
         return $this;
     }
 
+    public function getLatitude(): ?string
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?string $latitude): static
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?string
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?string $longitude): static
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getNearbyStopsNote(): ?string
+    {
+        return $this->nearbyStopsNote;
+    }
+
+    public function setNearbyStopsNote(?string $nearbyStopsNote): static
+    {
+        $this->nearbyStopsNote = $nearbyStopsNote;
+
+        return $this;
+    }
+
+    public function hasCoordinates(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
+
     public function hasContactInfo(): bool
     {
         return $this->phone || $this->email || $this->website || $this->instagramUrl || $this->facebookUrl || $this->tiktokUrl;
@@ -526,5 +616,43 @@ class Restaurant
         }
 
         return $this;
+    }
+
+    /** @return Collection<int, OpeningHour> */
+    public function getOpeningHours(): Collection
+    {
+        return $this->openingHours;
+    }
+
+    public function addOpeningHour(OpeningHour $openingHour): static
+    {
+        if (!$this->openingHours->contains($openingHour)) {
+            $this->openingHours->add($openingHour);
+            $openingHour->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpeningHour(OpeningHour $openingHour): static
+    {
+        if ($this->openingHours->removeElement($openingHour)) {
+            if ($openingHour->getRestaurant() === $this) {
+                $openingHour->setRestaurant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getOpeningHourForDay(int $day): ?OpeningHour
+    {
+        foreach ($this->openingHours as $oh) {
+            if ($oh->getDayOfWeek() === $day) {
+                return $oh;
+            }
+        }
+
+        return null;
     }
 }

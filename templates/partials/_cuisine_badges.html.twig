@@ -1,0 +1,7 @@
+{% if restaurant.cuisines is not empty %}
+    <div class="flex flex-wrap gap-1 mt-1">
+        {% for cuisine in restaurant.cuisines %}
+            <span class="inline-block text-xs bg-orange-50 text-orange-700 px-2 py-0.5 rounded border border-orange-100">{{ cuisine.name }}</span>
+        {% endfor %}
+    </div>
+{% endif %}
