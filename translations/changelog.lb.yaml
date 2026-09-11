@@ -23,6 +23,9 @@ repo:
     link_label: "CHANGELOG.md op GitHub opmaachen"
 
 release:
+    v2026_09_11:
+        title: "Wien Endlech.lu bedreift"
+        body: "Hannert Endlech.lu steet elo eng agedroe Gesellschaft, d’DAUMEDIA S.à r.l.-S, an net méi eng Privatpersoun. Am Impressum stinn dofir vun elo un de Sëtz, d’Handelsregisternummer an d’Handelsautorisatioun. Fir Är Donnéeën heescht dat: Är Rechter op Auskonft, Berichtegung a Läschung riichte sech vun elo un un d’Gesellschaft. Geännert huet sech, wien responsabel ass — net, wat mir iwwer Iech späicheren."
     v2026_09_05:
         title: "D’Waardelëscht fir d’App"
         body: "Endlech.lu kënnt als App op den Telefon. Fir iPhone an iPad leeft schonn eng Testversioun — wien sech androit, kritt den Zougang per E-Mail. Fir Android ass nach näischt gebaut, an dat steet och esou do: D’Umeldung zielt mat, wa mir décidéieren, ob mir ufänken."

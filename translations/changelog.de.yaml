@@ -29,6 +29,9 @@ repo:
     link_label: "CHANGELOG.md auf GitHub öffnen"
 
 release:
+    v2026_09_11:
+        title: "Wer Endlech.lu betreibt"
+        body: "Hinter Endlech.lu steht jetzt eine eingetragene Gesellschaft, die DAUMEDIA S.à r.l.-S, und nicht mehr eine Privatperson. Im Impressum stehen deshalb ab sofort Sitz, Handelsregisternummer und Handelsermächtigung. Für Ihre Daten heißt das: Ihre Rechte auf Auskunft, Berichtigung und Löschung richten sich ab jetzt an die Gesellschaft. Geändert hat sich, wer verantwortlich ist — nicht, was wir über Sie speichern."
     v2026_09_05:
         title: "Die App-Warteliste"
         body: "Endlech.lu kommt als App aufs Telefon. Für iPhone und iPad läuft schon eine Testfassung — wer sich einträgt, bekommt den Zugang per E-Mail. Für Android ist noch nichts gebaut, und das steht auch so da: Die Vormerkung zählt mit, wenn wir entscheiden, ob wir anfangen."

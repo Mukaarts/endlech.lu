@@ -29,6 +29,13 @@ final readonly class ChangelogRegistry
     public function notes(): array
     {
         return [
+            // Wer die Plattform betreibt, steht auf /legal — und dort hat sich
+            // mit der Gesellschaft der Verantwortliche nach Art. 4 Nr. 7 DSGVO
+            // geändert. Das sieht ein Gast, und es geht ihn an: Seine
+            // Betroffenenrechte richten sich ab jetzt gegen sie. Deshalb SHOWN,
+            // obwohl der übrige Inhalt des Releases (Warteschlangen-Wache,
+            // Datenschutzunterlagen) für sich genommen still geblieben wäre.
+            new ReleaseNote('2026.09.11', new \DateTimeImmutable('2026-09-11'), ReleaseVisibility::SHOWN),
             // Feature 08: eine neue öffentliche Seite unter /app. Ein Gast
             // sieht sie — deshalb SHOWN mit Text in allen vier changelog.*.yaml.
             new ReleaseNote('2026.09.05', new \DateTimeImmutable('2026-09-05'), ReleaseVisibility::SHOWN),

@@ -2,10 +2,70 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.05-blue)
+![Version](https://img.shields.io/badge/version-2026.09.11-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.11] – Betreibergesellschaft und Warteschlangen-Wache
+
+### Betreiber ist die DAUMEDIA S.A.R.L.-S
+
+Nach der Eintragung im RCS Luxembourg (B311765, Gründung 27.07.2026, Eintragung
+02.09.2026) betreibt die Gesellschaft die Plattform, nicht mehr die Privatperson.
+Das Impressum ist damit nach **Art. 5 der Loi du 14 août 2000** vollständig:
+Firma, ausgeschriebene Rechtsform, Sitz, Handelsregisternummer, Handelsermächtigung
+samt erteilender Behörde und Vertretung.
+
+⚠ **Datenschutzrechtlich hat der Verantwortliche gewechselt** — bis zum 2026-09-05
+eine Privatperson, seither die Gesellschaft. Betroffenenrechte richten sich ab jetzt
+gegen sie. Ob der Übergang eine gesonderte Information der Betroffenen erfordert,
+steht als DS-05 offen; das gehört fachlichem Rat.
+
+⚠ Der Normverweis war an zwei Stellen falsch (`§ 5 TMG / Art. 11`): Das TMG ist seit
+Mai 2024 durch das DDG abgelöst, und die einschlägige luxemburgische Norm ist Art. 5,
+nicht Art. 11. Der DDG-Verweis steht jetzt **nur in der deutschen Fassung** und als
+Hinweis, nicht als Rechtsgrundlage — für eine luxemburgische Gesellschaft gilt das
+Herkunftslandprinzip.
+
+⚠ Die frühere Entscheidung, keine Anschrift zu veröffentlichen (VB-03/OF-04), ist
+überholt: Art. 5 verlangt sie, und der Sitz steht im RCS ohnehin öffentlich. Die
+MwSt-Nummer ist noch nicht vergeben; das Feld bleibt leer und blendet sich von selbst
+ein, sobald es gefüllt ist.
+
+### Überwachung der Messenger-Warteschlange (`app:messenger:watch`)
+
+Der Ausfall des Workers war bisher lautlos: Nachrichten stapeln sich in
+`messenger_messages`, während die Anwendung weiter „erfolgreich" meldet — keine
+Bestätigungsmail, kein Monats-Snapshot, kein Brevo-Abgleich. Ein neuer Befehl misst
+das jetzt statt es anzunehmen und meldet per Mail an `app.contact_email`. Er läuft
+täglich um 07:20 im Zeitplan `marketing`; Schwelle sind 25 unbearbeitete Nachrichten
+oder eine, die seit über 30 Minuten in Zustellung hängt. `--dry-run` prüft, ohne zu
+versenden.
+
+⚠ **Der Befehl versendet über `TransportInterface`, nicht über `MailerInterface`.**
+Letzterer schiebt jede Mail über den Messenger — die Warnung läge damit in genau der
+Warteschlange, vor der sie warnt. Gemessen: Mit `MailerInterface` stieg der Stand von
+30 auf 31, und die 31. war die Warnung.
+
+⚠ **Diese Überwachung erkennt keinen vollständigen Stillstand.** Sie läuft im selben
+Consumer wie das, was sie beobachtet. Den Totalausfall sieht nur eine Prüfung von
+außen; die ist als BE-01 vorbereitet und noch nicht eingerichtet.
+
+### Datenschutzunterlagen nachgezogen
+
+`docs/datenschutz.md` um Verarbeitungsverzeichnis und Auftragsverarbeiter erweitert.
+DS-01 bis DS-04 abgearbeitet: Der Brevo-AV-Vertrag liegt geprüft im Repository, der
+Hoster ist ermittelt (**Hostinger**, Serverstandort Deutschland — Coolify ist die
+Software auf dem Server, nicht der Anbieter), und die anonyme Nachverfolgung in Brevo
+ist entschieden. Die verbleibenden Punkte brauchen einen Kontozugang; statt einer
+Aufgabenzeile liegen unter `docs/anfragen/` fertig ausformulierte Anfragen bereit.
+
+⚠ Befund bei DS-01b: Ziffer 6.2 des Brevo-DPA macht die Vorabinformation über neue
+Unterauftragsverarbeiter davon abhängig, dass man sich „via the dedicated form"
+angemeldet hat — das Formular ist im Vertragstext nicht verlinkt und über die
+Hilfeseiten nicht auffindbar. Ohne Nachfrage lässt sich das Widerspruchsrecht nicht
+ausüben.
 
 ## [2026.09.05] – Warteliste für die mobile App
 
