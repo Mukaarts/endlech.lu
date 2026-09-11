@@ -531,6 +531,28 @@ entweder beheben (`/sdd-build 08`) oder als bewusst hingenommen in `befunde.md` 
 ⚠ **BF-119 bleibt für B14, B15 und B01 offen.** Die Gegenprobe am Partner-Formular wirft
 weiterhin `RfcComplianceException`; die Reparatur an Feature 08 hat dort nichts geändert.
 
+> **Nachtrag 2026-09-11 · behoben durch `sdd-build`** (Auftrag BF-119, Branch
+> `fix/bf-119-email-validierung`). `PartnerWaitlistType`, `OrganisationWaitlistType` und
+> `RegistrationType` prüfen jetzt mit `Email::VALIDATION_MODE_STRICT`; zusätzlich wandert
+> die Adressprüfung in `WaitlistConfirmationService::register()` und
+> `RegistrationController` **vor** den `flush()`, damit ein ungültiger Wert keine Zeile
+> hinterlässt. Die Reproduktion aus diesem Bericht greift nicht mehr: Der Partner-Weg
+> liefert für `../../etc/passwd@example.lu` **422 statt 500**, und der Bestand bleibt
+> unverändert. Vor der Reparatur nachgestellt und belegt — mit zurückgebautem STRICT
+> antwortet derselbe Aufruf mit `500` und
+> `X-Debug-Exception: … does not comply with addr-spec of RFC 2822`.
+>
+> Abgesichert durch `Bf119EmailValidierungTest` (27 Fälle über alle drei Wege, je
+> RFC-widrig und gültig) und `Bf119RegisterReihenfolgeTest`. ⚠ Der zweite ist ein
+> **Integrations**-Test und ruft den Service direkt: Seit die Formulare strikt prüfen,
+> erreicht eine widrige Adresse den Service nicht mehr — ein funktionaler Test bliebe
+> grün, gleich ob die Prüfung vor oder hinter dem `flush()` steht. Beide Läufe wurden
+> durch Rückbau gegengeprüft und wurden rot.
+>
+> Nicht mitrepariert und als `OF-BF119a` bis `OF-BF119c` in den drei `spec.md`
+> vermerkt: fünf weitere `Email`-Constraints im HTML5-Default, `notifyRequester()` bei
+> Altbestand, und die abweichende Prüfung des API-Wegs.
+
 ---
 
 # Dritter Durchlauf — 2026-09-05

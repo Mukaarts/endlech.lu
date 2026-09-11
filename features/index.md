@@ -10,6 +10,15 @@ BF-119 (*hoch*), B10, B12 und B24 wegen eines `qa-report.md`, der noch das
 „Production-ready: nein" seines ersten Durchlaufs trägt.
 
 
+
+**2026-09-11 · BF-119 in Arbeit** — B01, B14, B15 auf `building`. Der Rücksprung von
+`approved` auf `review` ist die Buchung, die seit dem 2026-09-05 fehlte: Die QA von
+Feature `08` hat an diesen drei etwas gefunden, der Rücksprung wurde aber nie vollzogen,
+weil der Befund an einem anderen Feature auffiel. ⚠ **Gesetzt auf ausdrückliche Weisung**,
+nicht durch einen `sdd-qa`-Lauf — der Befund ist in
+`features/08-app-warteliste/qa-report.md` bereits mit Fundstelle und Reproduktion belegt,
+eine zweite Prüfung wäre Zeremonie gewesen. Abgenommen wird trotzdem nur von `sdd-qa`.
+
 **2026-09-11 · Statuspflege nach zwei Releases.** `v2026.09.11` (Betreibergesellschaft,
 Warteschlangen-Wache) und `v2026.09.11.1` (Sicherheits-Kopfzeilen, BF-123) sind live und
 auf Produktion nachgeprüft. Dabei fiel auf, dass 23 Bestandsfeatures auf `approved`
@@ -1694,7 +1703,7 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | 07 | Öffentliche Roadmap und Changelog | P2 | **deployed** | 06, B13, B16, B24, 02, 03, 05 | 2026-08-31 · live in v2026.08.31, auf Produktion nachgeprüft |
 | 09 | Produktanalyse (Plausible/Umami oder PostHog) | P2 | roadmap | 02, B26, B13 | 2026-09-05 · aus `/sdd-betrieb` — Entscheidung offen, siehe `docs/datenschutz.md` BE-02 |
 | 08 | Warteliste für die mobile App (iOS-Beta / Android) | P1 | **deployed** | B14, B22, B24, 02, 04 | 2026-09-05 · live in v2026.09.05, auf Produktion nachgeprüft |
-| B01 | Registrierung & E-Mail-Bestätigung | P0 | **approved** | — | 2026-09-11 · QA³: 17/20 — **BF-119 offen** (*hoch*, 2026-09-05): `RegistrationType` im HTML5-Default → 500 samt bleibender Zeile |
+| B01 | Registrierung & E-Mail-Bestätigung | P0 | **approved** | — | 2026-09-11 · QA⁴: BF-119 behoben und am Server belegt; fünf Befunde *mittel*, keiner blockierend |
 | B02 | Anmeldung mit Passwort | P0 | **deployed** | B01 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B03 | Passkey-Anmeldung & -Verwaltung | P0 | **deployed** | B01, B02 | 2026-08-29 · ENDLECH-6 live in v2026.08.29.1, auf Produktion belegt (302 statt 400) |
 | B04 | Profil, Avatar & eigene Einreichungen | P0 | **deployed** | B01, B11 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
@@ -1707,8 +1716,8 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | B11 | Restaurant vorschlagen (Wizard) | P0 | **deployed** | B01 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B12 | Startseite | P1 | **approved** | B05 | 2026-09-11 · QA² 15/15, BF-64 repariert — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf |
 | B13 | Statische Inhaltsseiten | P2 | **deployed** | — | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
-| B14 | Partner-Warteliste | P0 | **approved** | — | 2026-09-11 · QA: 28/28 — **BF-119 offen** (*hoch*, 2026-09-05): am Partner-Formular nachgestellt, wirft weiterhin |
-| B15 | Organisations-Wartelisten | P0 | **approved** | B14 | 2026-09-11 · QA: 27/27 — **BF-119 offen** (*hoch*, 2026-09-05): `OrganisationWaitlistType` unverändert |
+| B14 | Partner-Warteliste | P0 | **approved** | — | 2026-09-11 · QA²: BF-119 behoben und am laufenden Server belegt (422 statt 500); fünf neue Befunde *mittel/niedrig*, keiner blockierend |
+| B15 | Organisations-Wartelisten | P0 | **approved** | B14 | 2026-09-11 · QA²: BF-119 behoben und am Server belegt (422 statt 500); ein mittlerer, ein niedriger Befund, keiner blockierend |
 | B16 | Transparenzseite `/open` | P1 | **deployed** | B18 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B17 | Offener Datensatz & Kennzahl-Endpunkte | P1 | **deployed** | B18 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B18 | Finanzposten & Kennzahl-Snapshots | P1 | **deployed** | B19 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |

@@ -2,10 +2,53 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.11.1-blue)
+![Version](https://img.shields.io/badge/version-2026.09.11.2-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.11.2] – E-Mail-Prüfung an allen Eingängen (BF-119)
+
+### Drei Formulare prüfen jetzt streng
+
+`PartnerWaitlistType` (B14), `OrganisationWaitlistType` (B15) und `RegistrationType`
+(B01) laufen auf `Email::VALIDATION_MODE_STRICT` statt auf dem HTML5-Default. Feature 08
+hatte den Befund bereits repariert; für diese drei stand er seit dem 2026-09-05 offen.
+
+Der Default ließ Adressen durch, die `Mime\Address` nach RFC 2822 ablehnt. Weil vor dem
+Versand gespeichert wird, blieb nach dem 500er eine Zeile stehen — gemessen 0 → 1.
+Am laufenden Server nachgestellt: **422 statt 500**, Bestand unverändert, auf allen drei
+Wegen.
+
+⚠ **STRICT ist nicht nur strenger, sondern an einer Stelle großzügiger.** Der
+HTML5-Default wies Domains mit Akzent oder Umlaut ab — `jean-luc@télécom.lu` und
+`muller@bäckerei.lu` konnten sich **nicht registrieren**. Beide gehen jetzt durch. In
+einem Land mit französischen und deutschen Domainnamen ist das kein Randfall.
+
+### Die Adressprüfung wandert vor den `flush()`
+
+In `WaitlistConfirmationService::register()` und `RegistrationController` wird die
+Empfängeradresse konstruiert, **bevor** gespeichert wird. Das trennt zwei Fragen, die
+dort vermischt waren: „Ist das überhaupt eine Adresse?" gehört davor, „kam die Mail an?"
+dahinter.
+
+⚠ **Die Reihenfolge Token → flush → Mail bleibt unangetastet.** Wer sie insgesamt
+umdreht, repariert BF-119 und nimmt die Eigenschaft mit, für die sie gewählt wurde —
+dass ein Transportfehler die Anmeldung nicht verliert.
+
+⚠ **Diese zweite Hälfte ist über das Formular nicht prüfbar**: Seit die Constraints
+strikt prüfen, erreicht eine widrige Adresse den Service nicht mehr. Der Nachweis liegt
+deshalb in einem Integrationstest, der den Service direkt ruft. Beide neuen Prüfläufe
+wurden durch Rückbau gegengeprüft und wurden rot.
+
+### Nebenbefunde aus drei QA-Durchläufen
+
+B01, B14 und B15 wurden vollständig geprüft (Berichte in `features/`). Zwölf Befunde
+sind dabei entstanden, alle *mittel* oder *niedrig*, keiner blockierend — darunter eine
+stille Regression seit der Async-Umstellung (BF-124/BF-131: Der Nutzer erfährt von einem
+Zustellproblem nichts mehr), ein Prüflauf, der einen Kommentar liest statt Verhalten
+(BF-125), und dreimal dieselbe Spec-Drift (BF-126, BF-130, BF-132). Einzelheiten in
+`features/befunde.md`.
 
 ## [2026.09.11.1] – Sicherheits-Kopfzeilen
 

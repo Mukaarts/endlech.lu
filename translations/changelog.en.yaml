@@ -23,6 +23,9 @@ repo:
     link_label: "Open CHANGELOG.md on GitHub"
 
 release:
+    v2026_09_11_2:
+        title: "Addresses with accents now work"
+        body: "If your email address has an accent or umlaut in the domain — say on télécom.lu or bäckerei.lu — you previously could not register or join a waiting list: the form rejected it. That is fixed. At the same time the forms check more thoroughly, so an undeliverable address is no longer accepted in the first place."
     v2026_09_11:
         title: "Who runs Endlech.lu"
         body: "Endlech.lu is now run by a registered company, DAUMEDIA S.à r.l.-S, rather than a private individual. The legal notice therefore now shows the registered office, the trade register number and the business licence. For your data this means your rights to access, correction and deletion are now addressed to the company. What changed is who is responsible — not what we store about you."

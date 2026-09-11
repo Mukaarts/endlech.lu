@@ -29,6 +29,11 @@ final readonly class ChangelogRegistry
     public function notes(): array
     {
         return [
+            // Eine Fehlerbehebung, die ein Gast sehr wohl merkt: Adressen mit
+            // Akzent oder Umlaut in der Domain wurden bisher abgewiesen und
+            // gehen jetzt durch. Deshalb SHOWN — der 500er allein wäre still
+            // geblieben.
+            new ReleaseNote('2026.09.11.2', new \DateTimeImmutable('2026-09-11'), ReleaseVisibility::SHOWN),
             // Rein technisch: Sicherheits-Kopfzeilen und `expose_php`. Ein Gast
             // sieht davon nichts — deshalb SILENT und kein Text in den vier
             // changelog.*.yaml.

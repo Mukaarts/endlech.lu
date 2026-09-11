@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -109,6 +110,14 @@ final class RegistrationController extends AbstractController
                 $user->setMarketingConsentAt(new \DateTimeImmutable());
             }
 
+            // ⚠ BF-119: VOR dem flush. `new Address()` prüft gegen RFC 2822;
+            // der HTML5-Default des `Email`-Constraints ließ Adressen durch, die
+            // hier werfen. Stünde die Prüfung erst beim `->to()` weiter unten,
+            // wäre das Konto zu dem Zeitpunkt schon angelegt — der Nutzer sähe
+            // einen 500er und hätte trotzdem ein Konto, an das keine
+            // Bestätigung zustellbar ist. Gemessen: 0 → 1 Zeile.
+            $empfaenger = new Address($user->getEmail());
+
             $token = $user->generateVerificationToken();
 
             $entityManager->persist($user);
@@ -117,7 +126,7 @@ final class RegistrationController extends AbstractController
             $verifyUrl = $this->generateUrl('app_verify_email', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $email = (new TemplatedEmail())
-                ->to($user->getEmail())
+                ->to($empfaenger)
                 // Ohne diese Zeile rendert das Template erst beim Versand – bei
                 // asynchronem Transport also im Worker, wo es keine Request-Sprache
                 // gibt und default_locale (lb) greift. Der Betreff wäre dann

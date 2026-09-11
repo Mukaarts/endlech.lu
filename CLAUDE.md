@@ -748,8 +748,23 @@ verdrahtet und von `LimiterCoverageTest` bestätigt ist; er greift nur auf einem
 ⚠️ **Die E-Mail-Prüfung läuft hier mit `Email::VALIDATION_MODE_STRICT`** (BF-119). Der
 HTML5-Default lässt Adressen durch, die `Mime\Address` nach RFC 2822 ablehnt — und weil
 `register()` **vor** dem Versand speichert, blieb bei einem 500er eine Zeile stehen.
-⚠️ **B14, B15 und B01 nutzen weiterhin den Default** und haben denselben Fehler
-(nachgestellt am Partner-Formular); BF-119 steht dafür offen.
+⚠️ **Seit dem 2026-09-11 prüfen alle vier Wege strikt** — `PartnerWaitlistType` (B14),
+`OrganisationWaitlistType` (B15) und `RegistrationType` (B01) sind nachgezogen. ⚠ **Noch
+nicht ausgeliefert**: Auf Produktion erzeugt eine RFC-widrige Adresse dort weiterhin einen
+500er samt bleibender Zeile, bis der Branch `fix/bf-119-email-validierung` gemerged ist.
+
+⚠️ **Die zweite Hälfte der Reparatur steht im Service, nicht im Formular.** In
+`WaitlistConfirmationService::register()` und `RegistrationController` wandert die
+Adresskonstruktion **vor** den `flush()`. Das trennt zwei Fragen, die dort vermischt
+waren: „Ist das überhaupt eine Adresse?" gehört davor, „kam die Mail an?" dahinter. **Die
+Reihenfolge Token → flush → Mail bleibt unangetastet** — wer sie insgesamt umdreht,
+„repariert" BF-119 und nimmt die Eigenschaft mit, für die sie gewählt wurde.
+
+⚠️ **Über das Formular ist diese zweite Hälfte nicht mehr prüfbar** (BF-119): Seit die
+Constraints strikt prüfen, erreicht eine widrige Adresse den Service nicht mehr — ein
+funktionaler Test bliebe grün, gleich ob die Prüfung vor oder hinter dem `flush()` steht.
+Der Nachweis liegt deshalb in `tests/Integration/Waitlist/Bf119RegisterReihenfolgeTest.php`
+und ruft den Service direkt.
 
 ⚠️ **Kein Verzeichnis `public/app` anlegen** — sonst wiederholt sich BF-100 auf
 einer neuen Adresse. `RouteDirectoryCollisionTest` prüft die Ursache projektweit.

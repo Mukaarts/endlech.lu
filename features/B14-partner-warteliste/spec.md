@@ -160,6 +160,26 @@ Teilt sich `WaitlistConfirmationService`, `WaitlistEntryInterface`,
 
 ## Offene Fragen
 
+- **OF-BF119a** · Fünf weitere `new Email(...)` stehen weiterhin im HTML5-Default —
+  `ProfileType`, `PasswordResetRequestType`, `AccessibilityReportType`,
+  `RestaurantSuggestionType`, `RestaurantType`. Die ersten drei lösen einen Mailversand
+  an **genau diese** Adresse aus und haben damit dieselbe Lücke wie BF-119; die beiden
+  letzten speichern die Adresse nur. Beim Bauen von BF-119 gemessen, **bewusst nicht
+  mitrepariert**: Der Auftrag nannte drei Formulare, und was nicht im Auftrag steht,
+  wird nicht gebaut. — Betreiber
+
+- **OF-BF119b** · `WaitlistConfirmationService::notifyRequester()` (die zweite Mail)
+  konstruiert die Adresse erst beim `->to()`. Ein Reihenfolgeproblem ist das nicht — die
+  Methode schreibt nichts in die Datenbank —, aber ein **Altbestand** mit einer
+  RFC-widrigen Adresse aus der Zeit vor dieser Reparatur erzeugt dort weiterhin einen
+  500er. Ob solche Zeilen auf Produktion liegen, ist von hier aus nicht prüfbar. — Betreiber
+
+- **OF-BF119c** · Web- und API-Weg prüfen unterschiedlich: `Api\V1\AuthController::register()`
+  nutzt `filter_var(..., FILTER_VALIDATE_EMAIL)`. Gemessen weist das alle drei
+  BF-119-Adressen ab — der API-Weg war also nie betroffen —, lehnt aber auch
+  `jean-luc@télécom.lu` ab, das der Web-Weg seit dieser Reparatur **annimmt**. Dieselbe
+  Adresse führt damit je nach Tür zu einem anderen Ergebnis. — Betreiber
+
 - **OF-01** · Wie soll der Widerruf aussehen (AK-22)? Ein signierter Abmeldelink in
   jeder Mail wäre der übliche Weg und deckte zugleich FB-05 teilweise ab. — Betreiber
   **Entschieden 2026-08-25:** Ja, genau so (BF-37, 2026-08-25). Der Abmeldelink steht in jeder Wartelisten-Mail und löscht den Eintrag — ein Widerruf, nach dem der Datensatz bleibt, ist keiner.

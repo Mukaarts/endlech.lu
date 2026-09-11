@@ -154,3 +154,167 @@ liegt unter `scratchpad/e2e/live2.mjs`; die Ausgabe steht oben im Bericht.
 ## Nächster Schritt
 
 `/sdd-erfassen B22`. B15 geht auf `approved`; BF-39 steht in `features/befunde.md`.
+
+---
+
+# Zweiter Durchlauf — 2026-09-11
+
+Stand: 2026-09-11 · Vorstufe: `building` · Branch `fix/bf-119-email-validierung`
+
+## Fazit
+
+**Production-ready: ja** — BF-119 ist auch auf dem Organisationsweg behoben und am
+laufenden Server belegt. Offen bleiben **ein mittlerer und ein niedriger** Befund,
+keiner blockierend.
+
+15 von 19 Kriterien bestanden, **1 nicht mehr zutreffend**, 3 nicht prüfbar.
+
+Anlass war die BF-119-Reparatur. Gemessen an `/de/organisationen`:
+`../../etc/passwd@example.lu` → **422 statt 500**, Bestand **5 → 5**. Die typabhängige
+Validierung hält unter Beschuss: Ein untergeschobenes Fremdfeld (`estimatedVenues` bei
+`type=association`) ergibt **422**, ein erfundener Wert in der JSON-Interessenliste
+(`<script>alert(1)</script>`) ebenfalls **422** und **keine Zeile**.
+
+⚠ **Dieser Durchlauf prüft die Arbeit desselben Agenten, der sie gebaut hat** — wie bei
+B14. Gegengesteuert mit dem `code-reviewer` und damit, dass jeder Nachweis am laufenden
+Server entstand.
+
+## Akzeptanzkriterien im Einzelnen
+
+| AK | Ergebnis | Nachweis |
+|---|---|---|
+| AK-01 | ✅ bestanden | `curl /de/organisationen` → **200**; `testLandingPageRendersAllThreeSections` |
+| AK-02 | ✅ bestanden | `testTypeCanBePreselectedViaQuery` |
+| AK-03 | ✅ bestanden | `testTypePageRendersWithPreselectedType` — drei Datensätze (Gemeinden, Unternehmen, Vereine) |
+| AK-04 | ✅ bestanden | `testUnknownTypeSlugReturns404`, `testAk04UnbekannterSlugErgibt404` |
+| **AK-05** | ✅ bestanden | Markup ohne JavaScript geholt: `communeName` 1×, `estimatedVenues` 1×, `sponsorshipInterests` 6×, `collaborationInterests` 5× — **alle drei Blöcke stehen da** |
+| AK-06 | ⚠️ nicht prüfbar | Setzt einen Browser mit aktivem Stimulus voraus; mit `curl` nicht beobachtbar. Für den Nachweis bräuchte es einen echten Browser (wie bei B03 mit CDP) |
+| **AK-07** | ✅ bestanden | Am Server: `estimatedVenues=42` bei `type=association` → **422**, nicht still ignoriert; `testCrossTypeFieldsAreRejected` |
+| AK-08 | ✅ bestanden | `testOwnTypeFieldsAreAccepted` (eigener Typ akzeptiert) gegen AK-07 (fremder abgelehnt) |
+| AK-09 | ✅ bestanden | `testCommuneSubmissionStoresTypeSpecificFields`, `…CompanySubmissionStoresSponsorshipInterests`, `…AssociationSubmissionStoresCollaborationInterests` |
+| **AK-10** | ⚠️ nicht prüfbar | Der Fallback `getType() ?? COMMUNE` (`OrganisationController:127`) sitzt **hinter** der Pflichtvalidierung: Ohne `type` antwortet das Formular mit 422 (`testMissingTypeIsRejected`), der Fallback wird nie erreicht. Über HTTP nicht auslösbar — Verteidigung in der Tiefe, kein beobachtbares Verhalten |
+| AK-11 | ✅ bestanden | `testHoneypotIsSilentlyDiscarded` |
+| AK-12 | ✅ bestanden | `testConfirmationActivatesEntryAndNotifiesTeam`, `testUnknownTokenReturns404` |
+| AK-13 | ✅ bestanden | `testAk13ZielgruppentextStehtNurAufDerUnterseite` |
+| **AK-14** ⚠ | ✅ bestanden | `OrganisationController:93` nutzt tatsächlich `flash.partner_rate_limited`. ⚠ **Die Einschätzung der Spec trifft aber nicht zu** — siehe BF-129 |
+| **AK-15** ⚠ | ❌ trifft nicht mehr zu | Die Spec sagt „kein Ablauf, kein Widerrufsweg". Beides existiert: `TOKEN_LIFETIME_DAYS = 7` und Route `app_organisations_revoke` (`/{_locale}/organisationen/abmelden/{token}`) — BF-36/BF-37, live seit `v2026.08.29` |
+| **AK-16** | ⚠️ nicht prüfbar | `SHOW COLUMNS`: Die aufgezählten Felder sind alle da — die Liste ist aber **nicht mehr vollständig**. `marketing_consent_at` und `self_confirmed_at` kamen über Feature 04 und BF-89 dazu. Ein abschließend aufzählendes Kriterium lässt sich gegen einen erweiterten Bestand nicht mit „bestanden" beantworten (wie B14/AK-17) |
+| AK-17 | ✅ bestanden | `information_schema`: `sponsorship_interests` und `collaboration_interests` sind beide `json` |
+| AK-18 | ✅ bestanden | belegt durch AK-07: Nur die Felder des übermittelten Typs werden aufgebaut, ein fremdes ergibt 422 |
+| AK-19 | ✅ bestanden | belegt durch AK-05: Alle drei Blöcke stehen ohne JavaScript im Markup |
+
+## Sicherheitsprüfung
+
+| Prüfung | Ergebnis | Beleg |
+|---|---|---|
+| **Eigener** Rate-Limit-Zähler | ✅ greift | 5 × 302, dann 3 × **429** — eigenes Kontingent, nicht das der Partner (BF-38) |
+| Fremdes Typfeld untergeschoben | ✅ 422 | `estimatedVenues` bei `type=association` |
+| Erfundener Wert in der JSON-Liste | ✅ 422 | `sponsorshipInterests[]=<script>alert(1)</script>` → keine Zeile in der Datenbank |
+| Unbekannter Token | ✅ 404 | `testUnknownTokenReturns404` |
+| BF-119 am laufenden Server | ✅ behoben | 422 statt 500, Bestand **5 → 5** |
+| Bestätigungstoken im Log | ✅ kein Befund | `doctrine`-Kanal, in `prod` per `!doctrine` ausgeschlossen (BF-06/BF-12) |
+
+## Fehler
+
+### BF-129 · Der Organisationsweg meldet über den Partner-Schlüssel — niedrig
+
+**Betrifft:** AK-14
+
+**Reproduktion:** `grep -n rate_limited src/Controller/OrganisationController.php`
+→ Zeile 93: `$this->translator->trans('flash.partner_rate_limited')`
+
+⚠ **Der Schaden ist deutlich kleiner, als die Spec annimmt.** AK-14 nennt das Ergebnis
+„eine Partner-Meldung auf der Organisationsseite" und stellt es als klärungsbedürftig
+heraus. Der hinterlegte **Text** ist aber in allen vier Sprachen neutral:
+
+> „Sie haben in kurzer Zeit mehrere Anmeldungen abgeschickt. Bitte versuchen Sie es in
+> einer Stunde erneut."
+
+Kein Wort von „Partner". **Ein Besucher der Organisationsseite liest nichts Falsches** —
+irreführend ist allein der Schlüsselname im Quelltext. Damit ist AK-14 technisch erfüllt
+und die daran geknüpfte Sorge gegenstandslos.
+
+⚠ Die zweite Hälfte von AK-14 („zugleich teilen sich beide denselben Limiter-Service")
+ist **überholt**: Am Server nachgemessen greift ein eigenes Kontingent (BF-38).
+
+**Vorschlag:** Schlüssel in `flash.waitlist_rate_limited` umbenennen (drei Aufrufer, vier
+Kataloge) — oder AK-14 schließen und die Sorge streichen. Beides ist vertretbar; die
+Entscheidung gehört zum Betreiber, nicht in diesen Bericht.
+
+---
+
+### BF-130 · Spec und Entwurf beschreiben an sechs Stellen einen überholten Stand — mittel
+
+**Betrifft:** AK-14, AK-15, AK-16, FB-01, FB-03, FB-06 sowie `design.md`
+
+⚠ **Drei der sechs Stellen hat der prüfende Agent übersehen** — sie kamen vom
+`code-reviewer` und sind hier einzeln nachgemessen. Geprüft worden waren nur die
+Akzeptanzkriterien; der **Fehlbestand-Abschnitt** und `design.md` blieben unangesehen.
+Das ist die eigentliche Lehre dieses Durchlaufs: Eine Drift-Prüfung, die nur die
+AK-Tabelle liest, findet die Hälfte nicht.
+
+| Stelle | Behauptet | Nachgemessen |
+|---|---|---|
+| AK-14 | „eine Partner-Meldung" auf der Organisationsseite; geteilter Limiter | Text ist neutral; eigenes Kontingent (BF-129, BF-38) |
+| AK-15 | „kein Ablauf des Bestätigungstokens und kein Widerrufsweg" | `TOKEN_LIFETIME_DAYS = 7`; Route `app_organisations_revoke` (BF-36, BF-37) |
+| AK-16 | Liste der erfassten Daten ist abschließend | zwei Spalten mehr: `marketing_consent_at`, `self_confirmed_at` |
+| **FB-01** (`spec.md:122`) | „Kein Widerrufsweg" | `OrganisationController:223-234` → `app_organisations_revoke` |
+| **FB-03** (`spec.md:125`) | „Kein Ablauf des Bestätigungstokens" | `RESULT_EXPIRED` → HTTP 410 (`OrganisationController:175-181`) |
+| **FB-06** (`spec.md:128`) | „Kein eigenes Kontingent" | am Server gemessen: eigener Zähler, 429 ab dem sechsten |
+| **`design.md:75`** | `limiter.partner_waitlist` — ⚠ **geteilt mit B14** | `#[Autowire(service: 'limiter.organisation_waitlist')]` |
+
+⚠ **Der Fehlbestand wiegt schwerer als die Kriterien.** FB-01 und FB-03 sind als
+DSGVO-Lücken erfasst (Art. 7 Abs. 3, Art. 5 Abs. 1 lit. e) — sie stehen dort als *offene
+Mängel*, obwohl sie seit dem 2026-08-29 behoben und ausgeliefert sind. Wer die
+Datenschutzlage dieses Projekts anhand der Spec beurteilt, kommt zu einem falschen
+Ergebnis. Deshalb **mittel** und nicht *niedrig*.
+
+⚠ **Weiterhin zutreffend und ausdrücklich nicht betroffen:** FB-02 („keine Löschfrist,
+keine Aufräumroutine") — `OrganisationWaitlistEntryRepository` hat bis heute kein
+Gegenstück zu `deleteStaleUnconfirmed()` aus Feature 08. Das ist ein echter, offener
+Fehlbestand und keine Drift.
+
+⚠ **Zweite Ausprägung desselben Musters** — bei B14 als BF-126 erfasst, dort mit fünf
+Stellen. Die Ursache ist in beiden Fällen dieselbe: Die Rekonstruktion stammt vom
+2026-08-24, seither sind BF-36/37/38 behoben und mit `v2026.08.29` ausgeliefert, und
+Feature 04 hat Spalten ergänzt. **Die Reparaturen wurden gebucht, die Spezifikationen
+nicht.**
+
+Dass es hier zum zweiten Mal auftritt, macht es zu einem Projektmuster und nicht zu einem
+Einzelfall — entsprechend in `features/befunde.md` unter *Muster* aufgenommen.
+
+**Vorschlag:** AK-15 in ein erfülltes Kriterium überführen (Verweis auf BF-36/37), AK-16
+um die zwei Spalten ergänzen, AK-14 nach BF-129 entscheiden. Zuständig ist eine
+Spec-Fortschreibung, **nicht dieser Skill**.
+
+## Was der `code-reviewer` beigetragen hat
+
+Er hat die Kernmechanik unabhängig geprüft und **keinen funktionalen Fehler** gefunden —
+Validierung, JSON-Felder und JS-Freiheit bezeichnet er als solide und durch echte
+Funktionstests abgesichert. Zwei Beiträge gehen darüber hinaus:
+
+- **Eine zweite Schicht, die der Angriff allein nicht gezeigt hätte:** Die JSON-Listen
+  sind nicht nur über `ChoiceType` abgesichert, sondern zusätzlich an der Entity mit
+  `#[Assert\All([new Assert\Choice(callback: [SponsorshipInterest::class, 'values'])])]`
+  und Validierungsgruppe (`OrganisationWaitlistEntry.php:126, :134`). Dazu per Grep
+  belegt: Es gibt **keinen zweiten Schreibpfad** — die Setter werden im gesamten
+  `src/`-Baum nur vom Formular gerufen.
+- **Drei Drift-Stellen, die dieser Durchlauf übersehen hatte** (FB-01, FB-03, FB-06 und
+  `design.md:75`) — eingearbeitet in BF-130, jede einzeln nachgemessen.
+
+Er bestätigte außerdem **BF-125** am aktuellen Code und wies zutreffend darauf hin, dass
+es kein neuer Fund ist.
+
+## Neue Prüfläufe dieses Durchlaufs
+
+Keine. Die Absicherung von BF-119 entstand beim Bauen; dieser Durchlauf hat sie am
+laufenden Server gegengeprüft. Der einzige Testbedarf, der sich zeigt, ist BF-125 —
+dort erfasst, nicht hier.
+
+## Nächster Schritt
+
+**`/sdd-qa B01`** — das dritte und letzte Feature auf `building`. Es ist eigenständiger
+als B14 und B15: eigener Controller, eigener Mailversand, Anti-Enumeration mit
+Timing-Angleich. Danach können alle drei zusammen ausgeliefert werden.
+
+⚠ Bis dahin bleibt BF-119 auf Produktion aktiv — auf **allen drei** Wegen.

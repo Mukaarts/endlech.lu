@@ -23,6 +23,9 @@ repo:
     link_label: "Ouvrir CHANGELOG.md sur GitHub"
 
 release:
+    v2026_09_11_2:
+        title: "Les adresses avec accents fonctionnent"
+        body: "Si votre adresse e-mail comporte un accent ou un tréma dans le domaine — par exemple sur télécom.lu ou bäckerei.lu —, vous ne pouviez jusqu’ici ni créer un compte ni vous inscrire sur une liste d’attente : le formulaire la refusait. C’est corrigé. Dans le même temps, les formulaires vérifient plus rigoureusement, afin qu’une adresse non distribuable ne soit plus acceptée."
     v2026_09_11:
         title: "Qui exploite Endlech.lu"
         body: "Endlech.lu est désormais exploité par une société inscrite, DAUMEDIA S.à r.l.-S, et non plus par une personne privée. Les mentions légales indiquent donc à présent le siège, le numéro du registre de commerce et l’autorisation d’établissement. Pour vos données, cela signifie que vos droits d’accès, de rectification et d’effacement s’exercent désormais auprès de la société. Ce qui change, c’est qui est responsable — pas ce que nous conservons à votre sujet."

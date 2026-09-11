@@ -187,6 +187,26 @@ als bestanden, sondern nimmt es als Suchliste.
 
 ## Offene Fragen
 
+- **OF-BF119a** · Fünf weitere `new Email(...)` stehen weiterhin im HTML5-Default —
+  `ProfileType`, `PasswordResetRequestType`, `AccessibilityReportType`,
+  `RestaurantSuggestionType`, `RestaurantType`. Die ersten drei lösen einen Mailversand
+  an **genau diese** Adresse aus und haben damit dieselbe Lücke wie BF-119; die beiden
+  letzten speichern die Adresse nur. Beim Bauen von BF-119 gemessen, **bewusst nicht
+  mitrepariert**: Der Auftrag nannte drei Formulare, und was nicht im Auftrag steht,
+  wird nicht gebaut. — Betreiber
+
+- **OF-BF119b** · `WaitlistConfirmationService::notifyRequester()` (die zweite Mail)
+  konstruiert die Adresse erst beim `->to()`. Ein Reihenfolgeproblem ist das nicht — die
+  Methode schreibt nichts in die Datenbank —, aber ein **Altbestand** mit einer
+  RFC-widrigen Adresse aus der Zeit vor dieser Reparatur erzeugt dort weiterhin einen
+  500er. Ob solche Zeilen auf Produktion liegen, ist von hier aus nicht prüfbar. — Betreiber
+
+- **OF-BF119c** · Web- und API-Weg prüfen unterschiedlich: `Api\V1\AuthController::register()`
+  nutzt `filter_var(..., FILTER_VALIDATE_EMAIL)`. Gemessen weist das alle drei
+  BF-119-Adressen ab — der API-Weg war also nie betroffen —, lehnt aber auch
+  `jean-luc@télécom.lu` ab, das der Web-Weg seit dieser Reparatur **annimmt**. Dieselbe
+  Adresse führt damit je nach Tür zu einem anderen Ergebnis. — Betreiber
+
 - **OF-01** · Soll die E-Mail-Bestätigung den Zugang tatsächlich sperren (AK-13)? Ein
   `user_checker` wäre ein Zweizeiler, macht aber alle unbestätigten Bestandskonten
   sofort zugangslos, solange FB-02 und AK-15 nicht behoben sind. — Betreiber
