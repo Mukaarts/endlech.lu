@@ -8,6 +8,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -19,6 +20,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * absolute URL erzeugen → Mail. Erst dadurch ist der Eintrag beim Versand
  * garantiert gespeichert; scheitert der Transport, ist die Anmeldung trotzdem
  * nicht verloren.
+ *
+ * ⚠ **Zwei Fragen, die nicht dasselbe sind** (BF-119). „Ist das überhaupt eine
+ * Adresse?" und „kam die Mail an?" standen bis zum 2026-09-11 beide **hinter**
+ * dem `flush()`. Die erste gehört davor: Eine Adresse, die `Mime\Address` nach
+ * RFC 2822 ablehnt, ist kein Transportproblem, sondern ein ungültiger Wert —
+ * und ein ungültiger Wert darf keine Zeile hinterlassen. Gemessen: 0 → 1 Zeile
+ * plus HTTP 500.
+ *
+ * Die zweite bleibt dahinter, unverändert. Wer die Reihenfolge insgesamt
+ * umdreht, „repariert" BF-119 und nimmt dabei die Eigenschaft mit, für die sie
+ * überhaupt gewählt wurde.
  */
 final class WaitlistConfirmationService
 {
@@ -66,6 +78,14 @@ final class WaitlistConfirmationService
         array $subjectParams = [],
         ?string $revokeRoute = null,
     ): bool {
+        // ⚠ BF-119: VOR dem flush. `new Address()` prüft gegen RFC 2822 und wirft
+        // bei einer Adresse, die der HTML5-Default des `Email`-Constraints
+        // durchgelassen hat. Stünde die Prüfung weiter unten — beim `->to()` —,
+        // wäre der Eintrag da schon gespeichert und bliebe als Leiche zurück.
+        // Das Ergebnis wird unten weiterverwendet, damit die Prüfung nicht
+        // doppelt läuft und niemand sie für entbehrlich hält.
+        $empfaenger = new Address($entry->getEmail());
+
         $token = $entry->generateConfirmationToken();
 
         $this->entityManager->persist($entry);
@@ -90,7 +110,7 @@ final class WaitlistConfirmationService
         $locale = $entry->getLocale();
 
         $email = (new TemplatedEmail())
-            ->to($entry->getEmail())
+            ->to($empfaenger)
             ->subject($this->translator->trans($subjectKey, $subjectParams, null, $locale))
             ->locale($locale)
             ->htmlTemplate($emailTemplate)

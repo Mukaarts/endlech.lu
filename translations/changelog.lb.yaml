@@ -23,6 +23,9 @@ repo:
     link_label: "CHANGELOG.md op GitHub opmaachen"
 
 release:
+    v2026_09_11_2:
+        title: "Adresse mat Akzent ginn elo duerch"
+        body: "Wien eng E-Mail-Adress mat engem Akzent oder Ëmlaut am Domain huet — zum Beispill op télécom.lu oder bäckerei.lu —, konnt sech bis elo weder umellen nach op eng Waardelëscht androen: D’Formulaire huet d’Adress refuséiert. Dat ass elo an der Rei. Gläichzäiteg préiwen d’Formulairen méi genee, sou datt eng net zoustellbar Adress guer net méi ugeholl gëtt."
     v2026_09_11:
         title: "Wien Endlech.lu bedreift"
         body: "Hannert Endlech.lu steet elo eng agedroe Gesellschaft, d’DAUMEDIA S.à r.l.-S, an net méi eng Privatpersoun. Am Impressum stinn dofir vun elo un de Sëtz, d’Handelsregisternummer an d’Handelsautorisatioun. Fir Är Donnéeën heescht dat: Är Rechter op Auskonft, Berichtegung a Läschung riichte sech vun elo un un d’Gesellschaft. Geännert huet sech, wien responsabel ass — net, wat mir iwwer Iech späicheren."

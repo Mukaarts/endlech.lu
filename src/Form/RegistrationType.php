@@ -33,7 +33,17 @@ class RegistrationType extends AbstractType
                 'attr' => ['placeholder' => 'form.email_placeholder', 'autocomplete' => 'email'],
                 'constraints' => [
                     new NotBlank(message: 'user.email_blank'),
-                    new Email(message: 'user.email_invalid'),
+                    // ⚠ BF-119: `VALIDATION_MODE_STRICT` statt des HTML5-Defaults.
+                    // Der Default lässt Adressen durch, die `Mime\Address` nach
+                    // RFC 2822 ablehnt (`../../etc/passwd@example.lu`) — der Versand
+                    // wirft dann eine `RfcComplianceException`, und weil vor dem
+                    // Versand gespeichert wird, bleibt die Zeile stehen: 500er plus
+                    // Datensatz. Gemessen an Feature 08, wo STRICT schon steht:
+                    // acht realistische Adressen unverändert akzeptiert, zusätzlich
+                    // abgelehnt werden nur Local-Parts über 64 Zeichen (die RFC 5321
+                    // ohnehin verbietet). Umgekehrt akzeptiert STRICT
+                    // `jean-luc@télécom.lu`, das der Default still abwies.
+                    new Email(message: 'user.email_invalid', mode: Email::VALIDATION_MODE_STRICT),
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [

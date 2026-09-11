@@ -29,6 +29,9 @@ repo:
     link_label: "CHANGELOG.md auf GitHub öffnen"
 
 release:
+    v2026_09_11_2:
+        title: "Adressen mit Akzent gehen jetzt"
+        body: "Wer eine E-Mail-Adresse mit Akzent oder Umlaut in der Domain hat — etwa auf télécom.lu oder bäckerei.lu —, konnte sich bisher weder registrieren noch auf eine Warteliste eintragen: Das Formular wies die Adresse ab. Das ist behoben. Gleichzeitig prüfen die Formulare gründlicher, sodass eine unzustellbare Adresse gar nicht erst angenommen wird."
     v2026_09_11:
         title: "Wer Endlech.lu betreibt"
         body: "Hinter Endlech.lu steht jetzt eine eingetragene Gesellschaft, die DAUMEDIA S.à r.l.-S, und nicht mehr eine Privatperson. Im Impressum stehen deshalb ab sofort Sitz, Handelsregisternummer und Handelsermächtigung. Für Ihre Daten heißt das: Ihre Rechte auf Auskunft, Berichtigung und Löschung richten sich ab jetzt an die Gesellschaft. Geändert hat sich, wer verantwortlich ist — nicht, was wir über Sie speichern."

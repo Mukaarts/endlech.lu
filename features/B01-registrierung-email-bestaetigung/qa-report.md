@@ -547,3 +547,267 @@ Vollständige Suite nach der Ergänzung: **315 Tests, 1083 Assertions, 2 übersp
    Konten aus, solange sie keine neue Mail anfordern können.
 3. BUG-02, BUG-04, BUG-06, BUG-07 sind unabhängig und einzeln auslieferbar.
 4. BUG-08 ist ein eigenes Vorhaben und gehört durch die volle Kette.
+
+---
+
+# Vierter Durchlauf — 2026-09-11
+
+Stand: 2026-09-11 · Vorstufe: `building` · Branch `fix/bf-119-email-validierung`
+
+## Fazit
+
+**Production-ready: ja** — BF-119 ist auch auf dem Registrierungsweg behoben und am
+laufenden Server belegt: `../../etc/passwd@example.lu` → **422 statt 500**, Konten
+**3 → 3**.
+
+15 von 20 Kriterien bestanden, **1 durchgefallen**, **2 nicht mehr zutreffend**,
+2 nicht prüfbar. **Fünf** Befunde, alle *mittel*, keiner blockierend.
+
+⚠ **Die Spezifikation dieses Features ist zum größten Teil überholt.** Von neun
+Fehlbestand-Punkten sind **sechs erledigt** — darunter drei DSGVO-Pflichten. Dazu sind
+zwei der drei ⚠-Kriterien repariert. Wer diese Spec heute liest, hält eine Plattform
+ohne Kontolöschung, ohne Datenexport, ohne Passwort-Zurücksetzen und mit offener
+User-Enumeration für den Ist-Zustand. Nichts davon stimmt noch.
+
+## Akzeptanzkriterien im Einzelnen
+
+| AK | Ergebnis | Nachweis |
+|---|---|---|
+| AK-01 | ✅ bestanden | `testRegisterPageLoads` |
+| AK-02 | ✅ bestanden | `testAk02AngemeldeterWirdVonDerRegistrierseiteWeggeleitet` |
+| AK-03 | ✅ bestanden | Am Server: `name=T` → **422**, Meldung „mindestens 2 Zeichen lang sein" |
+| AK-04 | ✅ bestanden | `testValidationErrorsRerenderWithoutSendingEmail` |
+| AK-05 | ✅ bestanden | `testAk05UngleichePasswoerterWerdenAbgewiesen`, `testAk05MeldungIstUebersetztNichtDerRoheSchluessel` |
+| AK-06 | ✅ bestanden | Am Server: **302**, Konto 0 → 1; `testSuccessfulRegistrationCreatesUserAndSendsEmail` |
+| AK-07 | ✅ bestanden | DB-Abfrage nach dem Anlegen: Token gesetzt, `is_verified = 0` |
+| AK-08 | ✅ bestanden | Am Server: `Location: /de/verify` |
+| AK-09 | ✅ bestanden | Am Server: Token eingelöst → **302**, danach `is_verified = 1`; `testAk09GueltigerTokenVerifiziertUndLeertDenToken` |
+| AK-10 | ✅ bestanden | `testAk10AbgelaufenerTokenVerifiziertNicht`, `testEc03TokenOhneAblaufzeitpunktGiltAlsAbgelaufen` |
+| AK-11 | ✅ bestanden | `testAk11UnbekannterTokenLeitetAufDieStartseite` |
+| **AK-12** | ❌ **durchgefallen** | Siehe BF-131. In Produktion (`SendEmailMessage: async`) wirft `send()` keine `TransportExceptionInterface` — der Zweig ist unerreichbar. ⚠ Der Prüflauf `testMailerFailureShowsWarningAndStillRedirects` ist **grün**, weil das Test-Env `sync` fährt |
+| **AK-13** ⚠ | ✅ bestanden | Am Server nachgestellt: Anmeldung mit `unverified@endlech.lu` → **302**, danach `/de/profile` → **200**. Das unbestätigte Konto hat vollen Zugang — die Bestätigung bleibt folgenlos. Deckt sich mit FB-03, beide weiterhin offen |
+| **AK-14** ⚠ | ❌ trifft nicht mehr zu | Die Spec sagt „es erscheint: Diese E-Mail-Adresse ist bereits registriert." Gemessen: bestehende und neue Adresse liefern **identisch 302 → `/de/verify`**. Timing angeglichen (Median **458** vs. **461 ms** bei 410 ms Hash-Kosten) — BF-09, live seit `v2026.08.29` |
+| **AK-15** ⚠ | ❌ trifft nicht mehr zu | Die Spec sagt, „erneut senden" laufe ins Leere. `router:match /de/verify/resend` → **`app_verify_resend`**; der Prüflauf heißt sogar `testAk15ErneutSendenIstErreichbar` — BF-01, live seit `v2026.08.29` |
+| AK-16 | ✅ bestanden | `SHOW COLUMNS`: Name, E-Mail, Passwort-Hash, Anlagezeitpunkt — keine besonderen Kategorien |
+| AK-17 | ✅ bestanden | `grep 'supersecret1' var/log/dev.log` → **0 Treffer**. Der Bestätigungstoken steht im `doctrine`-Kanal, den `prod` per `!doctrine` ausschließt (BF-06/BF-12) |
+| AK-18 | ✅ bestanden | Token aus der DB: 64 Zeichen Hex |
+| AK-19 | ✅ bestanden | Nach dem Einlösen: `verification_token = (NULL)`, `is_verified = 1`; zweiter Aufruf greift nicht |
+| AK-20 | ✅ bestanden | `testAk20BestaetigungsmailTraegtDieLocaleDerRegistrierung`; genau eine Nachricht in der Warteschlange je Registrierung |
+
+## Fehlbestand — sechs von neun erledigt
+
+| FB | Spec sagt | Nachgemessen |
+|---|---|---|
+| **FB-01** | „Kein Rate Limit auf der Registrierung" | `limiter.registration` im Controller (BF-02) |
+| **FB-02** | „Kein Rate Limit auf dem erneuten Versand" | `limiter.verify_resend` im Controller (BF-02) |
+| FB-03 | „Die Bestätigung wird nirgends erzwungen" | **gilt weiter** — kein `user_checker`, am Server bestätigt (AK-13) |
+| **FB-04** | „Kein Löschweg für das Konto" | Route `app_profile_delete` (`POST /{_locale}/profile/loeschen`) |
+| **FB-05** | „Kein Weg, ein vergessenes Passwort zurückzusetzen" | Routen `app_password_reset_request`, `app_password_reset` — **auf Produktion: HTTP 200** |
+| **FB-06** | „Kein Datenexport (Auskunftsrecht)" | Route `app_profile_export` (`/{_locale}/profile/daten`) |
+| **FB-07** | „`UniqueEntity`-Meldung nicht übersetzt" | `message: 'user.email_unique'` — Schlüssel statt deutschem Klartext |
+| FB-08 | „Keine Wegwerf-Adressen-Prüfung, keine Passwortqualität" | **gilt weiter** — `Length(min: 8)` ist unverändert die einzige Anforderung |
+| FB-09 | „Kein `trusted_hosts`" | **gilt weiter** im Code — aber siehe BF-134 zur tatsächlichen Ausnutzbarkeit |
+
+## Sicherheitsprüfung
+
+| Prüfung | Ergebnis | Beleg |
+|---|---|---|
+| **User-Enumeration über die Antwort** | ✅ abgewehrt | bestehende und neue Adresse: identisch **302 → `/de/verify`** |
+| **User-Enumeration über die Laufzeit** | ✅ abgewehrt | Median **458 ms** (bestehend) vs. **461 ms** (neu), bei 410 ms Hash-Kosten — der Hash läuft nachweislich in **beiden** Zweigen |
+| **Host-Header-Manipulation** | ⚠️ siehe BF-134 | lokal ausnutzbar, auf Produktion vom Proxy abgefangen |
+| Token nach Einlösung | ✅ entwertet | `(NULL)`, zweiter Aufruf greift nicht |
+| Klartextpasswort im Log | ✅ nein | 0 Treffer |
+| BF-119 am laufenden Server | ✅ behoben | 422 statt 500, Konten **3 → 3** |
+
+## Fehler
+
+### BF-131 · AK-12 ist in Produktion unerreichbar — und ein grüner Prüflauf verdeckt es — mittel
+
+**Betrifft:** AK-12
+
+**Reproduktion:**
+1. `grep -n -A3 SendEmailMessage config/packages/messenger.yaml`
+   → Zeile 60: `SendEmailMessage: async` · Zeile 77 (`when@test`): `SendEmailMessage: sync`
+2. `php bin/phpunit --filter testMailerFailureShowsWarningAndStillRedirects` → **grün**
+
+**Erwartet:** Der Prüflauf belegt AK-12 für die Produktion.
+**Tatsächlich:** Er belegt es für `sync`. In Produktion läuft `async`; dort stellt
+`MailerInterface::send()` nur in die Warteschlange und wirft keine
+`TransportExceptionInterface`. Der `catch`-Zweig und die Warnung sind unerreichbar.
+
+⚠ **Das ist dieselbe Ursache wie BF-124 (B14/AK-04) — hier aber mit einer zusätzlichen
+Schicht.** Bei B14 gab es keinen Test, das Kriterium war schlicht still durchgefallen.
+Hier steht ein **grüner Prüflauf** über dem Kriterium, der seine Erfüllung behauptet,
+weil er in einer Umgebung läuft, die es anders konfiguriert. Ein grüner Test über einem
+Verhalten, das die Produktion nicht zeigt, ist schlechter als kein Test.
+
+⚠ Nachgewiesen wurde die Async-Wirkung bereits bei B14: Mit gestopptem Mailpit kam
+**302 ohne Warnung**, der Eintrag entstand, die Nachricht blieb in `messenger_messages`.
+
+**Vorschlag:** AK-12 an die Async-Wirklichkeit anpassen (die Zusage „der Nutzer erfährt
+von einem Zustellproblem" ist nicht mehr haltbar und wurde betreiberseitig durch
+`app:messenger:watch` ersetzt) und den Prüflauf entweder streichen oder mit einem
+ausdrücklichen Vermerk versehen, dass er nur die `sync`-Konfiguration abdeckt.
+
+---
+
+### BF-132 · Sechs von neun Fehlbestand-Punkten sind erledigt, drei DSGVO-Pflichten darunter — mittel
+
+**Betrifft:** FB-01, FB-02, FB-04, FB-05, FB-06, FB-07 sowie AK-14, AK-15
+
+Belege stehen vollständig in den beiden Tabellen oben; jede Zeile ist gegen den Code
+oder den laufenden Server gemessen.
+
+⚠ **Warum das schwerer wiegt als bei B14 (BF-126) und B15 (BF-130):** Dort war die
+Drift auf einzelne Kriterien beschränkt. Hier betrifft sie **zwei Drittel des
+Fehlbestands**, und darunter sind die drei Betroffenenrechte — Löschung (Art. 17),
+Auskunft (Art. 15) und der Zugangsverlust ohne Passwort-Reset. Die Spec führt sie als
+offene Mängel; **auf Produktion sind sie erfüllt** (`/de/passwort-vergessen` → HTTP 200).
+
+Eine Datenschutz-Auskunft, die anhand dieser Spec erteilt würde, wäre falsch — und zwar
+zuungunsten des Betreibers.
+
+**Vorschlag:** Fehlbestand und Kriterien in einem Zug fortschreiben. FB-03, FB-08 und
+FB-09 bleiben; alles andere ist erledigt.
+
+---
+
+### BF-133 · Feature `01` ist gebaut und live, steht aber auf `roadmap` — mittel
+
+**Betrifft:** `features/index.md`, nicht B01 selbst
+
+**Reproduktion:**
+1. `grep '^| 01 ' features/index.md` → Status **`roadmap`**, „2026-08-23 · aus BF-04 herausgelöst"
+2. `ls features/01-betroffenenrechte/` → **nur `spec.md`** (kein `design.md`, keine `tasks.md`, kein `qa-report.md`)
+3. `php bin/console debug:router | grep -E 'password_reset|profile_export|profile_delete'` → **drei Routen vorhanden**
+4. `git cat-file -e master:src/Controller/PasswordResetController.php` → **auf master**
+5. `curl -o /dev/null -w '%{http_code}' https://endlech.lu/de/passwort-vergessen` → **200**
+
+**Erwartet:** Ein Feature auf `roadmap` ist nicht gebaut.
+**Tatsächlich:** Es ist gebaut, gemerged und **seit unbekanntem Zeitpunkt live** — ohne
+`design.md`, ohne `tasks.md`, ohne QA-Bericht. Die Kette wurde für dieses Feature nie
+durchlaufen, und der Index weist es bis heute als offen aus.
+
+⚠ **Das ist der Grund für BF-132.** Die drei DSGVO-Punkte im Fehlbestand von B01
+(FB-04, FB-05, FB-06) verweisen genau auf dieses Feature. Weil sein Bau nie gebucht
+wurde, blieb auch der Fehlbestand stehen.
+
+⚠ Der Befund gehört nicht zu B01 und wird hier nur berichtet — er betrifft die
+Projektübersicht. **Kein Prüflauf kann ihn finden**: Es gibt nichts, was den Status im
+Index gegen die vorhandenen Routen hält.
+
+**Vorschlag:** Feature `01` durch `/sdd-qa 01` prüfen und den Status geradeziehen. Bis
+dahin ist unklar, ob die drei Betroffenenrechte fachlich vollständig sind — sie sind nur
+nachweislich *vorhanden*.
+
+---
+
+### BF-134 · Der Bestätigungslink folgt dem `Host`-Header — lokal ausnutzbar, auf Produktion vom Proxy aufgefangen — mittel
+
+**Betrifft:** FB-09
+
+**Reproduktion (lokal, `php -S`):**
+```
+curl -H "Host: boeser-server.example" -e "http://boeser-server.example/de/register" \
+     -H "Origin: http://boeser-server.example" -d "…" http://127.0.0.1:8899/de/register
+→ HTTP 302, Konto angelegt
+```
+Der Link in der ausgehenden Mail (aus `messenger_messages` gelesen):
+
+> `http://boeser-server.example/de/verify/3ba088c2`
+
+⚠ **Der erste Versuch schlug fehl** — mit bloß gefälschtem `Host` antwortet die Anwendung
+mit **422**, weil der stateless-CSRF-Schutz die Herkunft prüft. Erst mit **passendem
+`Referer` und `Origin`** geht der Angriff durch. Wer nur den Host fälscht, hält die Lücke
+fälschlich für geschlossen.
+
+**Der Schaden:** Ein Angreifer lässt die Plattform eine **authentische** Mail an eine
+fremde Adresse schicken — mit dem Absender, der Gestaltung und den SPF/DKIM-Signaturen
+des Betreibers — deren Bestätigungslink auf seinen eigenen Server zeigt.
+
+**Auf Produktion greift der Angriff nicht:**
+
+```
+curl -o /dev/null -w '%{http_code}' -H "Host: boeser-server.example" https://endlech.lu/de/
+→ 503        (mit Host: endlech.lu → 200)
+```
+
+Coolifys Proxy routet nach Host und weist einen fremden ab, bevor die Anwendung ihn
+sieht. ⚠ **Diese Verteidigung steht nirgends geschrieben und gehört keinem Feature.**
+Sie fällt weg, sobald jemand die Anwendung ohne diesen Proxy betreibt — etwa lokal, in
+einer Vorschau-Umgebung oder nach einem Hosterwechsel. `framework.yaml` setzt
+`trusted_hosts` bis heute nicht.
+
+**Vorschlag:** `trusted_hosts` auf die eigene Domain setzen — eine Zeile, die die Lücke
+unabhängig vom Betriebsmodell schließt. Betrifft laut FB-09 ebenso B14 und B15, die ihre
+Bestätigungslinks genauso bauen.
+
+---
+
+### BF-135 · Bei Versandfehlern verrät die Antwort doch, ob die Adresse vergeben ist — mittel
+
+**Betrifft:** AK-14, BF-09
+
+Gefunden vom `code-reviewer`, am Code verifiziert. Die beiden Zweige reagieren auf
+denselben Fehler **unterschiedlich**:
+
+| Zweig | Bei `TransportExceptionInterface` | Antwort |
+|---|---|---|
+| Neuanlage (`RegistrationController.php:143-149`) | `addFlash('warning', 'flash.register_email_failed')` + Redirect | **warning** |
+| Bestandskonto (`sendeKontoExistiertHinweis()`, `:174-178`) | Exception wird verschluckt, Ablauf fällt in Zeile 151 | **success** |
+
+⚠ **Der Kommentar im Bestandszweig lautet „Die Antwort bleibt in jedem Fall dieselbe."**
+Das gilt aber nur *innerhalb* dieses Zweigs — der andere weicht ab. Genau die
+Formulierung, die beim Lesen Sicherheit erzeugt und die Asymmetrie verdeckt.
+
+**Reproduktion (Bedingung, nicht ausgeführt):** Mailversand muss synchron scheitern.
+Dann liefert eine **neue** Adresse `warning`, eine **bestehende** `success` — das
+Unterscheidungsmerkmal, das BF-09 beseitigen sollte.
+
+⚠ **Heute nicht auslösbar, und zwar aus dem Grund, der BF-131 ausmacht:**
+`SendEmailMessage: async` — `send()` stellt nur in die Warteschlange und wirft keine
+`TransportExceptionInterface`. Der Fehler passiert im Worker, lange nach der Antwort.
+**Nicht am laufenden System nachgestellt**, deshalb als Bedingung formuliert statt als
+Ablauf.
+
+⚠ **Das Leck wird scharf, sobald jemand auf `sync://` zurückstellt** — wovor `CLAUDE.md`
+aus anderen Gründen bereits warnt. Der Schutz hängt damit an einer Transport-Einstellung
+und nicht am Code, der ihn leisten soll.
+
+**Vorschlag:** Im Neuanlage-Zweig dieselbe Antwort geben wie im Bestandszweig — die
+Warnung entfällt (sie ist nach BF-131 ohnehin unerreichbar), oder beide Zweige geben sie.
+Entscheidend ist, dass sie sich nicht unterscheiden.
+
+## Was der `code-reviewer` beigetragen hat
+
+- **BF-135** — den einzigen Befund dieses Durchlaufs, den der prüfende Agent nicht
+  gefunden hat. Er betrifft genau die Stelle, die vorher als bestanden gemessen worden
+  war: Die Anti-Enumeration hält auf dem **Erfolgsweg** (am Server belegt, inklusive
+  Timing), nicht aber im **Fehlerfall**. Eine Verhaltensprüfung findet das nicht, solange
+  der Fehlerfall nicht auslösbar ist.
+- **Zwei weitere Drift-Stellen**, verifiziert und in BF-132 aufgenommen:
+  `design.md` Entscheidung #6 behauptet `MESSENGER_TRANSPORT_DSN=sync://` auf Produktion
+  (seit dem 2026-09-02 falsch), und `spec.md:86` nennt `CommunityController.php:29` als
+  **einzige** Prüfung auf `isVerified()` — es sind inzwischen **drei** Stellen
+  (`CommunityController:39`, `BoardController:96`, `BoardController:198`), die Zeilennummer
+  stimmt ebenfalls nicht mehr. Damit ist auch die Folgerung von AK-13 („praktisch
+  folgenlos") zu scharf: Die Bestätigung wirkt beim Vorschlags-Wizard **und** im
+  Ideen-Board.
+- Er bestätigte zusätzlich, dass der neue `new Address()`-Check die Anti-Enumeration
+  **nicht** bricht — `Email::to()` validiert intern über dieselbe RFC-Prüfung, der
+  Bestandszweig war also nie ungeprüft.
+
+## Neue Prüfläufe dieses Durchlaufs
+
+Keine. Für BF-135 wäre einer sinnvoll, er gehört aber zur Reparatur: Solange der
+Fehlerfall bei `async` nicht auslösbar ist, prüfte er die `sync`-Konfiguration — genau
+der Fehler, der BF-131 ausmacht.
+
+## Nächster Schritt
+
+**`/sdd-deploy`** für B01, B14 und B15 gemeinsam — alle drei stehen jetzt auf `approved`,
+und die BF-119-Reparatur wirkt auf Produktion noch nicht.
+
+⚠ Danach **`/sdd-qa 01`**: Feature `01` ist gebaut und live, steht aber auf `roadmap` und
+hat weder `design.md` noch einen Prüfbericht (BF-133). Drei Betroffenenrechte sind
+nachweislich *vorhanden* — ob sie fachlich vollständig sind, hat nie jemand geprüft.
