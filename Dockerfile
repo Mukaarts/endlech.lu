@@ -116,6 +116,16 @@ ENV APP_ENV=prod \
 # php.ini-production: display_errors=Off, kürzere Fehlerausgabe.
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
+# ⚠ `expose_php=Off` nimmt die Kopfzeile `X-Powered-By: PHP/8.4.25` an der
+# Quelle. Am 2026-09-11 auf Produktion gemessen: Sie stand dort und nannte die
+# genaue Patch-Version. Das ist keine Lücke für sich, erspart einem Angreifer
+# aber die Frage, welche überhaupt in Betracht kommen.
+#
+# `SecurityHeadersSubscriber` entfernt dieselbe Kopfzeile noch einmal in PHP —
+# doppelt, weil nicht jeder Betrieb dieses Image benutzt und die Einstellung
+# hier niemand sieht, der die Anwendung ohne Docker startet.
+RUN printf 'expose_php = Off\n' > "$PHP_INI_DIR/conf.d/zz-endlech.ini"
+
 # ⚠ `wget` allein für Coolifys Healthcheck. Coolify benutzt den HEALTHCHECK aus
 # diesem Dockerfile NICHT — es setzt beim Ausrollen einen eigenen und ruft darin
 # `wget` auf. Fehlt das Programm, scheitert die Prüfung zehnmal mit

@@ -2,10 +2,49 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.11-blue)
+![Version](https://img.shields.io/badge/version-2026.09.11.1-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.11.1] – Sicherheits-Kopfzeilen
+
+### `SecurityHeadersSubscriber` (BF-123)
+
+Bei der Deploy-Nachprüfung zu v2026.09.11 gemessen: Die Produktion lieferte **keine
+einzige** Sicherheits-Kopfzeile. Die vollständige Antwort der Startseite führte neun
+Kopfzeilen, davon keine zur Sicherheit — kein HSTS, kein `nosniff`, kein
+`X-Frame-Options`, keine Referrer- oder Permissions-Policy. Dazu nannte
+`x-powered-by: PHP/8.4.25` die genaue Patch-Version des Interpreters.
+
+Vorbestehend und von keinem Feature verursacht: Das FrankenPHP-Image bringt die
+Kopfzeilen nicht mit, eine eigene Caddy-Konfiguration gibt es nicht, und kein Prüflauf
+hat je danach gesehen.
+
+⚠ **Gesetzt werden sie in PHP, nicht im Webserver.** Der naheliegende Ort wäre die
+Caddyfile — dort erreichten sie auch `/build/`. Dagegen stehen drei Dinge: Die
+Standard-Caddyfile des Image müsste ersetzt werden, und ein Fehler darin nimmt die Seite
+offline (BF-116 ist genau so passiert); `CADDY_SERVER_EXTRA_DIRECTIVES` wäre eine
+weitere Variable, die jemand in Coolify von Hand setzt und beim nächsten Umzug vergisst
+(siehe `TRUSTED_PROXIES`); und ein Prüflauf kann eine Caddyfile nicht messen, diesen
+Subscriber dagegen schon. Praktisch trägt das: Jeder Besucher lädt zuerst ein Dokument,
+und HSTS gilt danach für die ganze Herkunft.
+
+⚠ **Die CSP geht als `Content-Security-Policy-Report-Only` hinaus.** Eine scharfe
+Richtlinie, die irgendwo zu eng ist, nimmt der Seite nicht die Erreichbarkeit, sondern
+das JavaScript — Passkey-Knopf, Wizard und Turbo wären tot, und es sähe nach einem
+Frontend-Fehler aus. Die Richtlinie bildet den gemessenen Bestand ab: keine
+Inline-`<script>` in `templates/`, aber Inline-`style=` in 23 Dateien, deshalb
+`'unsafe-inline'` nur für Stile. Wer sie scharf schaltet, tauscht den Kopfzeilennamen —
+nach einem Blick in die Browser-Konsole über mehrere Seiten.
+
+⚠ **Kein `preload`, kein `includeSubDomains`.** Beides ist eine Zusage über Namen, die es
+noch nicht gibt, und die Preload-Liste ist praktisch nicht mehr zu verlassen. HSTS wird
+nur über HTTPS und nie im Debug-Betrieb gesetzt.
+
+Dazu `expose_php = Off` im Dockerfile. 13 neue Prüfläufe; der funktionale misst an
+`/health`, also an einer echten Antwort — der Unit-Test allein bliebe grün, wenn niemand
+den Subscriber registriert, und genau das war der Zustand.
 
 ## [2026.09.11] – Betreibergesellschaft und Warteschlangen-Wache
 

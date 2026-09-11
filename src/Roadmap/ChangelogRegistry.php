@@ -29,6 +29,10 @@ final readonly class ChangelogRegistry
     public function notes(): array
     {
         return [
+            // Rein technisch: Sicherheits-Kopfzeilen und `expose_php`. Ein Gast
+            // sieht davon nichts — deshalb SILENT und kein Text in den vier
+            // changelog.*.yaml.
+            new ReleaseNote('2026.09.11.1', new \DateTimeImmutable('2026-09-11'), ReleaseVisibility::SILENT),
             // Wer die Plattform betreibt, steht auf /legal — und dort hat sich
             // mit der Gesellschaft der Verantwortliche nach Art. 4 Nr. 7 DSGVO
             // geändert. Das sieht ein Gast, und es geht ihn an: Seine

@@ -1552,6 +1552,46 @@ keinen Port**.
 im Bild; Volume auf `/app/config/jwt` plus einmalig `lexik:jwt:generate-keypair`), die
 Migrationen und das Upload-Volume.
 
+## Sicherheits-Kopfzeilen (`SecurityHeadersSubscriber`)
+
+Am 2026-09-11 bei einer Deploy-Nachprüfung gemessen: Die Produktion lieferte **keine
+einzige** Sicherheits-Kopfzeile (BF-123). Das Basisimage bringt sie nicht mit, und eine
+eigene Caddy-Konfiguration gibt es in diesem Projekt nicht.
+
+⚠️ **Sie werden in PHP gesetzt, nicht im Webserver** — entgegen dem ersten Anschein.
+Der naheliegende Ort wäre die Caddyfile, dort erreichten sie auch `/build/`. Dagegen
+stehen drei Dinge: Die Standard-Caddyfile des FrankenPHP-Image müsste dafür ersetzt
+werden, und ein Fehler darin nimmt die Seite offline (BF-116 ist genau so passiert);
+`CADDY_SERVER_EXTRA_DIRECTIVES` wäre eine weitere Variable, die jemand in Coolify von
+Hand setzt und beim nächsten Umzug vergisst (siehe `TRUSTED_PROXIES`); und **ein
+Prüflauf kann eine Caddyfile nicht messen**, diesen Subscriber dagegen schon. Praktisch
+trägt das: Jeder Besucher lädt zuerst ein Dokument, und HSTS gilt danach für die ganze
+Herkunft.
+
+⚠️ **Die CSP geht als `Content-Security-Policy-Report-Only` hinaus, und das ist Absicht.**
+Eine scharfe Richtlinie, die irgendwo zu eng ist, nimmt der Seite nicht die
+Erreichbarkeit, sondern das JavaScript — Passkey-Knopf, Wizard und Turbo wären tot, und
+es sähe nach einem Frontend-Fehler aus (dasselbe Muster wie beim fehlenden
+`TRUSTED_PROXIES`, wo der Anmeldeknopf schlicht nichts tat). Die Richtlinie bildet den
+**gemessenen** Bestand ab: keine Inline-`<script>` in `templates/`, aber Inline-`style=`
+in 23 Dateien, deshalb `'unsafe-inline'` nur für Stile. **Wer sie scharf schaltet**,
+tauscht den Kopfzeilennamen — nachdem er in der Browser-Konsole über mehrere Seiten
+geprüft hat, dass kein Verstoß mehr gemeldet wird. `SecurityHeadersSubscriberTest`
+hält fest, dass es bis dahin nicht versehentlich passiert.
+
+⚠️ **Kein `preload`, kein `includeSubDomains` beim HSTS.** Beides ist eine Zusage über
+Namen, die es noch nicht gibt, und die Preload-Liste ist praktisch nicht mehr zu
+verlassen. HSTS wird zudem **nur über HTTPS und nie im Debug-Betrieb** gesetzt: lokal
+zwingt die Kopfzeile den Browser dauerhaft auf `https://localhost`, bis jemand die
+Herkunft von Hand aus `chrome://net-internals/#hsts` löscht.
+
+⚠️ **Vorhandene Kopfzeilen werden nicht überschrieben.** Sonst nähme der Subscriber einer
+Antwort, die es besser weiß, die eigene Angabe weg.
+
+`expose_php = Off` steht zusätzlich im Dockerfile (`conf.d/zz-endlech.ini`) — die
+Kopfzeile `X-Powered-By` nannte die genaue Patch-Version. Doppelt abgesichert, weil die
+php.ini-Zeile niemand sieht, der die Anwendung ohne das Image startet.
+
 ## Route `/health`
 
 Sprachfreie Lebendigkeitsprüfung für Docker, Coolify und Load Balancer. Eigener
