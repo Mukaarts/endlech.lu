@@ -1,10 +1,35 @@
 # Features
 
-Stand: 2026-09-04 · Stack-Profil: `symfony-doctrine` · Artefaktpfad: `docs/`
+Stand: 2026-09-11 · Stack-Profil: `symfony-doctrine` · Artefaktpfad: `docs/`
 
 Stand der Rückerfassung: **alle 26 Features rekonstruiert** (2026-08-23).
-Stand der Prüfung: **B01 zweimal geprüft und repariert** → `review` (17/20 Kriterien).
-Die Behebungen liegen auf `fix/b01-registrierung-qa` und sind **noch nicht ausgeliefert**.
+Stand der Auslieferung: **17 Bestandsfeatures auf `deployed`** (2026-09-11) — sie waren
+ohnehin live, ihre Reparaturen gingen mit `v2026.08.29` hinaus. **Sechs bleiben auf
+`approved`**, jede mit dem Grund in ihrer Zeile: B01, B14 und B15 wegen des offenen
+BF-119 (*hoch*), B10, B12 und B24 wegen eines `qa-report.md`, der noch das
+„Production-ready: nein" seines ersten Durchlaufs trägt.
+
+
+**2026-09-11 · Statuspflege nach zwei Releases.** `v2026.09.11` (Betreibergesellschaft,
+Warteschlangen-Wache) und `v2026.09.11.1` (Sicherheits-Kopfzeilen, BF-123) sind live und
+auf Produktion nachgeprüft. Dabei fiel auf, dass 23 Bestandsfeatures auf `approved`
+standen, obwohl ihr Code seit `v2026.08.29` ausgeliefert ist — Fall 1 der
+Deploy-Ablaufreferenz („war live, auditiert"), bei dem nichts gebaut und nichts
+hochgeladen wird, sondern nur der Status nachzieht.
+
+⚠ **Drei davon wären beinahe mitgelaufen.** B01, B14 und B15 tragen mit **BF-119** einen
+offenen Befund vom Grad *hoch*, gefunden am 2026-09-05 bei der QA von Feature `08` — also
+**nach** ihrer Abnahme. Das Statusmodell sieht dafür den Rücksprung vor, nicht den
+Schritt nach vorn; sie bleiben deshalb auf `approved`, bis der Befund einen eigenen
+Auftrag bekommen hat. Wer nur auf den Status sieht, hält sie sonst für erledigt.
+
+⚠ **Bei B10, B12 und B24 widerspricht der `qa-report.md` dem Index.** Er trägt noch das
+„Production-ready: nein" des ersten Durchlaufs, während der Index den zweiten als
+bestanden führt; die Reports wurden nach der Reparatur nicht fortgeschrieben. Das
+Fortschreiben gehört zu `sdd-qa`, nicht zu `sdd-deploy` — bis dahin bleibt der Status
+stehen. Am Code nachgeprüft ist der schwerste dieser Fälle: **BF-68** (Open Redirect
+über `?_locale=`) ist in `_language_switcher.html.twig` behoben und ging mit
+`v2026.08.29` hinaus.
 
 **2026-08-23 · BF-04 herausgelöst:** Die fehlenden Betroffenenrechte waren B01
 zugerechnet, sind aber keine Reparatur an B01, sondern fehlende Funktionen über drei
@@ -13,9 +38,12 @@ Damit hat B01 nur noch Befunde mit Grad *mittel* — was nach den Regeln der Ket
 Auslieferung nicht blockiert.
 
 **2026-08-23 · B01 abgenommen** (dritter QA-Durchlauf): 17 von 20 Kriterien, nur noch
-zwei Befunde mit Grad *mittel*. Die Reparatur liegt committet auf
-`fix/b01-registrierung-qa` und ist **noch nicht ausgeliefert** — für Nutzer ist die
-Sackgasse offen, bis das gemerged ist.
+zwei Befunde mit Grad *mittel*. Die Reparatur ist mit **`v2026.08.29`** ausgeliefert;
+die Sackgasse ist seither zu. ⚠ **B01 steht trotzdem nicht auf `deployed`** — bei der
+QA von Feature `08` kam am 2026-09-05 **BF-119** dazu (*hoch*): `RegistrationType`
+prüft im HTML5-Default, eine Adresse wie `../../etc/passwd@example.lu` erzeugt einen
+500er und hinterlässt trotzdem eine Zeile. Der Befund ist nach der Abnahme entstanden
+und braucht einen eigenen Auftrag.
 
 **2026-08-24 · B02 abgenommen** nach Reparatur: Anmeldung sperrt nach fünf Fehlversuchen,
 Abmelden verlangt ein Token. 16 von 17 Kriterien, nur *mittel*/*niedrig* offen.
@@ -1666,30 +1694,30 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | 07 | Öffentliche Roadmap und Changelog | P2 | **deployed** | 06, B13, B16, B24, 02, 03, 05 | 2026-08-31 · live in v2026.08.31, auf Produktion nachgeprüft |
 | 09 | Produktanalyse (Plausible/Umami oder PostHog) | P2 | roadmap | 02, B26, B13 | 2026-09-05 · aus `/sdd-betrieb` — Entscheidung offen, siehe `docs/datenschutz.md` BE-02 |
 | 08 | Warteliste für die mobile App (iOS-Beta / Android) | P1 | **deployed** | B14, B22, B24, 02, 04 | 2026-09-05 · live in v2026.09.05, auf Produktion nachgeprüft |
-| B01 | Registrierung & E-Mail-Bestätigung | P0 | **approved** | — | 2026-08-23 · QA³: 17/20, nur mittlere Befunde offen |
-| B02 | Anmeldung mit Passwort | P0 | **approved** | B01 | 2026-08-24 · QA²: 16/17, repariert |
+| B01 | Registrierung & E-Mail-Bestätigung | P0 | **approved** | — | 2026-09-11 · QA³: 17/20 — **BF-119 offen** (*hoch*, 2026-09-05): `RegistrationType` im HTML5-Default → 500 samt bleibender Zeile |
+| B02 | Anmeldung mit Passwort | P0 | **deployed** | B01 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B03 | Passkey-Anmeldung & -Verwaltung | P0 | **deployed** | B01, B02 | 2026-08-29 · ENDLECH-6 live in v2026.08.29.1, auf Produktion belegt (302 statt 400) |
-| B04 | Profil, Avatar & eigene Einreichungen | P0 | **approved** | B01, B11 | 2026-08-24 · QA 2. Durchlauf: 23/24, drei Befunde *mittel* |
-| B05 | Restaurantsuche, Filter & Sortierung | P0 | **approved** | B07, B08 | 2026-08-24 · QA: 24/24, zwei Befunde *niedrig* |
-| B06 | Restaurant-Detailseite | P0 | **approved** | B07, B08, B09, B10 | 2026-08-24 · QA: 23/23, **kein Befund** |
-| B07 | Öffnungszeiten | P1 | **approved** | — | 2026-08-24 · QA: 17/17, ein Befund *niedrig* |
-| B08 | Küchen-Typen | P1 | **approved** | — | 2026-08-24 · QA: 16/16, zwei Befunde *niedrig* |
-| B09 | Restaurantfotos & Galerie | P1 | **approved** | B20 | 2026-08-24 · QA: 18/18, ein Befund *mittel* |
-| B10 | Haltestellen in der Nähe | P2 | **approved** | — | 2026-08-24 · QA 2. Durchlauf: 24/24 |
-| B11 | Restaurant vorschlagen (Wizard) | P0 | **approved** | B01 | 2026-08-24 · QA: 18/19, ein Befund *mittel* |
-| B12 | Startseite | P1 | **approved** | B05 | 2026-08-24 · QA²: 15/15, BF-64 repariert |
-| B13 | Statische Inhaltsseiten | P2 | **approved** | — | 2026-08-24 · QA: 14/14, ein Befund *mittel* |
-| B14 | Partner-Warteliste | P0 | **approved** | — | 2026-08-24 · QA: 28/28, ein Befund *mittel* |
-| B15 | Organisations-Wartelisten | P0 | **approved** | B14 | 2026-08-24 · QA: 27/27, ein Befund *niedrig* |
-| B16 | Transparenzseite `/open` | P1 | **approved** | B18 | 2026-08-24 · QA: 29/29, ein Befund *mittel* |
-| B17 | Offener Datensatz & Kennzahl-Endpunkte | P1 | **approved** | B18 | 2026-08-24 · QA: 25/25, drei Befunde *niedrig* |
-| B18 | Finanzposten & Kennzahl-Snapshots | P1 | **approved** | B19 | 2026-08-24 · QA: 29/29, ein Befund *mittel* |
-| B19 | Admin-Zugang & Dashboard | P0 | **approved** | B02 | 2026-08-24 · QA: 17/17, ein Befund *mittel* |
-| B20 | Restaurantverwaltung (Admin) | P0 | **approved** | B19 | 2026-08-24 · QA: 19/20, ein Befund *mittel* |
-| B21 | Vorschläge prüfen (Admin) | P0 | **approved** | B19, B11 | 2026-08-24 · QA: 20/20, ein Befund *mittel* |
-| B22 | Wartelisten-Verwaltung (Admin) | P1 | **approved** | B19, B14, B15 | 2026-08-24 · QA: 30/30, ein Befund *niedrig* |
-| B23 | REST-API v1 (iOS-Backend) | P0 | **approved** | B01, B05 | 2026-08-24 · QA 2. Durchlauf: 34/35, drei Befunde *mittel/niedrig* |
-| B24 | Mehrsprachigkeit | P1 | **approved** | — | 2026-08-25 · QA 16/16, BF-68 bis BF-72 behoben |
+| B04 | Profil, Avatar & eigene Einreichungen | P0 | **deployed** | B01, B11 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B05 | Restaurantsuche, Filter & Sortierung | P0 | **deployed** | B07, B08 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B06 | Restaurant-Detailseite | P0 | **deployed** | B07, B08, B09, B10 | 2026-09-11 · war live, auditiert; kein Befund |
+| B07 | Öffnungszeiten | P1 | **deployed** | — | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B08 | Küchen-Typen | P1 | **deployed** | — | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B09 | Restaurantfotos & Galerie | P1 | **deployed** | B20 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B10 | Haltestellen in der Nähe | P2 | **approved** | — | 2026-09-11 · QA² 24/24 — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf, nicht fortgeschrieben |
+| B11 | Restaurant vorschlagen (Wizard) | P0 | **deployed** | B01 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B12 | Startseite | P1 | **approved** | B05 | 2026-09-11 · QA² 15/15, BF-64 repariert — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf |
+| B13 | Statische Inhaltsseiten | P2 | **deployed** | — | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B14 | Partner-Warteliste | P0 | **approved** | — | 2026-09-11 · QA: 28/28 — **BF-119 offen** (*hoch*, 2026-09-05): am Partner-Formular nachgestellt, wirft weiterhin |
+| B15 | Organisations-Wartelisten | P0 | **approved** | B14 | 2026-09-11 · QA: 27/27 — **BF-119 offen** (*hoch*, 2026-09-05): `OrganisationWaitlistType` unverändert |
+| B16 | Transparenzseite `/open` | P1 | **deployed** | B18 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B17 | Offener Datensatz & Kennzahl-Endpunkte | P1 | **deployed** | B18 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B18 | Finanzposten & Kennzahl-Snapshots | P1 | **deployed** | B19 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B19 | Admin-Zugang & Dashboard | P0 | **deployed** | B02 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B20 | Restaurantverwaltung (Admin) | P0 | **deployed** | B19 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B21 | Vorschläge prüfen (Admin) | P0 | **deployed** | B19, B11 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B22 | Wartelisten-Verwaltung (Admin) | P1 | **deployed** | B19, B14, B15 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B23 | REST-API v1 (iOS-Backend) | P0 | **deployed** | B01, B05 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
+| B24 | Mehrsprachigkeit | P1 | **approved** | — | 2026-09-11 · QA 16/16, BF-68 bis BF-72 behoben und in v2026.08.29 live — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf |
 | B25 | PWA & mobile Navigation | P1 | rekonstruiert | — | 2026-08-23 |
 | B26 | Cookie-Banner | P2 | rekonstruiert | — | 2026-08-23 |
 
