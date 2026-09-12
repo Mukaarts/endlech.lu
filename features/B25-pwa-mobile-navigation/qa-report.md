@@ -253,3 +253,47 @@ der einzige mit Datenschutzbezug und gehört in den nächsten Reparaturauftrag
 (`/sdd-build` mit BF-140 bis BF-145).
 
 Status: `rekonstruiert` → **`approved`**.
+
+---
+
+## Nachtrag vom 2026-09-12 · BF-140 geklärt und behoben
+
+Auf Nachfrage geklärt, und die Klärung hat den Befund **kleiner** gemacht als den Fund:
+
+| Frage | Antwort |
+|---|---|
+| Werden fremde Avatare gerendert? | **Nein.** `_avatar.html.twig` wird an genau zwei Stellen eingebunden, beide mit `{user: app.user}` — Kopfzeile und Profilseite |
+| Sind die Dateinamen erratbar? | **Nein.** `AvatarUploadService:29` bildet sie aus `uniqid('', true)` — mikrosekundengenau plus Entropie |
+| Welche Upload-Pfade gibt es noch? | `/uploads/restaurants/` (Fotos der Häuser, Gemeingut) und `/uploads/team/michael.jpg` (Gründerporträt für `/about` und das Presse-Kit, veröffentlichtes Material) |
+
+**Folge für den Grad: *mittel* → *niedrig*.** Der Angriff hiess `nutzer-7.jpg` und
+suggerierte fremde, erratbare Avatare; tatsächlich geht es um das **eigene** Bild im
+**eigenen** Browser, und der Zugriffsweg ist ein geteiltes Gerät plus Inspektion der
+Cache-API. AK-20 bleibt verletzt — die Zusage ist absolut formuliert —, aber der Schaden
+ist kleiner als beim Fund angenommen. Die Korrektur steht auch in `features/befunde.md`.
+
+**Behoben:** `public/sw.js` cacht Bilder jetzt über eine **Positivliste**
+(`/icons/`, `/images/`, `/uploads/restaurants/`, `/uploads/team/`) statt über
+`request.destination === 'image'`.
+
+| Fall | vorher | nachher |
+|---|---|---|
+| `/uploads/avatars/nutzer-7.jpg` | JA | **nein** |
+| `/uploads/restaurants/haus.jpg` | JA | JA |
+| `/uploads/team/michael.jpg` | JA | JA |
+| `/icons/icon-192.png` | JA | JA |
+| `/uploads/irgendwas-neues/datei.jpg` | JA | **nein** |
+
+Der letzte Fall ist der eigentliche Gewinn: Eine Ausnahme für `/uploads/avatars/` hätte
+den heutigen Fall behoben und den nächsten personenbezogenen Pfad wieder mitgenommen.
+Dasselbe Prinzip trägt `@source` in `assets/styles/app.css`. Rückbau auf die alte
+Bedingung färbt alle fünf Fälle auf `JA` — gegengeprüft.
+
+⚠ **`CACHE_VERSION` steht jetzt auf `endlech-v3`, und das ist Teil der Reparatur.** Die
+Positivliste verhindert **neue** Einträge; die bereits gecachten Bilder verschwinden erst,
+wenn `activate` den alten Cache löscht. Ohne die Erhöhung hätte die Reparatur genau jene
+Geräte nicht erreicht, um die es geht.
+
+⚠ **AK-16 ist damit zum zweiten Mal an einem Tag eingetreten** — `CACHE_VERSION` musste
+erneut von Hand gezogen werden (v1 → v2 für BF-99, v2 → v3 für BF-140). OF-02 (Ableitung
+aus `app.version`) hat damit zwei Belege statt einer Vermutung.

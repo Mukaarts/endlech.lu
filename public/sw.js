@@ -22,8 +22,34 @@
 // `<text>` in der Systemschrift. Ohne diese Zahl sähe ein wiederkehrender Besucher
 // die alte Vorschau neben dem neuen Paket — genau der Fall, vor dem der Hinweis
 // darüber warnt.
-const CACHE_VERSION = 'endlech-v2';
+//
+// ⚠ Auf `v3` erhöht am 2026-09-12 (BF-140), und hier ist die Erhöhung **Teil der
+// Reparatur**: Die neue Positivliste verhindert, dass künftig ein Profilbild in den
+// Cache gerät — die bereits gecachten bleiben ohne einen Versionswechsel aber liegen.
+// Erst `activate` löscht den alten Cache mitsamt Inhalt.
+const CACHE_VERSION = 'endlech-v3';
 const OFFLINE_URL = '/offline.html';
+
+// ⚠ BF-140: **Positivliste, keine Ausschlussliste.** Gecacht wird nur, was hier steht.
+// Der frühere Zweig nahm jede Antwort mit `destination === 'image'` auf — und damit auch
+// `/uploads/avatars/`, also ein Profilbild. Auf einem geteilten Gerät lag es nach dem
+// Abmelden weiter im Cache, bis jemand `CACHE_VERSION` erhöht. AK-19 und AK-20 des
+// Bestandsfeatures B25 schliessen genau das aus.
+//
+// ⚠ Der Grund für die Positivliste liegt in der Zukunft: Eine Ausnahme für
+// `/uploads/avatars/` hätte den heutigen Fall behoben und den nächsten
+// personenbezogenen Pfad wieder mitgenommen. Dasselbe Prinzip trägt `@source` in
+// `assets/styles/app.css`.
+//
+// `uploads/team/` gehört dazu: Das ist das Gründerporträt für `/about` und das
+// Presse-Kit, also veröffentlichtes Material. `uploads/restaurants/` sind die Fotos der
+// Häuser — Gemeingut der Plattform.
+const CACHEBARE_BILDER = [
+    '/icons/',
+    '/images/',
+    '/uploads/restaurants/',
+    '/uploads/team/',
+];
 
 const APP_SHELL = [
     OFFLINE_URL,
@@ -96,7 +122,7 @@ self.addEventListener('fetch', (event) => {
     // Sonstige (Bilder/Icons): cache-first mit Netzwerk-Fallback.
     event.respondWith(
         caches.match(request).then((cached) => cached || fetch(request).then((response) => {
-            if (response && response.ok && (request.destination === 'image' || url.pathname.startsWith('/icons/'))) {
+            if (response && response.ok && CACHEBARE_BILDER.some((pfad) => url.pathname.startsWith(pfad))) {
                 const copy = response.clone();
                 caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
             }

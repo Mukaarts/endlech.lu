@@ -7,6 +7,17 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ## [Unreleased]
 
+### Behoben
+
+- **BF-140** · Der Service Worker cacht Bilder jetzt über eine **Positivliste**
+  (`/icons/`, `/images/`, `/uploads/restaurants/`, `/uploads/team/`) statt über
+  `destination === 'image'`. Vorher landete auch das **eigene Profilbild** im Cache und
+  blieb dort nach dem Abmelden liegen — auf einem geteilten Gerät ein personenbezogenes
+  Datum ohne Zweck. `CACHE_VERSION` steht deshalb auf `endlech-v3`: Die Liste verhindert
+  neue Einträge, die bereits gecachten verschwinden erst mit dem Löschen des alten
+  Caches. ⚠ Die Positivliste nimmt auch einen **künftigen** Upload-Pfad nicht
+  automatisch mit — eine Ausnahme für `/uploads/avatars/` hätte das getan.
+
 ## [2026.09.12.1] – Sammelreparatur: 23 Befunde, eine Markenschrift
 
 ⚠ **Dieser Release bringt `v2026.09.12` mit.** Jener wurde getaggt und nach `master`

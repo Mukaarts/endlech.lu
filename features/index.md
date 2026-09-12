@@ -18,7 +18,7 @@ BF-119 (*hoch*), B10, B12 und B24 wegen eines `qa-report.md`, der noch das
 |---|---|---|
 | Kriterien | 16 von 20 bestanden, 3 durchgefallen, **1 nicht prüfbar** | **11 von 11 bestanden** |
 | Randfälle | 4 von 4 | 4 von 4 (EC-04 teilweise) |
-| Befunde | 6 — BF-140 (*mittel*), BF-141 bis BF-145 (*niedrig*) | 1 — BF-146 (*niedrig*), an der Spec |
+| Befunde | 6 — **BF-140 am selben Tag geklärt, auf *niedrig* berichtigt und behoben**, BF-141 bis BF-145 (*niedrig*) | 1 — BF-146 (*niedrig*), an der Spec |
 | Neue Tests | `PwaTest` (8) plus `qa/B25/sw-verhalten.mjs` | `CookieBannerTest` (4) |
 | Deployment | nötig für BF-140 | **nicht nötig** — der Code ist unverändert |
 

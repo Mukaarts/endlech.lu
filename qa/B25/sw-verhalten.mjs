@@ -78,7 +78,7 @@ const anfrage = (url, { method = 'GET', mode = 'no-cors', destination = '' } = {
     const e = ereignis();
     handler.install(e);
     await e.ergebnis;
-    const cache = await caches.open('endlech-v2');
+    const cache = await caches.open('endlech-v3');
     sag('AK-04', `cache=${cache.name} inhalt=${JSON.stringify(await cache.keys())} skipWaiting=${skipWaitingGerufen}`);
 }
 
@@ -124,7 +124,7 @@ const anfrage = (url, { method = 'GET', mode = 'no-cors', destination = '' } = {
 
 // ── AK-18 · Auch eine zuvor besuchte Seite liefert offline.html ────────────
 {
-    const cache = await caches.open('endlech-v2');
+    const cache = await caches.open('endlech-v3');
     await cache.put('https://endlech.lu/de/restaurants', new FakeResponse('/de/restaurants-GECACHT'));
     netzAn = false;
     const e = ereignis(anfrage('https://endlech.lu/de/restaurants', { mode: 'navigate' }));
@@ -138,7 +138,7 @@ const anfrage = (url, { method = 'GET', mode = 'no-cors', destination = '' } = {
 // ── AK-07 · /build/ stale-while-revalidate ─────────────────────────────────
 {
     netzAufrufe = [];
-    const cache = await caches.open('endlech-v2');
+    const cache = await caches.open('endlech-v3');
     await cache.put('https://endlech.lu/build/app.abc.css', new FakeResponse('/build/app.abc.css-ALT'));
     const e = ereignis(anfrage('https://endlech.lu/build/app.abc.css'));
     handler.fetch(e);
@@ -165,7 +165,7 @@ const anfrage = (url, { method = 'GET', mode = 'no-cors', destination = '' } = {
     handler.fetch(e);
     await e.ergebnis;
     await new Promise((r) => setTimeout(r, 20));
-    const cache = await caches.open('endlech-v2');
+    const cache = await caches.open('endlech-v3');
     sag('AK-19', `cache_nach_bildabruf=${JSON.stringify(await cache.keys())}`);
 }
 
@@ -179,15 +179,25 @@ console.log(ergebnis.join('\n'));
     if (e.ergebnis !== undefined) { await e.ergebnis.catch(() => {}); }
 }
 
-// ── Angriff 2 · Avatar eines Nutzers (personenbezogenes Bild) ──────────────
+// ── Angriff 2 · Welche Bilder landen im Cache? (BF-140) ────────────────────
+// Erwartet nach der Reparatur: Avatar NICHT, Restaurantfoto und Porträt JA.
 {
-    const e = ereignis(anfrage('https://endlech.lu/uploads/avatars/nutzer-7.jpg', { destination: 'image' }));
-    handler.fetch(e);
-    await e.ergebnis;
-    await new Promise((r) => setTimeout(r, 20));
-    const cache = await caches.open('endlech-v2');
-    const drin = (await cache.keys()).filter((k) => k.includes('avatars'));
-    console.log(`ANGRIFF-2\tavatar_im_cache=${drin.length ? JSON.stringify(drin) : 'nein'}`);
+    const faelle = [
+        ['avatar', 'https://endlech.lu/uploads/avatars/nutzer-7.jpg'],
+        ['restaurantfoto', 'https://endlech.lu/uploads/restaurants/haus.jpg'],
+        ['portraet', 'https://endlech.lu/uploads/team/michael.jpg'],
+        ['app-icon', 'https://endlech.lu/icons/icon-192.png'],
+        ['fremder-uploads-pfad', 'https://endlech.lu/uploads/irgendwas-neues/datei.jpg'],
+    ];
+    for (const [name, url] of faelle) {
+        const e = ereignis(anfrage(url, { destination: 'image' }));
+        handler.fetch(e);
+        await e.ergebnis;
+        await new Promise((r) => setTimeout(r, 20));
+        const cache = await caches.open('endlech-v3');
+        const drin = (await cache.keys()).includes(url);
+        console.log(`ANGRIFF-2\t${name}_im_cache=${drin ? 'JA' : 'nein'}`);
+    }
 }
 
 // ── Angriff 3 · Antwort mit Fehlerstatus darf nicht gecacht werden ─────────
@@ -195,7 +205,7 @@ console.log(ergebnis.join('\n'));
 // `ok: true`, der Lauf prüfte also nichts. Jetzt antwortet er mit `ok: false`.
 {
     antwortOk = false;
-    const cache = await caches.open('endlech-v2');
+    const cache = await caches.open('endlech-v3');
     const vorher = new Set(await cache.keys());
     const e = ereignis(anfrage('https://endlech.lu/build/kaputt.js'));
     handler.fetch(e);
