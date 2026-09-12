@@ -15,6 +15,32 @@ framework:
     # Leerer Wert = Verhalten wie bisher (kein Proxy vertraut). In Coolify auf
     # das Docker-Netz setzen, z. B. `10.0.0.0/8,172.16.0.0/12,192.168.0.0/16`,
     # oder `private_ranges` als Kurzform.
+    # ⚠ BF-134: Ohne diese Liste baut die Anwendung ihre Bestätigungslinks aus dem
+    # `Host`-Header der Anfrage. Nachgestellt: Mit gefälschtem `Host` **und**
+    # passendem `Referer`/`Origin` entstand ein Konto, und der Link in der Mail
+    # lautete `http://boeser-server.example/de/verify/…` — eine authentische Mail
+    # des Betreibers, deren Link auf den Server des Angreifers zeigt.
+    #
+    # ⚠ **Auf Produktion fängt Coolifys Proxy das ab** (fremder Host → 503,
+    # gemessen). Diese Zeile ist die Verteidigung dahinter: Sie greift auch, wenn
+    # jemand die Anwendung ohne diesen Proxy betreibt — lokal, in einer Vorschau
+    # oder nach einem Hosterwechsel.
+    #
+    # ⚠ **`localhost` und `127.0.0.1` MÜSSEN drin bleiben.** Der `HEALTHCHECK` des
+    # Images ruft `http://127.0.0.1/health`, und Coolifys eigene Prüfung ruft
+    # ebenfalls lokal. Fehlt der Eintrag, antwortet die Anwendung dort mit 400, der
+    # frische Container gilt als krank, und Coolify rollt zurück — dasselbe Muster
+    # wie BF-116, nur mit einer Konfigurationszeile als Ursache.
+    #
+    # ⚠ **Keine Umgebungsvariable** (BF-29): `framework.trusted_hosts` erwartet eine
+    # Liste, und ein `%env(...)%`-Platzhalter kommt als EIN Eintrag an — der
+    # Container-Build bricht mit „Expected string, got array" ab. Wer eine weitere
+    # Domain aufschaltet, trägt sie hier ein.
+    trusted_hosts:
+        - '^(www\.)?endlech\.lu$'
+        - '^localhost$'
+        - '^127\.0\.0\.1$'
+
     trusted_proxies: '%env(TRUSTED_PROXIES)%'
     trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
 
