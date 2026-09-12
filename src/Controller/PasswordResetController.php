@@ -10,6 +10,7 @@ use App\Form\PasswordResetType;
 use App\RateLimit\ActionLimiter;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -17,6 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Exception\RfcComplianceException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -49,6 +52,11 @@ final class PasswordResetController extends AbstractController
         // dieselbe Lage wie bei der Registrierung, deshalb dieselben Werte.
         #[Autowire(service: 'limiter.password_reset')]
         private readonly RateLimiterFactoryInterface $resetLimiter,
+        // ⚠ BF-138: Der einzige Weg, auf dem der Betreiber von einem Konto erfährt,
+        // dessen Adresse kein Mailserver annimmt. In `prod` geht eine Warnung an
+        // Sentry (siehe monolog.yaml) — ohne sie wartet der Nutzer stumm auf eine
+        // Mail, die niemand schicken kann.
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -83,9 +91,36 @@ final class PasswordResetController extends AbstractController
             $user = $this->users->findOneBy(['email' => $email]);
 
             if ($user instanceof User) {
-                $token = $user->generatePasswordResetToken();
-                $this->em->flush();
-                $this->sendeLink($mailer, $user, $token, $request->getLocale());
+                try {
+                    // ⚠ BF-138: Die Adresse wird geprüft, BEVOR ein Token entsteht —
+                    // dasselbe Muster wie im `RegistrationController` (BF-119).
+                    // `new Address()` prüft gegen RFC 2822, und im Altbestand gibt es
+                    // Adressen, die das nicht erfüllen: Der HTML5-Default des
+                    // `Email`-Constraints liess sie bis BF-119 durch. Zustellbar ist
+                    // an sie nichts, ein Token wäre also ein Schreibzugriff ohne jeden
+                    // Zweck.
+                    $empfaenger = new Address($email);
+
+                    $token = $user->generatePasswordResetToken();
+                    $this->em->flush();
+                    $this->sendeLink($mailer, $user, $empfaenger, $token, $request->getLocale());
+                } catch (RfcComplianceException) {
+                    // ⚠ **Der Abbruch muss hier landen und nicht in einer 500er-Seite.**
+                    // Ein Serverfehler nur für vorhandene Konten verrät deren Existenz
+                    // deutlicher als die 12 ms, gegen die BF-137 antrat — und weil der
+                    // Wurf VOR `gleicheLaufzeitAn()` lag, nahm er den Angleich mit:
+                    // gemessen 19,5 ms gegen 141–146 ms im regulären Zweig.
+                    //
+                    // ⚠ Der Zugangsverlust bleibt und ist von hier aus nicht heilbar.
+                    // Geloggt wird die **Kennung**, nicht die Adresse: `prod` schickt
+                    // Warnungen an Sentry, und dort gilt `send_default_pii: false`.
+                    // Wer die Adresse braucht, sieht sie mit der Kennung in der
+                    // Datenbank nach.
+                    $this->logger->warning(
+                        'Passwort-Reset unmöglich: die gespeicherte Adresse verletzt RFC 2822 (BF-138).',
+                        ['user_id' => $user->getId()],
+                    );
+                }
             }
 
             // ⚠ Dieselbe Antwort in beiden Zweigen. Der Unterschied darf sich weder
@@ -147,7 +182,13 @@ final class PasswordResetController extends AbstractController
         ]);
     }
 
-    private function sendeLink(MailerInterface $mailer, User $user, string $token, string $locale): void
+    /**
+     * ⚠ Die Adresse kommt als geprüftes `Address`-Objekt herein, nicht als
+     * Zeichenkette (BF-138). Ein `->to((string) $user->getEmail())` an dieser
+     * Stelle prüfte sie erst, nachdem der Token geschrieben war, und der Wurf
+     * landete ausserhalb jeder Behandlung.
+     */
+    private function sendeLink(MailerInterface $mailer, User $user, Address $empfaenger, string $token, string $locale): void
     {
         $url = $this->generateUrl(
             'app_password_reset',
@@ -156,7 +197,7 @@ final class PasswordResetController extends AbstractController
         );
 
         $mail = (new TemplatedEmail())
-            ->to((string) $user->getEmail())
+            ->to($empfaenger)
             ->subject($this->translator->trans('email.password_reset_subject', [], null, $locale))
             ->locale($locale)
             ->htmlTemplate('email/password_reset.html.twig')
