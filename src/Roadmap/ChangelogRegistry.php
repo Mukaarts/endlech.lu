@@ -29,6 +29,13 @@ final readonly class ChangelogRegistry
     public function notes(): array
     {
         return [
+            // Ein Gast merkt von dieser Sammelreparatur zweierlei, und beides
+            // gehört gesagt: Die Seite trägt eine andere Schrift, und auf
+            // Tablets liess sie sich bisher waagerecht verschieben. Der grosse
+            // Rest — Prüfläufe, Spezifikationen, ein Reset-500 für Konten mit
+            // RFC-widriger Altadresse — bleibt unerwähnt; ein Changelog, der
+            // jeden Befund aufzählt, wird nicht gelesen.
+            new ReleaseNote('2026.09.12.1', new \DateTimeImmutable('2026-09-12'), ReleaseVisibility::SHOWN),
             // Betrifft zwei Wege, die ein Nutzer selbst geht: das Löschen des
             // eigenen Kontos und das Zurücksetzen des Passworts. Beide sind
             // jetzt gegen Missbrauch gedeckelt — das gehört gesagt, weil es
