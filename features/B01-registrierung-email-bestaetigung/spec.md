@@ -8,6 +8,18 @@ Status: `approved` · Stand: 2026-08-23 · **Rückerfassung aus dem Bestand**
 > Kriterien mit ⚠ beschreiben Verhalten, das fragwürdig aussieht, aber so im Bestand
 > steht. Was fehlt, steht unter [Fehlbestand](#fehlbestand) und ist **kein** Kriterium.
 
+> **Abgeglichen am 2026-09-12 (BF-132).** Sechs Fehlbestandspunkte waren erledigt, ohne
+> dass die Spezifikation es sagte — FB-01, FB-02, FB-04, FB-05, FB-06, FB-07 —, dazu
+> FB-09 seit demselben Tag (BF-134); drei davon sind DSGVO-Pflichten (Art. 17,
+> Auskunftsrecht, Zugangsrückweg). **Eine Datenschutz-Auskunft anhand der alten Fassung
+> wäre falsch gewesen, zuungunsten des Betreibers.** Ebenfalls berichtigt: AK-14 und
+> AK-15 (überholt), die Zahl der `isVerified()`-Prüfungen (drei, nicht eine) und AK-12,
+> das auf Produktion nicht mehr erfüllbar ist (BF-124/BF-131).
+>
+> ⚠ Diese Datei ist die **Rekonstruktion** eines Bestandsfeatures. Sie veraltet mit
+> jeder Reparatur, die sie behebt — genau das ist hier passiert, zum dritten Mal nach
+> BF-126 (B14) und BF-130 (B15).
+
 ## Zweck
 
 Ein Besucher legt sich ein Konto mit Name, E-Mail und Passwort an und bestätigt seine
@@ -38,7 +50,8 @@ Umgekehrt hängen an B01: B02 (Anmeldung), B03 (Passkeys), B04 (Profil), B11
 - Registrierung über die REST-API → B23 (eigener Weg, eigenes Verhalten:
   Anti-Enumeration, kein Token in der Antwort)
 - Konto per Passkey anlegen → strukturell ausgeschlossen, siehe B03
-- Passwort zurücksetzen → existiert nicht, siehe FB-05
+- Passwort zurücksetzen → Feature `01` (Betroffenenrechte). ~~existiert nicht, siehe
+  FB-05~~ — **gebaut und live**, `/{locale}/passwort-vergessen` antwortet mit HTTP 200.
 
 ## Akzeptanzkriterien
 
@@ -75,6 +88,19 @@ Umgekehrt hängen an B01: B02 (Anmeldung), B03 (Passkeys), B04 (Profil), B11
 - **AK-12** · Angenommen, der Mailversand wirft eine `TransportExceptionInterface`,
   wenn registriert wird, dann bleibt das Konto **gespeichert** und es erscheint die
   Warnung `flash.register_email_failed` statt der Erfolgsmeldung.
+  ⚠ **Auf Produktion ist dieses Kriterium seit dem 2026-09-02 nicht mehr erfüllbar
+  (BF-124, BF-131).** `SendEmailMessage` läuft über den `async`-Transport;
+  `MailerInterface::send()` legt die Nachricht in `messenger_messages` und wirft
+  nichts. Zum Zeitpunkt der Antwort hat die Zustellung noch nicht stattgefunden — der
+  Nutzer *kann* nicht mehr gewarnt werden, und das ist keine Nachlässigkeit, sondern
+  die Folge der Entscheidung für eine Warteschlange (die dafür Retry und
+  `failed`-Transport mitbringt). Geprüft wird das Kriterium weiterhin im Test-Env, wo
+  der Versand `sync` ist; für den Betreiber tritt `app:messenger:watch` an die Stelle
+  der Nutzerwarnung. ⚠ Der Prüflauf dazu hat zwei Wochen lang **gar keine Störung
+  erzeugt** — siehe BF-131.
+  ⚠ **Gleiche Meldung in beiden Zweigen (BF-135).** Bei einer bereits vergebenen
+  Adresse meldete der Code Erfolg, wo er hier warnt; die Art der Meldung war damit
+  die Antwort auf „gibt es dieses Konto?".
 
 ### Fragwürdiges Verhalten — als Kriterium aufgenommen, zur Klärung vorgelegt
 
@@ -82,22 +108,33 @@ Umgekehrt hängen an B01: B02 (Anmeldung), B03 (Passkeys), B04 (Profil), B11
   korrektem Passwort anmeldet, dann gelingt die Anmeldung vollständig — er erreicht
   Profil, Passkey-Verwaltung und alle geschützten Seiten außer dem Vorschlags-Wizard.
   *(So verhält sich der Code heute: `config/packages/security.yaml` konfiguriert keinen
-  `user_checker`, und `User` implementiert kein `isEnabled()`. Die einzige Prüfung auf
-  `isVerified()` außerhalb dieses Features steht in `CommunityController.php:29`.
-  Folge: Die E-Mail-Bestätigung ist praktisch folgenlos.)*
+  `user_checker`, und `User` implementiert kein `isEnabled()`.
+  ⚠ **Berichtigt am 2026-09-12 (BF-132): Es sind drei Prüfungen, nicht eine.**
+  `CommunityController.php:39` (nicht 29 — die Zeile hat sich verschoben),
+  `BoardController.php:96` (Idee einreichen) und `BoardController.php:210`. Dazu eine
+  vierte mit anderer Wirkung: `MarketingContactRegistry.php:126` überträgt ein
+  unbestätigtes Konto nicht an Brevo. Folge: Die E-Mail-Bestätigung ist nicht
+  folgenlos, aber sie sperrt keinen Zugang — sie sperrt das **Beitragen**.)*
 
-- **AK-14** ⚠ · Angenommen, eine E-Mail-Adresse ist bereits registriert, wenn sie im
+- **AK-14** ~~⚠ · Angenommen, eine E-Mail-Adresse ist bereits registriert, wenn sie im
   Registrierformular erneut eingegeben wird, dann erscheint „Diese E-Mail-Adresse ist
-  bereits registriert."
-  *(So verhält sich der Code heute: `#[UniqueEntity]` auf `App\Entity\User:15`. Die
-  REST-API tut an dieser Stelle ausdrücklich das Gegenteil — sie antwortet generisch,
-  um User-Enumeration zu verhindern (B23). Über den Web-Weg ist dieselbe Information
-  frei abfragbar, der Schutz der API damit wirkungslos.)*
+  bereits registriert."~~ — **überholt, behoben durch BF-09.**
+  **Heute gilt:** Angenommen, eine Adresse ist bereits registriert, wenn sie im
+  Registrierformular eingegeben wird, dann ist die Antwort **identisch** zur Anlage
+  eines neuen Kontos (Weiterleitung auf die Hinweisseite, `flash.register_success`),
+  es entsteht **kein** zweites Konto, und an die Adresse geht ein Hinweis, dass dort
+  schon ein Konto besteht. Das Passwort wird in beiden Zweigen gehasht, damit die
+  Laufzeit die Meldung nicht verrät.
+  *(Der frühere Zustand — `#[UniqueEntity]` mit deutschem Klartext — machte den
+  Web-Weg zum Abfragewerkzeug und den Anti-Enumerationsschutz der REST-API (B23)
+  wirkungslos. Seit BF-135 stimmt die Antwort auch im Störungsfall überein.)*
 
-- **AK-15** ⚠ · Angenommen, ein Nutzer klickt auf der Hinweisseite `/{locale}/verify`
+- **AK-15** ~~⚠ · Angenommen, ein Nutzer klickt auf der Hinweisseite `/{locale}/verify`
   auf „Bestätigungsmail erneut senden", wenn der Link geöffnet wird, dann erscheint
   `flash.verify_invalid_link` und er landet auf der Startseite — es wird **keine** Mail
-  versandt.
+  versandt.~~ — **überholt, behoben mit OF-03.**
+  **Heute gilt:** Der Klick löst tatsächlich einen erneuten Versand aus; `/verify/resend`
+  steht vor `/verify/{token}`, und der Weg ist gedeckelt (siehe FB-02).
   *(So verhält sich der Code heute: `/verify/{token}` ist in
   `EmailVerificationController.php:35` vor `/verify/resend` (Zeile 59) deklariert und
   fängt die Anfrage mit `token = "resend"` ab. Nachweis:
@@ -129,49 +166,77 @@ Katalog: `~/.claude/sdd/sicherheit.md`. Was hier nicht steht, prüft `sdd-qa` ni
 - **EC-01** · Zwei Registrierungen mit derselben Adresse gleichzeitig → die zweite
   scheitert am `UNIQUE`-Index auf `user.email` (DB-Ebene), nicht nur an der Validierung.
 - **EC-02** · Ein zweites `generateVerificationToken()` (über `resend`) überschreibt den
-  ersten Token — der zuvor versandte Link wird ungültig. Im Bestand nicht auslösbar,
-  siehe AK-15.
+  ersten Token — der zuvor versandte Link wird ungültig. ~~Im Bestand nicht auslösbar,
+  siehe AK-15.~~ **Seit der Reparatur von AK-15 auslösbar** und damit der Regelfall,
+  wenn jemand zweimal auf „erneut senden" klickt: Es gilt immer der jüngste Link.
 - **EC-03** · `verificationTokenExpiresAt = null` → `isVerificationTokenExpired()`
   liefert `true`. Ein bereits bestätigtes Konto kann also nie versehentlich über einen
   Alt-Link erneut verifiziert werden.
 - **EC-04** · Passwort länger als 4096 Zeichen → Abweisung durch `Length(max: 4096)`;
   schützt vor DoS über teure Hash-Berechnung.
 - **EC-05** · Registrierung mit einer Adresse, die im Formular gültig ist, aber beim
-  Versand abgewiesen wird → Konto bleibt bestehen (AK-12), ist aber nie bestätigbar
-  und ohne Verwaltungszugriff auch nicht löschbar (siehe FB-04).
+  Versand abgewiesen wird → Konto bleibt bestehen (AK-12), ist aber nie bestätigbar.
+  ~~und ohne Verwaltungszugriff auch nicht löschbar (siehe FB-04)~~ — **löschbar, seit
+  Feature `01` den Weg dafür hat.** ⚠ Der Fall selbst ist seit BF-119 weitgehend
+  ausgeschlossen: `RegistrationType` prüft mit `Email::VALIDATION_MODE_STRICT`, und die
+  Adresskonstruktion steht **vor** dem `flush()` — eine abgewiesene Adresse hinterlässt
+  keine Zeile mehr. Für den **Altbestand** solcher Adressen bleibt der Passwort-Reset
+  betroffen (BF-138).
 
 ## Fehlbestand
 
 Nicht vorhanden, aus dem Code belegt. **Kein Kriterium** — `sdd-qa` prüft nichts davon
 als bestanden, sondern nimmt es als Suchliste.
 
-- **FB-01 · Kein Rate Limit auf der Registrierung.** `config/packages/framework.yaml`
+- ~~**FB-01 · Kein Rate Limit auf der Registrierung.**~~ — **erledigt** (BF-02,
+  Limiter `registration`, ausgeliefert mit `v2026.08.29`; `LimiterCoverageTest` hält
+  fest, dass er verdrahtet ist). *Ursprünglicher Befund:* `config/packages/framework.yaml`
   definiert drei Limiter (`api_anonymous`, `api_login`, `partner_waitlist`); keiner
   greift auf `/{locale}/register`, und `RegistrationController` bezieht keinen.
   *Folge:* Unbegrenzt viele Konten pro IP, und mit jedem Konto ein Mailversand über die
   Brevo-Quota des Betreibers. Der Katalog nennt Rate Limits für Registrierung
   ausdrücklich als Pflicht.
-- **FB-02 · Kein Rate Limit auf dem erneuten Versand.** `resend()` erzeugt Token und
+- ~~**FB-02 · Kein Rate Limit auf dem erneuten Versand.**~~ — **erledigt** im selben
+  Zug wie AK-15: Die Route ist erreichbar und gedeckelt. *Ursprünglicher Befund:* `resend()` erzeugt Token und
   Mail ohne Zählung. *Folge:* Wäre die Route erreichbar (siehe AK-15), ließe sich damit
   ein fremdes Postfach zumüllen — die Adresse steht am angemeldeten Konto.
 - **FB-03 · Die Bestätigung wird nirgends erzwungen.** Kein `user_checker`, kein
-  `isEnabled()`. *Folge:* siehe AK-13 — das Feature hat außer beim Vorschlags-Wizard
-  keine Wirkung.
-- **FB-04 · Kein Löschweg für das Konto.** Weder `ProfileController` noch die API
+  `isEnabled()` — am 2026-09-12 nachgeprüft, gilt weiterhin. *Folge:* siehe AK-13.
+  ⚠ **Die Folge ist milder als hier beschrieben (BF-132):** Das Feature wirkt an drei
+  Stellen — Vorschlags-Wizard (`CommunityController.php:39`) und Ideen-Board
+  (`BoardController.php:96` und `:210`) —, dazu bleibt ein unbestätigtes Konto aus dem
+  Brevo-Abgleich heraus. Was fehlt, ist eine Sperre an der Anmeldung selbst.
+- ~~**FB-04 · Kein Löschweg für das Konto.**~~ — **erledigt** durch Feature `01`:
+  `app_profile_delete` verlangt Passwort und CSRF-Token, seit BF-136 zusätzlich
+  gedeckelt (3 Versuche je 15 Minuten, am Konto gezählt). Art. 17 DSGVO ist damit
+  ohne Datenbankeingriff erfüllbar. *Ursprünglicher Befund:* Weder `ProfileController` noch die API
   kennen eine Löschfunktion; es gibt keine Route und keine Oberfläche dafür.
   *Folge:* Löschpflicht nach Art. 17 DSGVO ist nur über einen direkten
   Datenbankeingriff erfüllbar. Der Katalog nennt das als Pflicht, nicht als Wunsch.
-- **FB-05 · Kein Weg, ein vergessenes Passwort zurückzusetzen.** Keine Route, kein
+- ~~**FB-05 · Kein Weg, ein vergessenes Passwort zurückzusetzen.**~~ — **erledigt**
+  durch Feature `01`: `/{locale}/passwort-vergessen` (auf Produktion HTTP 200), Token
+  mit Frist, gedeckelt, Anti-Enumeration in Antwort **und** Laufzeit (BF-137).
+  ⚠ Für Konten mit RFC-widriger Altadresse bleibt der Weg wirkungslos (BF-138) — am
+  2026-09-12 auf Produktion gezählt: 0 betroffene Konten. *Ursprünglicher Befund:* Keine Route, kein
   Formular, kein Mailtemplate. *Folge:* Wer sein Passwort vergisst und keinen Passkey
   hinterlegt hat, verliert den Zugang endgültig.
-- **FB-06 · Kein Datenexport (Auskunftsrecht).** Kein Endpunkt, keine Oberfläche.
-- **FB-07 · Die Meldung des `UniqueEntity`-Constraints ist nicht übersetzt.**
+- ~~**FB-06 · Kein Datenexport (Auskunftsrecht).** Kein Endpunkt, keine Oberfläche.~~
+  — **erledigt** durch Feature `01`: `app_profile_export` liefert den Bestand über
+  `App\Account\AccountDataExporter`.
+- ~~**FB-07 · Die Meldung des `UniqueEntity`-Constraints ist nicht übersetzt.**~~ —
+  **erledigt**, und durch BF-09 ohnehin gegenstandslos: Die Meldung erscheint nicht
+  mehr, weil eine vergebene Adresse keine eigene Antwort bekommt.
+  *Ursprünglicher Befund:*
   `src/Entity/User.php:15` trägt den deutschen Klartext „Diese E-Mail-Adresse ist
   bereits registriert." statt eines Übersetzungsschlüssels — als einzige
   Validierungsmeldung des Features. *Folge:* In `lb`, `fr` und `en` erscheint deutscher
   Text.
-- **FB-09 · Kein `trusted_hosts`, während die Bestätigungs-URL aus dem Request-Host
-  gebaut wird.** `RegistrationController` erzeugt den Link mit
+- ~~**FB-09 · Kein `trusted_hosts`, während die Bestätigungs-URL aus dem Request-Host
+  gebaut wird.**~~ — **erledigt am 2026-09-12 (BF-134).** `framework.trusted_hosts`
+  trägt eine feste Liste (`^(www\.)?endlech\.lu$`, `^localhost$`, `^127\.0\.0\.1$`).
+  Der Angriff ist gegengeprüft: mit gefälschtem `Host`, `Referer` und `Origin`
+  **HTTP 400 statt 302**, kein Konto, keine Mail. ⚠ Der Befund war schärfer als hier
+  beschrieben — er hing **nicht** vom Webserver ab. *Ursprünglicher Befund:* `RegistrationController` erzeugt den Link mit
   `UrlGeneratorInterface::ABSOLUTE_URL`; Symfony nimmt dafür Schema und Host aus der
   eingehenden Anfrage. `config/packages/framework.yaml` setzt weder `trusted_hosts`
   noch `trusted_proxies`. *Folge:* Wer eine Registrierung mit manipuliertem

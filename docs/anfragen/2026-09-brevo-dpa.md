@@ -1,13 +1,26 @@
 # Anfrage an Brevo — offene Punkte zum Auftragsverarbeitungsvertrag
 
-Stand: 2026-09-05 · deckt **DS-01b**, **DS-01c** und **DS-01d** ab
+Stand: 2026-09-05 · ~~deckt **DS-01b**, **DS-01c** und **DS-01d** ab~~
 Empfänger: `dpo@brevo.com` · Kopie an den eigenen Ablageort
 
-> **Warum als Mail und nicht im Konto:** Ziffer 6.2 des DPA macht die
-> Vorabinformation über neue Unterauftragsverarbeiter davon abhängig, dass man sich
-> „via the dedicated form" angemeldet hat — **das Formular ist im Vertragstext nicht
-> verlinkt und über die Hilfeseiten nicht auffindbar** (geprüft am 2026-09-05). Ohne
-> Nachfrage lässt sich das Widerspruchsrecht deshalb nicht ausüben.
+> ⚠⚠ **Am 2026-09-12 überholt — diese Anfrage bitte NICHT mehr so abschicken.** Der
+> Abgleich mit dem Online-Stand (`docs/datenschutz.md`, Abschnitt Brevo) hat ergeben,
+> dass Brevo das DPA neu gefasst hat: Es ist jetzt **Appendix 3** der Terms of Service
+> statt Annex 2, und die Nummerierung stimmt nicht mehr.
+>
+> | Punkt | Stand |
+> |---|---|
+> | **DS-01b** — Formular für Benachrichtigungen | **entfallen.** Ziff. 7.3 informiert in jedem Fall, per Mail oder im Konto, **vor** der Freigabe; danach 30 Tage Kündigungsrecht. Frage 1 unten ist damit gegenstandslos |
+> | **DS-01c** — geltende Fassung | **erledigt** mit dem Abgleich vom 2026-09-12; Kopie in `qa/brevo-dpa/BREVO-Appendix-3-DPA-abgerufen-2026-09-12.pdf` |
+> | **DS-01d** — Datum der AGB-Annahme | **offen.** Steht im Brevo-Konto, braucht keine Anfrage an den Datenschutzbeauftragten |
+>
+> ⚠ **Was stattdessen eine Anfrage verdient**, falls der Betreiber sie stellen will:
+> Ziff. 5.3 macht die Löschung am Vertragsende von einem **Verlangen** abhängig („upon
+> your request"). Wie dieses Verlangen zu stellen ist und ob es eine Frist dafür gibt,
+> sagt der Vertrag nicht. Das ist die Frage, die nach der Neufassung offen bleibt.
+>
+> **Der Text unten bleibt als Historie stehen** — er zeigt, welche Fragen der
+> Vertragsstand vom 15.05.2024 aufwarf.
 
 ---
 

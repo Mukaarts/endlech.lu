@@ -279,4 +279,66 @@ final class AdminWaitlistMarketingTest extends AbstractWebTestCase
 
         self::assertResponseStatusCodeSame(403);
     }
+
+    /**
+     * BF-90 · Eine wirksame Sperre wird in der Liste ausgewiesen.
+     *
+     * Nach einer Abmeldung — oder nachdem jemand die Karteikarte im Brevo-Konto
+     * gelöscht hat (`contactDeleted`) — bleibt die Zeile auf `synced`, und das ist
+     * **richtig**: Der Zustand sagt, was Brevo noch schuldet, und das ist nichts.
+     * Die Zeile selbst muss stehen bleiben, denn sie **ist** die Sperre; ohne sie
+     * trüge der nächste Lauf die Adresse in fünf Minuten neu ein (AK-12).
+     *
+     * ⚠ **Irreführend war deshalb nicht der Zustand, sondern die Anzeige.** Wer nur
+     * das grüne „Übertragen" samt Datum liest, hält den Kontakt für aktiv bespielt.
+     * Genau diese Lücke war BF-90; sein Wortlaut („ein lokaler Zustand, der nicht
+     * mehr stimmt") las `synced` als „steht bei Brevo" — eine andere Bedeutung, als
+     * `MarketingSyncState` dokumentiert.
+     */
+    public function testBf90SperreWirdInDerListeAusgewiesen(): void
+    {
+        $client = static::createClient();
+        $this->loginAs($client, 'admin@endlech.lu');
+
+        $email = 'bf90_'.uniqid().'@brasserie-test.lu';
+        $eintrag = $this->eintragMitKontakt($client, $email, MarketingSyncState::SYNCED);
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $kontakt = static::getContainer()->get(MarketingContactRepository::class)->findOneBy(['email' => $email]);
+        self::assertNotNull($kontakt);
+
+        // Die Sperre so setzen, wie der Webhook es tut: Widerruf nach der
+        // Einwilligung, Zustand unangetastet.
+        $kontakt->setRevokedAt(new \DateTimeImmutable('+1 minute'));
+        $em->flush();
+
+        self::assertTrue($kontakt->isBlocked(), 'Vorbedingung: Die Sperre muss wirksam sein.');
+        self::assertSame(
+            MarketingSyncState::SYNCED,
+            $kontakt->getSyncState(),
+            'Vorbedingung: Der Zustand bleibt — daran war nichts falsch.',
+        );
+
+        $uebersetzer = static::getContainer()->get('translator');
+        $hinweis = $uebersetzer->trans('marketing.admin.blocked', [], null, 'de');
+
+        // ⚠ Geprüft wird auf der **Detailseite**, weil dort der Bezug eindeutig ist:
+        // Die Liste führt viele Zeilen, und ein Treffer im Gesamt-HTML könnte von
+        // einer fremden stammen. Der Zustand steht auf beiden Seiten, gerendert vom
+        // selben Baustein bzw. derselben Spalte.
+        $client->request('GET', self::LOCALE.'/admin/warteliste/partner/'.$eintrag->getId());
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString(
+            $hinweis,
+            (string) $client->getResponse()->getContent(),
+            'BF-90: Ohne diesen Hinweis liest sich „Übertragen" wie ein aktiv bespielter Kontakt.',
+        );
+
+        // Die Liste trägt ihn ebenso — dort ist der Befund aufgefallen.
+        $client->request('GET', self::LOCALE.'/admin/warteliste');
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString($hinweis, (string) $client->getResponse()->getContent());
+    }
 }

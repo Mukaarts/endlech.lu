@@ -84,9 +84,18 @@ final class RegistrationController extends AbstractController
                 ->findOneBy(['email' => $user->getEmail()]);
 
             if ($vorhanden instanceof User) {
-                $this->sendeKontoExistiertHinweis($mailer, (string) $user->getEmail(), $request->getLocale());
+                $zugestellt = $this->sendeKontoExistiertHinweis($mailer, (string) $user->getEmail(), $request->getLocale());
 
-                $this->addFlash('success', $this->translator->trans('flash.register_success'));
+                // ⚠ BF-135: **Auch im Fehlerfall dieselbe Meldung wie unten.** Vorher
+                // verschluckte dieser Zweig die Ausnahme und fiel in `success`, während
+                // der Neuanlage-Zweig `warning` setzte — bei gestörtem Versand war die
+                // Art der Meldung damit die Antwort auf die Frage „gibt es dieses
+                // Konto?". Gemessen: bestehende Adresse `success`, neue `warning`. Die
+                // Anti-Enumeration aus BF-09 deckte nur den Erfolgsweg ab.
+                $this->addFlash(
+                    $zugestellt ? 'success' : 'warning',
+                    $this->translator->trans($zugestellt ? 'flash.register_success' : 'flash.register_email_failed'),
+                );
 
                 return $this->redirectToRoute('app_verify_notice');
             }
@@ -163,8 +172,15 @@ final class RegistrationController extends AbstractController
      *
      * Der Hinweis auf das Zurücksetzen des Passworts steht seit Feature 01 wieder
      * drin — vorher verwies er auf eine Funktion, die es nicht gab.
+     *
+     * ⚠ **Der Rückgabewert ist der Punkt (BF-135).** Vorher endete die Methode
+     * `void` und verschluckte den Versandfehler; der Aufrufer meldete dann Erfolg,
+     * wo der andere Zweig warnt. Ob zugestellt wurde, muss **beide** Zweige gleich
+     * behandeln — sonst ist die Meldung selbst das Enumerationsmerkmal.
+     *
+     * @return bool ob die Nachricht angenommen wurde
      */
-    private function sendeKontoExistiertHinweis(MailerInterface $mailer, string $email, string $locale): void
+    private function sendeKontoExistiertHinweis(MailerInterface $mailer, string $email, string $locale): bool
     {
         $mail = (new Email())
             ->to($email)
@@ -174,7 +190,9 @@ final class RegistrationController extends AbstractController
         try {
             $mailer->send($mail);
         } catch (TransportExceptionInterface) {
-            // Die Antwort bleibt in jedem Fall dieselbe.
+            return false;
         }
+
+        return true;
     }
 }

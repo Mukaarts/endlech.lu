@@ -61,9 +61,35 @@ gehört sie in `app.operator_vat` — das Impressum blendet die Zeile dann von s
 | **Drittlandsübermittlung** | ⚠ **ja — über Unterauftragsverarbeiter.** Siehe die Liste unten. Abgesichert über EU-US Data Privacy Framework und Standardvertragsklauseln |
 | **Zwecke** | (1) Versand von Transaktionsmails, (2) **seit Feature 04:** Führung eines Kontaktbestands für Werbe-Kampagnen |
 | **Rechtsgrundlage** | Zweck 1: Art. 6 Abs. 1 lit. b (Vertrag/vorvertraglich) · Zweck 2: **Art. 6 Abs. 1 lit. a — Einwilligung** |
-| **AV-Vertrag** | **Annex 2 der Brevo General Terms and Conditions** — gilt automatisch mit Annahme der AGB, **keine gesonderte Unterzeichnung nötig**. Bei Widersprüchen geht das DPA den AGB vor (Ziff. 1.4) |
-| **Gelesene Fassung** | Annex 2 – Data Protection Agreement, Stand **15.05.2024**, Kopie in `qa/brevo-dpa/` · geprüft am **2026-09-05** |
-| **Löschung nach Vertragsende** | **100 Tage** (Ziff. 8.1). Eine Löschbescheinigung gibt es auf erste Anfrage (Ziff. 8.2). ⚠ Innerhalb dieser Frist muss ein Export selbst erfolgen |
+| **AV-Vertrag** | **Appendix 3 der Brevo Terms of Service** („Data Processing Agreement") — gilt automatisch mit Annahme der AGB, **keine gesonderte Unterzeichnung nötig**. Bei Widersprüchen geht das DPA vor, „to the extent of that conflict" (Ziff. **2.1**) |
+| **Gelesene Fassung** | **abgerufen am 2026-09-12**, Kopie in `qa/brevo-dpa/BREVO-Appendix-3-DPA-abgerufen-2026-09-12.pdf`. ⚠ Die Vorfassung (**Annex 2**, Stand 15.05.2024) liegt daneben und ist **überholt** — Brevo hat das Dokument neu gefasst, Aufbau und Nummerierung stimmen nicht mehr |
+| **Löschung nach Vertragsende** | ⚠ **drei Monate, und nur auf Verlangen** (Ziff. **5.3**): „Upon termination of the Terms, We will, **upon your request**, destroy all Customer Data within three (3) months". Eine schriftliche Löschbestätigung gibt es ebenfalls auf Anfrage. ⚠ Innerhalb dieser Frist muss ein Export selbst erfolgen |
+| **Aufbewahrungsfristen im Betrieb** | Ziff. **4.3**: Der Verantwortliche — nicht Brevo — steuert die Aufbewahrung der hochgeladenen Daten. Brevo löscht nur am Ende der Vertragsbeziehung |
+| **Meldung einer Datenschutzverletzung** | ⚠ **„without undue delay"** (Ziff. **5.7**), Inhalt nach Art. 33 Abs. 3 DSGVO. **Keine Stundenzahl mehr** — die Vorfassung nannte ausdrücklich 72 Stunden |
+
+⚠⚠ **Am 2026-09-12 gegen den Online-Stand abgeglichen: Brevo hat den
+Auftragsverarbeitungsvertrag neu gefasst.** Die hier zuvor dokumentierte Fassung
+(Annex 2, Stand 15.05.2024) war korrekt wiedergegeben — die PDF-Kopie belegt jede
+Angabe samt Klauselnummer —, sie beschreibt aber nicht mehr den geltenden Vertrag.
+Was sich geändert hat:
+
+| Punkt | Fassung 15.05.2024 | Stand 2026-09-12 |
+|---|---|---|
+| Fundstelle | **Annex 2** der General Terms and Conditions | **Appendix 3** der Terms of Service. ⚠ „Annex 2" bezeichnet dort jetzt die **Liste der Unterauftragsverarbeiter** — wer der alten Angabe folgt, findet das falsche Dokument |
+| Vorrang | Ziff. 1.4, unbedingt | Ziff. 2.1, „to the extent of that conflict" |
+| Löschung | Ziff. 8.1: **100 Tage**, „incompressible period", **von selbst** | Ziff. 5.3: **drei Monate**, **auf Verlangen** |
+| Löschnachweis | Ziff. 8.2: „certificate of deletion" | Ziff. 5.3: „written confirmation of such destruction" |
+| Datenschutzverletzung | Ziff. 5.3: **72 Stunden** | Ziff. 5.7: „without undue delay" |
+| Neue Unterauftragsverarbeiter | Ziff. 6.2: Hinweis **nur bei Anmeldung** über ein Formular, 10 Werktage vorher | Ziff. 7.3: Hinweis **immer**, per Mail oder im Konto, **vor** der Freigabe, danach 30 Tage Kündigungsrecht bei berechtigtem Einwand |
+
+⚠ **Die wichtigste Folge ist eine Handlung, nicht ein Satz:** Die Löschung am
+Vertragsende geschieht **nicht mehr von selbst**. Wer den Vertrag beendet, muss sie
+ausdrücklich verlangen — sonst bleiben die Daten bei Brevo, und die drei Monate laufen
+nie an.
+
+⚠ **Eine Verbesserung ist ebenfalls eingetreten:** Die Anmeldung zum
+Benachrichtigungsformular (bisher DS-01) ist entfallen; über neue
+Unterauftragsverarbeiter wird jetzt in jedem Fall informiert.
 
 ⚠ **Die frühere Angabe „EU — keine Drittlandsübermittlung nach Kapitel V DSGVO" war
 falsch** und stand hier seit Feature 04. Brevo selbst sitzt in Frankreich, aber mehrere
@@ -72,27 +98,43 @@ sogar ausschließlich dort. Die Übermittlung ist zulässig, aber sie findet sta
 Verzeichnis, das sie verneint, trägt bei einer Auskunft nicht. Korrigiert am 2026-09-05
 nach Lektüre des Vertragstexts.
 
-**Unterauftragsverarbeiter** (Schedule 1 des DPA, Stand 15.05.2024):
+**Unterauftragsverarbeiter** (Annex 2 des DPA, abgerufen am 2026-09-12). Immer
+im Spiel, weil Teil der Infrastruktur:
 
-| Dienst | Aufgabe | Serverstandort | Grundlage |
-|---|---|---|---|
-| Google Cloud Platform | Hosting | Belgien | DPF + Standardvertragsklauseln |
-| Scaleway/Iliad | Hosting | Frankreich | — (EU) |
-| OVH | Hosting | Frankreich | — (EU) |
-| Hetzner Online | Hosting | Deutschland | — (EU) |
-| Cloudflare | CDN und Firewall | USA/EU | DPF + Standardvertragsklauseln |
-| Zendesk | Support-Ticketsystem | EU/USA | BCR + SCC + „Data Centre Location Add-On" |
-| **Datadog** | Protokollierung und Fehlersuche | **USA** | EU-US Data Privacy Framework |
+| Dienst | Aufgabe | Sitz | Serverstandort | Grundlage |
+|---|---|---|---|---|
+| OVH | Hosting | Frankreich | Frankreich | — (EU) |
+| Google Cloud Platform | Hosting | Frankreich | Belgien | DPF + Standardvertragsklauseln |
+| Cloudflare | CDN und Firewall | USA | USA/EU | DPF + SCC + „Data Localization Suite" |
+| Zendesk | Support-Ticketsystem | USA | EU/USA | BCR + Standardvertragsklauseln |
+| **Omni** | Dashboards | **USA** | EU | DPF + SCC + ergänzende Maßnahmen |
 
-Dazu optional, nur bei Nutzung des jeweiligen Dienstes: Looker (Dashboards), Integry
-(Integrationen), Convrrt (Landingpages) — alle mit US-Bezug. **Endlech.lu nutzt keinen
-davon**; wer einen einschaltet, erweitert damit die Übermittlung und zieht diese Liste mit.
+Nur bei Nutzung des jeweiligen Dienstes — **Endlech.lu nutzt keinen davon**, wer einen
+einschaltet, erweitert damit die Übermittlung und zieht diese Liste mit:
 
-⚠ **Über neue Unterauftragsverarbeiter wird nur informiert, wer sich dafür angemeldet
-hat.** Ziff. 6.2: *„Provided that Customer has subscribed to receive notifications via the
-dedicated form"* — dann zehn Werktage vorher, mit Widerspruchsrecht. **Ohne diese
-Anmeldung erfährt der Verantwortliche nichts** und kann sein Widerspruchsrecht nicht
-ausüben. Das ist ein Handgriff im Brevo-Konto, kein Vertragsdetail: siehe DS-01.
+| Gruppe | Dienste |
+|---|---|
+| Integration und Seiten | Integry (USA), Convrrt (USA) |
+| SMS-Routing | Vonage (USA), Telnyx (Irland), iBasis (Liechtenstein), Twilio (USA), Sinch (UK) |
+| **KI-Anbieter** | **OpenAI** (EU, Server EU/USA), **Google Gemini** (EU, EU/USA), **Anthropic** (Irland, Server **USA**), **Langfuse** (EU, EU) |
+| Wartung | Eldar IT (Serbien, Salesforce-Plugin) |
+
+Dazu Gruppenunternehmen: Brevo GmbH (Deutschland) und Brevo CRM Solutions Limited.
+
+⚠ **Drei Änderungen gegenüber dem Stand vom 15.05.2024, und eine ist bemerkenswert:**
+**Datadog** (Protokollierung, USA), **Scaleway/Iliad** und **Hetzner** stehen **nicht
+mehr** in der Liste; **Looker** ist durch **Omni** ersetzt — und das steht jetzt in der
+Infrastrukturgruppe, ist also nicht mehr abwählbar. Neu sind vier **KI-Anbieter**, unter
+ihnen Anthropic mit Servern in den USA. Sie gelten als Unterauftragsverarbeiter nur, wenn
+die betreffende Funktion tatsächlich benutzt wird — **dieses Projekt benutzt sie nicht**,
+und wer im Brevo-Konto eine KI-Funktion einschaltet, übermittelt Kontaktdaten an einen
+weiteren Dritten.
+
+⚠ **Der Hinweis auf neue Unterauftragsverarbeiter kommt jetzt in jedem Fall** (Ziff. 7.3):
+per Mail oder im Konto, **vor** der Freigabe, danach 30 Tage Kündigungsrecht bei einem
+Einwand, der sich auf einen Verstoß gegen EU-Datenschutzrecht stützt. ~~Ziff. 6.2: Hinweis
+nur bei Anmeldung über ein dediziertes Formular~~ — **entfallen; DS-01 ist damit erledigt**
+und braucht keinen Handgriff im Brevo-Konto mehr.
 
 ⚠ **Der zweite Zweck ist neu und ändert die Art der Weitergabe grundlegend.**
 Bis Feature 04 bekam Brevo nur die einzelne Nachricht, die es zustellen sollte.
@@ -304,10 +346,13 @@ Rechnung**, nicht im DPA — offen als DS-02b.
 Das ist AK-34 aus Feature 04 und keine Nacharbeit:
 
 - [x] ~~**AV-Vertrag mit Brevo geprüft und hier mit Datum eingetragen**~~ — **am
-      2026-09-05 erledigt.** Er ist Annex 2 der AGB und gilt automatisch mit deren
-      Annahme; die Kernpunkte (Löschfrist 100 Tage, Unterauftragsverarbeiter samt
-      Serverstandorten, Widerspruchsrecht) stehen jetzt oben. Offen bleiben DS-01b bis
-      DS-01d — Anmeldung zu den Benachrichtigungen, Fassungsprüfung, Datum der Annahme
+      2026-09-05 erledigt, am 2026-09-12 erneut geprüft und nachgezogen.** Er ist
+      **Appendix 3** der Terms of Service (bis 2024: Annex 2) und gilt automatisch mit
+      deren Annahme; die Kernpunkte stehen oben, samt Abgleichstabelle der Änderungen.
+      ⚠ **DS-01b ist entfallen** (die Anmeldung zum Benachrichtigungsformular verlangt
+      der Vertrag nicht mehr), **DS-01c ist mit diesem Abgleich erledigt**. Offen bleibt
+      allein **DS-01d** — das Datum, an dem die AGB angenommen wurden; es steht im
+      Brevo-Konto
 - [x] ~~**`/legal` nennt Brevo als Empfänger für Werbezwecke**~~ — **am 2026-09-05
       festgestellt: war bereits erfüllt.** Der Abschnitt steht seit Feature 04; der
       offene Punkt war überholt. Beim Nachsehen fielen allerdings drei andere Lücken
@@ -322,6 +367,20 @@ gesetztem Schlüssel. **Kein Kontakt geht raus, bevor die Erklärung ihn nennt.*
 
 ## Offene Punkte mit Frist
 
+- **DS-01e · Fassung des Brevo-DPA einmal im Jahr prüfen** (nächste Prüfung: **2027-09**).
+  ⚠ **Der Grund steht in BF-139:** Zwischen dem 15.05.2024 und dem 2026-09-12 hat Brevo den
+  Vertrag neu gefasst — Fundstelle, Nummerierung, Löschfrist und Meldefrist haben sich
+  geändert, und **niemand hat davon erfahren**. Der Vertrag sieht eine Benachrichtigung nur
+  für neue *Unterauftragsverarbeiter* vor (Ziff. 7.3), nicht für neue Fassungen des DPA
+  selbst. Ein Vertragsstand veraltet also lautlos, und eine Dokumentation, die ihn
+  wiedergibt, veraltet mit ihm. Der Ablauf ist kurz: Seite abrufen, gegen die
+  Abgleichstabelle oben lesen, PDF nach `qa/brevo-dpa/` legen, Datum hier eintragen.
+- **DS-01f · Die Löschung am Vertragsende ausdrücklich verlangen**, falls Brevo je
+  gekündigt wird. Ziff. 5.3: „upon your request" — ohne Verlangen läuft keine Frist an.
+  Das ist kein Termin, sondern ein Schritt in der Kündigung; er steht hier, weil er sonst
+  niemandem einfällt.
+
+
 > **Vorbereitet am 2026-09-05:** Für alle Punkte, die einen Kontozugang brauchen, liegen
 > fertige Texte und Klickwege bereit — `docs/anfragen/`. Die Checkliste dort ist nach
 > Dringlichkeit geordnet und nennt zu jedem Punkt, wohin die Antwort gehört.
@@ -332,10 +391,15 @@ gesetztem Schlüssel. **Kein Kontakt geht raus, bevor die Erklärung ihn nennt.*
 > | `2026-09-brevo-dpa.md` | DS-01b, DS-01c, DS-01d — fertige Anfrage an `dpo@brevo.com` |
 > | `2026-09-hostinger-standort.md` | DS-02b, DS-02c — fertige Anfrage, mit dem Hinweis, was vorher im hPanel steht |
 >
-> ⚠ **DS-01b braucht wirklich eine Anfrage.** Ziffer 6.2 des DPA verlangt eine Anmeldung
-> „via the dedicated form", **verlinkt dieses Formular aber nicht** — weder im
+> ⚠ ~~**DS-01b braucht wirklich eine Anfrage.** Ziffer 6.2 des DPA verlangt eine
+> Anmeldung „via the dedicated form", verlinkt dieses Formular aber nicht — weder im
 > Vertragstext noch auf den Hilfeseiten (beides am 2026-09-05 geprüft). Ohne Nachfrage
-> lässt sich das Widerspruchsrecht gegen neue Unterauftragsverarbeiter nicht ausüben.
+> lässt sich das Widerspruchsrecht gegen neue Unterauftragsverarbeiter nicht ausüben.~~
+> — **am 2026-09-12 entfallen.** Die neue Fassung informiert in jedem Fall (Ziff. 7.3),
+> ohne Anmeldung; das Formular gibt es nicht mehr, und die Anfrage dazu erübrigt sich.
+> ⚠ **Die Frage, die stattdessen bleibt:** Die Löschung am Vertragsende geschieht nur
+> noch **auf Verlangen** (Ziff. 5.3). Wer den Vertrag beendet, muss sie ausdrücklich
+> fordern — das gehört in die Kündigungsschritte, nicht in eine Anfrage.
 
 
 Aufgenommen am 2026-09-05 im Rahmen von `/sdd-betrieb`, nach der Auslieferung von

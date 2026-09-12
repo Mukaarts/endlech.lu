@@ -7,6 +7,8 @@ use App\Enum\WaitlistStatus;
 use App\Repository\PartnerWaitlistEntryRepository;
 use App\Tests\AbstractWebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 final class PartnerControllerTest extends AbstractWebTestCase
 {
@@ -238,25 +240,83 @@ final class PartnerControllerTest extends AbstractWebTestCase
     }
 
     /**
-     * AK-23 / BF-38: Beide Wartelisten beziehen denselben Limiter. Hinter einer
-     * geteilten IP — einer Gemeindeverwaltung etwa — blockieren sich damit
-     * unabhängige Interessenten gegenseitig.
+     * AK-23 / BF-38: Die beiden Wartelisten führen **getrennte** Kontingente. Hinter
+     * einer geteilten IP — einer Gemeindeverwaltung etwa — sperrt ein ausgeschöpfter
+     * Partnerweg nicht auch den Organisationsweg.
      *
-     * In `when@test` steht das Limit auf 10000, der Grenzwert ist hier also nicht
-     * messbar. Geprüft wird deshalb die Ursache: dass beide Controller auf
-     * denselben Dienst zeigen. Der Test schlägt fehl, sobald sie getrennt werden —
-     * und genau dann gehört der Befund geschlossen.
+     * ⚠ **Dieser Lauf prüft das Verhalten, nicht den Quelltext (BF-125).** Die
+     * Vorfassung durchsuchte `OrganisationController.php` als Zeichenkette nach
+     * `limiter.partner_waitlist` — und traf den Ausdruck seit BF-38 nur noch im
+     * **Kommentar** von Zeile 37, während die `#[Autowire]`-Zeile längst
+     * `limiter.organisation_waitlist` nannte. Der Lauf bestätigte damit das Gegenteil
+     * des tatsächlichen Verhaltens und wäre auch bei einem Rückbau grün geblieben: in
+     * beide Richtungen blind. Ein Prüflauf, der Quelltext liest, prüft die Kommentare
+     * mit.
+     *
+     * ⚠ Erschöpft wird in **einem** Zug, nicht über wiederholte Submits: In
+     * `when@test` steht das Limit auf 10000 (Pflicht-Override), eine Schleife wäre
+     * eine Wartezeit und kein Prüflauf. Muster aus `Bf136KontoloeschungLimiterTest`.
      */
-    public function testAk23BeideWartelistenTeilenSichDenLimiter(): void
+    public function testAk23WartelistenFuehrenGetrennteKontingente(): void
     {
-        $partner = file_get_contents(__DIR__ . '/../../../src/Controller/PartnerController.php');
-        $organisation = file_get_contents(__DIR__ . '/../../../src/Controller/OrganisationController.php');
+        $client = static::createClient();
 
-        self::assertStringContainsString("limiter.partner_waitlist", $partner);
-        self::assertStringContainsString(
-            "limiter.partner_waitlist",
-            $organisation,
-            'Sobald die Organisationsliste einen eigenen Limiter hat, ist BF-38 behoben — dieser Test darf dann fallen.',
+        $factory = $client->getContainer()->get('limiter.partner_waitlist');
+        self::assertInstanceOf(RateLimiterFactoryInterface::class, $factory);
+
+        // Der Schlüssel ist die Adresse des Testclients — dieselbe, die beide
+        // Controller über `getClientIp()` benutzen.
+        $partnerKontingent = $factory->create('127.0.0.1');
+        $partnerKontingent->reset();
+        $partnerKontingent->consume(10_000);
+
+        $this->sendePartnerFormular($client);
+        $partnerStatus = $client->getResponse()->getStatusCode();
+
+        $this->sendeOrganisationsFormular($client);
+        $organisationStatus = $client->getResponse()->getStatusCode();
+
+        // ⚠ Aufräumen VOR den Zusicherungen: Der Zähler liegt im Cache-Pool und
+        // übersteht den DAMA-Rollback — ein leer gelassenes Kontingent färbt sonst
+        // jeden folgenden Partner-Lauf rot, und zwar erst beim zweiten Aufruf der
+        // Suite (BF-136, dieselbe Falle).
+        $partnerKontingent->reset();
+
+        self::assertSame(
+            Response::HTTP_TOO_MANY_REQUESTS,
+            $partnerStatus,
+            'Vorbedingung: Der Partnerweg muss bei leerem Kontingent bremsen.',
         );
+        self::assertSame(
+            Response::HTTP_FOUND,
+            $organisationStatus,
+            'BF-38: Ein ausgeschöpfter Partnerweg darf den Organisationsweg nicht mitsperren.',
+        );
+    }
+
+    private function sendePartnerFormular(KernelBrowser $client): void
+    {
+        $crawler = $client->request('GET', self::LOCALE . '/partner');
+
+        $client->submit($this->formWithField($crawler, 'partner_waitlist[email]', [
+            'partner_waitlist[restaurantName]' => 'Brasserie Kontingent',
+            'partner_waitlist[contactName]' => 'Anna Muster',
+            'partner_waitlist[email]' => 'kontingent_' . uniqid() . '@brasserie-test.lu',
+            'partner_waitlist[locality]' => 'Strassen',
+            'partner_waitlist[consent]' => true,
+        ]));
+    }
+
+    private function sendeOrganisationsFormular(KernelBrowser $client): void
+    {
+        $crawler = $client->request('GET', self::LOCALE . '/organisationen');
+
+        $client->submit($this->formWithField($crawler, 'organisation_waitlist[email]', [
+            'organisation_waitlist[type]' => 'association',
+            'organisation_waitlist[organisationName]' => 'Verein Kontingent',
+            'organisation_waitlist[contactName]' => 'Alex Muster',
+            'organisation_waitlist[email]' => 'kontingent_' . uniqid() . '@verein-test.lu',
+            'organisation_waitlist[consent]' => true,
+        ]));
     }
 }

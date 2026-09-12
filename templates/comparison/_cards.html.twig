@@ -12,7 +12,17 @@
    dem Accessibility-Tree. Ein Screenreader liest die Merkmale also nicht doppelt.
 
    ⚠ Die Gruppen sind hier `<h3>` unter der `<h2>` des Abschnitts — keine
-   übersprungene Ebene (AK-27). In der Tabelle übernimmt das `<th scope="colgroup">`. #}
+   übersprungene Ebene (AK-27). In der Tabelle übernimmt das `<th scope="colgroup">`.
+
+   ⚠ **BF-82 liegt nicht hier, sondern in `assets/styles/app.css`.** Ein
+   Anbietername ohne Leerzeichen sprengte die Darstellung — gemessen mit 48 Zeichen:
+   **182 px** waagerechtes Scrollen. Der naheliegende Griff (`break-words` an die
+   Stelle, die den Namen rendert) traf daneben: Gemessen überstanden `h2` und `p` des
+   Eignungsblocks, denn der Name steckt auch **im Fliesstext**, nicht nur in den
+   Beschriftungen. `overflow-wrap` wird vererbt, deshalb steht die Regel einmal am
+   `body`. ⚠ Nicht mit `overflow-wrap: anywhere` verwechseln, das oben aus gutem
+   Grund verworfen wurde: Das zerlegt auch normale Wörter mitten im Wort
+   („Stuf-enlo-ser Eing-ang"). #}
 <div class="md:hidden space-y-8">
     {% for group in comparison_groups() %}
         {% set rows = page.rowsIn(group) %}
@@ -40,7 +50,7 @@
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt class="font-medium text-gray-600">{{ 'table.col_theirs'|trans({'%brand%': page.competitor.brand}, 'comparison') }}</dt>
+                                    <dt class="font-medium text-gray-600 break-words">{{ 'table.col_theirs'|trans({'%brand%': page.competitor.brand}, 'comparison') }}</dt>
                                     <dd class="text-gray-800">
                                         {% include 'comparison/_verdict_body.html.twig' with {
                                             verdict: row.theirs,

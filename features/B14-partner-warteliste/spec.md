@@ -2,6 +2,18 @@
 
 Status: `rekonstruiert` · Stand: 2026-08-23 · **Rückerfassung aus dem Bestand**
 
+> **Abgeglichen am 2026-09-12 (BF-126).** Fünf Stellen beschrieben einen überholten
+> Stand: AK-21 („keine Ablauffrist"), AK-22 („kein Widerrufsweg") und AK-23 („geteiltes
+> Kontingent") sind seit `v2026.08.29` erledigt (BF-36/37/38), AK-17 zählte die
+> erfassten Daten abschliessend auf und übersah drei Felder, AK-04 ist auf Produktion
+> nicht mehr erfüllbar (BF-124). Dazu FB-01, FB-03 und FB-04 (BF-134).
+> **Wer die alte Fassung las, hielt drei behobene DSGVO-Mängel für offen** — und eine
+> Auskunft nach AK-17 wäre lückenhaft gewesen.
+>
+> ⚠ Diese Datei ist die **Rekonstruktion** eines Bestandsfeatures: Sie beschreibt, was
+> der Code tut, nicht was er tun sollte — und sie veraltet mit jeder Reparatur, die sie
+> behebt.
+
 ## Zweck
 
 Restaurantbetreiber tragen sich auf `/{locale}/partner` für das kostenpflichtige
@@ -43,6 +55,18 @@ Teilt sich `WaitlistConfirmationService`, `WaitlistEntryInterface`,
   dann geht eine Bestätigungsmail mit absolutem Link an die angegebene Adresse.
 - **AK-04** · Angenommen, der Mailversand scheitert, wenn die Antwort betrachtet wird,
   dann **bleibt der Eintrag gespeichert** und es erscheint `flash.partner_email_failed`.
+  ⚠ **Die zweite Hälfte ist auf Produktion seit dem 2026-09-02 nicht mehr erfüllbar
+  (BF-124).** Der Versand läuft über den `async`-Transport: `send()` legt die Nachricht
+  in `messenger_messages` und wirft keine `TransportExceptionInterface` mehr,
+  `register()` gibt immer `true` zurück, und `if (!$sent)` wird nicht erreicht.
+  Nachgestellt mit gestopptem Mailpit: **HTTP 302 ohne Warnung**, Eintrag entsteht
+  (5 → 6), Nachricht in der Warteschlange. ⚠ **Der erste Prüflauf hat AK-04 zu Recht
+  als bestanden gebucht** — damals lief der Mailer synchron; die Regression ist still
+  eingetreten, weil die Umstellung an einer anderen Stelle beschlossen wurde. Was
+  bleibt: Der Eintrag geht nicht verloren (erste Hälfte, weiterhin erfüllt), und der
+  Rückstau wird gemessen (`app:messenger:watch`, täglich 07:20). Den Interessenten
+  kann niemand mehr warnen — zum Zeitpunkt der Antwort ist die Zustellung nicht
+  passiert.
 - **AK-05** · Angenommen, der Browser unterstützt Turbo, wenn erfolgreich abgeschickt
   wird, dann wird nur das Formular durch die Erfolgsmeldung ersetzt (`turbo-stream`,
   `action="replace"`, Ziel `partner-waitlist-form`).
@@ -84,6 +108,13 @@ Teilt sich `WaitlistConfirmationService`, `WaitlistEntryInterface`,
   personenbezogenen Daten er trägt, dann sind es: Restaurantname, Ansprechpartner,
   E-Mail, Telefon (optional), Ort, Freitextnachricht, Einwilligungszeitpunkt, Sprache
   und Herkunftsquelle. **Keine IP-Adresse.**
+  ⚠ **Die Aufzählung war unvollständig (BF-126).** Seit dem 2026-08-29 kommen drei
+  Felder hinzu, und eine Auskunft nach dieser Liste wäre lückenhaft gewesen:
+  `marketingConsentAt` (eigene Einwilligung für den Brevo-Verteiler, Feature 04),
+  `selfConfirmedAt` (Zeitpunkt der Selbstbestätigung — er unterscheidet den
+  Doppel-Opt-in vom Weitersetzen durch die Verwaltung, BF-89) und `restaurant`
+  (Verknüpfung mit einem bestehenden Eintrag, von der Verwaltung gesetzt, B22).
+  **Keine IP-Adresse** — das gilt weiterhin.
 - **AK-18** · Angenommen, das Honeypot-Feld wird betrachtet, wenn nach einem
   `Blank`-Constraint gesucht wird, dann gibt es keines — ein Validierungsfehler würde dem
   Bot verraten, welches Feld die Falle ist.
@@ -97,28 +128,41 @@ Teilt sich `WaitlistConfirmationService`, `WaitlistEntryInterface`,
 
 ### Fragwürdiges Verhalten — als Kriterium aufgenommen, zur Klärung vorgelegt
 
-- **AK-21** ⚠ · Angenommen, ein Bestätigungslink wird nach beliebig langer Zeit
+- **AK-21** ~~⚠ · Angenommen, ein Bestätigungslink wird nach beliebig langer Zeit
   aufgerufen, wenn die Anfrage durchläuft, dann greift er weiterhin — es gibt **keine
-  Ablauffrist**.
+  Ablauffrist**.~~ — **überholt, behoben durch BF-36, live seit `v2026.08.29`.**
+  **Heute gilt:** Der Token verfällt sieben Tage nach `createdAt`; ein abgelaufener
+  Link antwortet mit HTTP 410. Sieben Tage statt 24 Stunden, weil eine
+  Wartelisten-Anmeldung kein Anmeldevorgang ist — wer sie am Freitagabend abschickt,
+  liest die Mail vielleicht erst am Montag.
   *(So verhält sich der Code heute: `PartnerWaitlistEntry::generateConfirmationToken()`
   setzt keinen Ablaufzeitpunkt, anders als `User::generateVerificationToken()` mit
   24 Stunden. Folge: Ein Token, der einmal in einem fremden Postfach oder Log landet,
   bleibt dauerhaft einlösbar.)*
 
-- **AK-22** ⚠ · Angenommen, ein Interessent möchte sich wieder austragen, wenn er einen
+- **AK-22** ~~⚠ · Angenommen, ein Interessent möchte sich wieder austragen, wenn er einen
   Weg dafür sucht, dann gibt es keinen — weder einen Abmeldelink in der Mail noch eine
-  Selbstbedienungsseite, und auch die Verwaltung (B22) kennt keine Löschfunktion.
-  *(Folge: Die Einwilligung ist erteilt, aber nicht widerrufbar. Art. 7 Abs. 3 DSGVO
-  verlangt, dass der Widerruf so einfach ist wie die Erteilung.)*
+  Selbstbedienungsseite, und auch die Verwaltung (B22) kennt keine Löschfunktion.~~
+  — **überholt, behoben durch BF-37, live seit `v2026.08.29`.**
+  **Heute gilt:** Jede Mail trägt den Rückweg (`app_partner_revoke`, Token im Link);
+  der Widerruf ist damit so einfach wie die Erteilung und erfüllt Art. 7 Abs. 3 DSGVO.
+  ⚠ Wer den Link aus einer Mailvorlage entfernt, nimmt genau diese Pflicht mit.
 
-- **AK-23** ⚠ · Angenommen, jemand hat sich auf der **Organisations**-Warteliste
+- **AK-23** ~~⚠ · Angenommen, jemand hat sich auf der **Organisations**-Warteliste
   eingetragen, wenn er danach das Partnerformular abschickt, dann zählt beides auf
-  dasselbe Kontingent.
-  *(So verhält sich der Code heute: Beide Controller beziehen denselben Service
-  `limiter.partner_waitlist`. Folge: Hinter einer geteilten IP — etwa einer
-  Gemeindeverwaltung — blockieren sich unabhängige Interessenten gegenseitig. Zudem
-  zeigt die Organisationsseite bei Überschreitung die Partner-Meldung
-  `flash.partner_rate_limited`.)*
+  dasselbe Kontingent.~~ — **überholt, behoben durch BF-38, live seit `v2026.08.29`.**
+  **Heute gilt:** Jede Warteliste führt ihr eigenes Kontingent
+  (`limiter.partner_waitlist`, `limiter.organisation_waitlist`, `limiter.app_waitlist`);
+  ein ausgeschöpfter Partnerweg sperrt den Organisationsweg nicht mit. Am 2026-09-12
+  über Verhalten belegt: Partnerweg 429, Organisationsweg weiterhin 302
+  (`PartnerControllerTest::testAk23WartelistenFuehrenGetrennteKontingente`).
+  ⚠ **Der frühere Prüflauf dazu bewies das Gegenteil des tatsächlichen Verhaltens**, weil
+  er den Quelltext als Zeichenkette durchsuchte und nur noch einen Kommentar traf
+  (BF-125).
+  ⚠ **Nicht behoben ist der Meldungsschlüssel:** Die Organisationsseite zeigt bei
+  Überschreitung weiterhin `flash.partner_rate_limited` — der hinterlegte Text ist in
+  allen vier Sprachen neutral, irreführend ist allein der Schlüsselname (BF-129, offen,
+  *niedrig*).
 
 ## Edge Cases
 
@@ -138,17 +182,24 @@ Teilt sich `WaitlistConfirmationService`, `WaitlistEntryInterface`,
 
 ## Fehlbestand
 
-- **FB-01 · Kein Widerrufsweg.** Siehe AK-22. DSGVO-Pflicht, nicht Komfort.
-- **FB-02 · Keine Löschfrist und keine Aufräumroutine.**
+- ~~**FB-01 · Kein Widerrufsweg.** Siehe AK-22. DSGVO-Pflicht, nicht Komfort.~~ —
+  **erledigt** (BF-37, live seit `v2026.08.29`): Abmeldelink in jeder Mail.
+- **FB-02 · Keine Löschfrist und keine Aufräumroutine.** ⚠ **Am 2026-09-12 nachgeprüft
+  und weiterhin offen** — der Aufräumlauf aus Feature `08`
+  (`StaleAppWaitlistCleaner`) greift ausschliesslich auf die **App**-Warteliste;
+  `findPendingOlderThan()` wird im Produktivcode nach wie vor nirgends gerufen.
   `PartnerWaitlistEntryRepository::findPendingOlderThan()` existiert und ist offenkundig
   dafür gedacht — sie wird aber **nirgends im Produktivcode aufgerufen**, nur in
   `tests/Integration/Repository/PartnerWaitlistEntryRepositoryTest.php:29`. *Folge:*
   Nie bestätigte Anmeldungen bleiben unbefristet gespeichert; toter Code täuscht eine
   Aufräumlogik vor, die es nicht gibt.
-- **FB-03 · Kein Ablauf des Bestätigungstokens.** Siehe AK-21.
-- **FB-04 · Kein `trusted_hosts`, während der Bestätigungslink aus dem Request-Host
+- ~~**FB-03 · Kein Ablauf des Bestätigungstokens.** Siehe AK-21.~~ — **erledigt**
+  (BF-36, live seit `v2026.08.29`): sieben Tage, gemessen an `createdAt`.
+- ~~**FB-04 · Kein `trusted_hosts`, während der Bestätigungslink aus dem Request-Host
   gebaut wird.** `WaitlistConfirmationService::register()` nutzt `ABSOLUTE_URL`. Siehe
-  B01/FB-09 — hier mit demselben Angriffsweg.
+  B01/FB-09 — hier mit demselben Angriffsweg.~~ — **erledigt am 2026-09-12 (BF-134).**
+  Feste Liste in `framework.trusted_hosts`; der Angriff antwortet jetzt mit HTTP 400
+  statt 302, kein Eintrag, keine Mail.
 - **FB-05 · Keine Auskunftsfunktion.** Wer wissen will, welche Daten über ihn
   gespeichert sind, hat keinen Weg dorthin.
 - ~~**FB-06 · Der Freitext `message` wird nicht begrenzt geprüft.**~~ **Entfällt —

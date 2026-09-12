@@ -15,6 +15,73 @@
 @source "../../assets";
 @source "../../src";
 
+/* ─── Markenschrift (BF-99) ────────────────────────────────────────────────
+   Inter 4.1, SIL Open Font License 1.1 (Lizenztext: `assets/fonts/Inter-OFL.txt`).
+
+   ⚠ **Warum überhaupt eine eigene Schrift.** Die Wort-Bildmarke im Presse-Kit war
+   als `<text>` mit dem Tailwind-Standardstapel gesetzt, also mit der
+   **Systemschrift** des jeweiligen Geräts — auf einem Mac SF Pro, auf Windows
+   Segoe UI. Gemessen schwankte die Breite des Schriftzugs zwischen **2166 und
+   2778 Einheiten** (28 %), und im ungünstigsten Fall greift eine Serifenschrift.
+   Bei einer Wortmarke ist die Schrift die Marke; „irgendeine, die da ist" ist
+   keine Festlegung. Der naheliegende Ausweg — die Datei in einem Vektorprogramm
+   outlinen — hätte die Schrift des jeweiligen Rechners eingefroren, auf diesem
+   Mac also SF Pro, das für Markenzwecke nicht lizenziert ist.
+
+   ⚠ **Selbst gehostet, nicht über ein CDN.** Ein Aufruf an `fonts.gstatic.com`
+   überträgt die IP jedes Besuchers an einen Dritten und wäre ohne Einwilligung
+   angreifbar — dasselbe Muster, aus dem dieses Projekt Sentry in der EU-Region
+   fährt und den Kartenanbieter bewusst nicht einbindet.
+
+   ⚠ **Subset statt Vollschnitt: je ~17 kB statt 111–115 kB.** Enthalten sind
+   Latin-1 (damit alle vier Sprachen samt é, ë, ä, ü, ç, œ), typografische
+   Anführungszeichen, Gedankenstriche, Pfeile, Häkchen und das Eurozeichen.
+   **Nicht** enthalten sind Piktogramme und Emoji (⚠, ♿, ✅): Sie bleiben bei der
+   Systemschrift, damit ihr Aussehen sich nicht ändert — Inter würde sie monochrom
+   zeichnen, wo heute das farbige Systemzeichen steht.
+
+   ⚠ `font-display: swap` samt vollständigem Fallback-Stapel: Bis die Datei da
+   ist, liest sich die Seite in der Systemschrift weiter. Ein `block` liesse den
+   Text für bis zu drei Sekunden unsichtbar — auf einer Barrierefreiheitsplattform
+   die falsche Entscheidung. */
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/Inter-Regular.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("../fonts/Inter-Medium.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("../fonts/Inter-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("../fonts/Inter-Bold.woff2") format("woff2");
+}
+
+/* Der Stapel bleibt vollständig hinter Inter stehen — er ist der Fallback und
+   zugleich die Fassung, die zwei Wochen lang die Marke getragen hat. */
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 /* Globaler Fokus-Fallback (WCAG 2.4.7). Greift bei Tastaturfokus für jedes
    Element, das keine eigene Fokus-Utility trägt — insbesondere die Seiten unter
    home/, about/ und community/ sowie die Footer-Links, die bisher nur den auf
@@ -165,4 +232,24 @@
     table {
         break-inside: avoid;
     }
+}
+
+/* BF-82 · Ein einzelnes Wort darf die Seite nicht waagerecht scrollen lassen.
+   Gemessen auf einer Vergleichsseite mit einem 48 Zeichen langen Anbieternamen
+   ohne Leerzeichen: 182 px Überlauf, und die überstehenden Elemente waren
+   Überschrift und Fliesstext des Eignungsblocks — nicht die Beschriftung, an der
+   man zuerst sucht.
+
+   ⚠ Die Regel steht am `body` und nicht an einzelnen Stellen, weil `overflow-wrap`
+   vererbt wird und der Fall projektweit auftritt: Restaurantnamen, Ideen-Titel im
+   Board und Organisationsnamen auf den Wartelisten sind **nutzergeneriert**. Dort
+   ist ein überlanges Wort ohne Leerzeichen keine Vorsorge, sondern eine Eingabe,
+   die jemand machen kann.
+
+   ⚠ `break-word` und ausdrücklich **nicht** `anywhere` oder `break-all`: Es greift
+   nur, wenn ein Wort allein schon zu breit ist, und lässt normale Zeilen
+   unangetastet. `anywhere` zerlegt auch gewöhnliche Wörter mitten im Wort
+   („Stuf-enlo-ser Eing-ang") — genau deshalb ist es bei BF-77 verworfen worden. */
+body {
+    overflow-wrap: break-word;
 }

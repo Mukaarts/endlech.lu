@@ -166,7 +166,19 @@ final class BoardController extends AbstractController
 
         // ⚠ Fremde wartende Idee → 404, nicht 403. Ein 403 mit Titel in der
         // Fehlerseite verriete Existenz und Inhalt (AK-18, AK-56).
-        if (!$idea->isPublished() && $this->getUser() !== $idea->getSubmittedBy()) {
+        //
+        // ⚠ BF-111: Die Bedingung braucht den Fall „gar kein Verfasser" eigens.
+        // `$this->getUser() !== $idea->getSubmittedBy()` allein ließ eine wartende
+        // Idee OHNE Verfasser für jeden Gast durch: Dort ist beides `null`, und
+        // `null !== null` ist **false** — die Sperre griff nicht. Nachgestellt:
+        // HTTP 200, Titel im `<title>`, Beschreibung vollständig.
+        //
+        // Die Regel lautet: Eine unveröffentlichte Idee sieht **nur ihr Verfasser**.
+        // Gibt es keinen, sieht sie niemand. Nicht zu „$user === $verfasser"
+        // vereinfachen — bei zwei `null` wäre das wieder wahr.
+        $verfasser = $idea->getSubmittedBy();
+
+        if (!$idea->isPublished() && (null === $verfasser || $verfasser !== $this->getUser())) {
             throw $this->createNotFoundException();
         }
 

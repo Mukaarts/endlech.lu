@@ -3,11 +3,16 @@
 Die visuelle Sprache von Endlech.lu: Farben, Typografie, Komponenten und die
 Regeln für Barrierefreiheit, an die sie gebunden sind.
 
-**Das Wichtigste vorweg:** Es gibt keine `tailwind.config.js` und keinen
-`@theme`-Block. `assets/styles/app.css` besteht aus `@import "tailwindcss"` plus
-vier Sonderblöcken. **Es existiert kein einziger benannter Design-Token** — das
-System lebt vollständig in den Utility-Ketten der 77 Twig-Templates. Dieses
-Dokument ist deshalb die einzige Stelle, an der es überhaupt aufgeschrieben ist.
+**Das Wichtigste vorweg:** Es gibt keine `tailwind.config.js`. `assets/styles/app.css`
+besteht aus `@import "tailwindcss"` plus Sonderblöcken und **genau einem** Token im
+`@theme`-Block: `--font-sans` (die Markenschrift, seit dem 2026-09-12, BF-99). Alles
+andere lebt vollständig in den Utility-Ketten der 77 Twig-Templates — dieses Dokument
+ist deshalb die einzige Stelle, an der es überhaupt aufgeschrieben ist.
+
+⚠ **Bis zum 2026-09-12 stand hier „keinen `@theme`-Block … kein einziger benannter
+Design-Token".** Das galt, bis die Marke eine eigene Schrift bekam. Wer einen zweiten
+Token anlegt, zieht diese Zeile mit — sonst wiederholt sich das Muster, das an einem
+einzigen Tag vier Spezifikationen betraf (BF-126, BF-130, BF-132, BF-133).
 
 Wo zwei Varianten nebeneinander existieren, ist eine als **Kanon** markiert und
 die andere als **Bestand**. Bestand heißt: vorhanden, funktioniert, aber nicht
@@ -141,7 +146,42 @@ eine neue Seite anlegt, wählt nach Publikum, nicht nach Geschmack.
 
 ## Typografie
 
-Systemschrift über `font-sans`, keine Webfont-Einbindung.
+**Inter** (Version 4.1, SIL Open Font License 1.1) über `font-sans`, selbst gehostet
+und auf Latin zugeschnitten. Vier Schnitte — 400, 500, 600, 700 —, je rund 17 kB,
+zusammen 80 kB. Lizenztext: `assets/fonts/Inter-OFL.txt`.
+
+⚠ **Warum überhaupt eine eigene Schrift (BF-99).** Bis zum 2026-09-12 war es die
+Systemschrift, also SF Pro auf einem Mac und Segoe UI auf Windows. Für Fließtext ist
+das eine gute Entscheidung; für eine **Wortmarke** ist es keine: Der Schriftzug in den
+beiden Wort-Bildmarken des Presse-Kits war als Text gesetzt, und seine Breite schwankte
+gemessen zwischen 2166 und 2778 Einheiten (**28 %**), je nachdem was der Betrachter
+installiert hatte. Bei einer Wortmarke ist die Schrift die Marke.
+
+⚠ **Selbst gehostet, nicht über ein CDN.** Ein Aufruf an `fonts.gstatic.com` überträgt
+die IP jedes Besuchers an einen Dritten — dasselbe Muster, aus dem Sentry in der
+EU-Region läuft.
+
+⚠ **Piktogramme und Emoji sind bewusst NICHT im Subset** (⚠, ♿, ✅). Sie bleiben bei
+der Systemschrift; Inter würde sie monochrom zeichnen, wo heute das farbige
+Systemzeichen steht. Enthalten sind dagegen alle typografischen Zeichen, die das
+Projekt benutzt: Gedankenstriche, „Anführungszeichen“, Pfeile, ✓, € — erhoben durch
+Zählung über `templates/` und `translations/`.
+
+⚠ **`font-display: swap` mit vollständigem Fallback-Stapel.** Bis die Datei da ist,
+liest sich die Seite in der Systemschrift weiter. `block` liesse den Text für bis zu
+drei Sekunden unsichtbar — auf einer Barrierefreiheitsplattform die falsche Wahl.
+
+⚠ **Die Kopfzeile hängt daran.** Inter ist breiter als SF Pro, und beim Umstellen lief
+die Navigation bei 768 px in Französisch wieder über (17 px als Gast). Die Reparatur
+steht in `base.html.twig`: Logo-Schriftzug erst ab `xl`, „Über uns" erst ab `lg` (dafür
+in der Fussleiste ergänzt), Abstände gestaffelt `space-x-2 lg:space-x-3 xl:space-x-6`.
+Gemessen: 0 px waagerechtes Scrollen in vier Sprachen bei 768, 1024, 1280 und 1440 px.
+
+**Die Wort-Bildmarken tragen den Schriftzug als Pfade**, nicht als Text — erzeugt mit
+HarfBuzz (Kerning der Schrift) und fontTools, nicht von Hand gezeichnet. Wer sie
+ändert, erzeugt die Pfade neu; ein „Text in Pfade konvertieren" im Vektorprogramm
+friert die Schrift des jeweiligen Rechners ein und ist damit genau der Fehler, den
+BF-99 beschrieb.
 
 ### Überschriften
 
