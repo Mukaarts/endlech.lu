@@ -1,6 +1,6 @@
 # Features
 
-Stand: 2026-09-12 · Stack-Profil: `symfony-doctrine` · Artefaktpfad: `docs/`
+Stand: 2026-09-12 (Release `v2026.09.12.1`) · Stack-Profil: `symfony-doctrine` · Artefaktpfad: `docs/`
 
 Stand der Rückerfassung: **alle 26 Features rekonstruiert** (2026-08-23).
 Stand der Auslieferung: **17 Bestandsfeatures auf `deployed`** (2026-09-11) — sie waren
@@ -10,6 +10,44 @@ BF-119 (*hoch*), B10, B12 und B24 wegen eines `qa-report.md`, der noch das
 „Production-ready: nein" seines ersten Durchlaufs trägt.
 
 
+
+**2026-09-12 · `v2026.09.12.1` ausgerollt und auf Produktion nachgeprüft.** Die
+Sammelreparatur mit **23 Befunden** ist live, und mit ihr die drei aus `v2026.09.12`,
+das getaggt aber nie ausgerollt worden war — die Fußzeile stand acht Tage auf
+`v2026.09.11.1`.
+
+| Nachprüfung | Ergebnis |
+|---|---|
+| Fußzeile | `v2026.09.12.1` |
+| `/health`, vier Sprachen | 200 |
+| Markenschrift | `Inter-Bold.c9c3363e.woff2` → 200, 17 172 Bytes, `font/woff2` |
+| Sicherheits-Kopfzeilen | sechs vorhanden, `x-powered-by` weg |
+| **BF-119** | Partner, Organisationen, Registrierung je **422 statt 500** |
+| **BF-138** | Reset mit RFC-widriger Adresse **302 in 0,217 s** statt 500 — der Laufzeit-Angleich greift |
+| **BF-109** | Überschriftenkette auf sieben Seiten lückenlos |
+| **BF-80** | Kopfzeile trägt `space-x-2 lg:space-x-3 xl:space-x-6`, „Über uns" in der Fußzeile |
+| **BF-99** | beide Wort-Bildmarken ohne `<text>`, vier Pfade, `CACHE_VERSION` auf `endlech-v2` |
+| Anmeldedeckel | ab dem sechsten Fehlversuch „Zu viele fehlgeschlagene Anmeldeversuche" |
+| Fremde ID, Fehlerseite, Fixtures | 404, kein Stacktrace, keine Testdaten |
+| Betriebsmittel | alle 200, kein 404 |
+
+⚠ **Zwei Dinge konnte diese Nachprüfung nicht leisten, und das gehört dazu:**
+`trusted_hosts` (BF-134) ist von außen **nicht** direkt messbar — der Proxy weist einen
+fremden `Host` schon mit 503 („no available server") ab, Symfony wird nie erreicht. Der
+Beleg ist indirekt und trägt trotzdem: Der `HEALTHCHECK` des Containers ruft
+`http://127.0.0.1/health`; stünde der lokale Eintrag falsch in der Liste, hätte Symfony
+400 geantwortet, der Container hätte als krank gegolten und Coolify hätte zurückgerollt
+(BF-116-Muster). Der Rollout ist durchgegangen, `/health` antwortet 200, und
+`endlech.lu` **und** `www.endlech.lu` liefern 200 — die Muster stimmen also. Und die
+**Anmeldung mit einem echten Konto** kann nur der Betreiber prüfen; Produktionspasswörter
+liegen hier nicht vor.
+
+⚠ **Ein Messfehler auf dem Weg, weil er sich wiederholen wird:** Der erste
+BF-119-Durchgang lief mit einem Cookie-Jar (`curl -b/-c`) und lieferte 422 — nur kam das
+422 vom **stateless CSRF-Schutz**, nicht von der Adressprüfung. Dasselbe Formular ohne
+Cookie-Jar antwortet auf eine gültige Adresse mit 302. Erst dieser Vergleich macht die
+422 aussagekräftig. **Bei Formularprüfungen auf Produktion gehört immer der Gegenfall
+mitgemessen** — sonst belegt ein Statuscode nur, dass irgendetwas abgewiesen wurde.
 
 **2026-09-11 · BF-119 in Arbeit** — B01, B14, B15 auf `building`. Der Rücksprung von
 `approved` auf `review` ist die Buchung, die seit dem 2026-09-05 fehlte: Die QA von
@@ -1700,7 +1738,7 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 
 | ID | Feature | Prio | Status | Abhängig von | Zuletzt |
 |---|---|---|---|---|---|
-| 01 | Betroffenenrechte: Konto löschen, Daten exportieren, Passwort zurücksetzen | P0 | **approved** | B01, B04, B19 | 2026-09-12 · QA²: BF-136 und BF-137 behoben und am Server belegt, AK-07 erstmals geprüft; BF-138 offen (*mittel*, Grad hängt am Altbestand) |
+| 01 | Betroffenenrechte: Konto löschen, Daten exportieren, Passwort zurücksetzen | P0 | **deployed** | B01, B04, B19 | 2026-09-12 · live in `v2026.09.12.1`, auf Produktion nachgeprüft: Reset mit RFC-widriger Altadresse **302 in 0,217 s** statt 500 (BF-138), Mindestdauer greift (BF-137) |
 | 02 | Barrierefreiheit der Plattform (EN 301 549 / RAWeb) | P0 | **deployed** | B01–B26 | 2026-08-29 · live in v2026.08.29 |
 | 03 | Vergleichsseiten (vs. Google Maps, Wheelmap, TripAdvisor) | P1 | **deployed** | B05, B13, B24, B16, 02 | 2026-08-29 · live in v2026.08.29, auf Produktion nachgeprüft |
 | 04 | Marketing-Kontakte in Brevo | P1 | **deployed** | B01, B14, B15, B22, 01 | 2026-08-30 · live in v2026.08.30, Migrationen durch, auf Produktion belegt |
@@ -1709,7 +1747,7 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | 07 | Öffentliche Roadmap und Changelog | P2 | **deployed** | 06, B13, B16, B24, 02, 03, 05 | 2026-08-31 · live in v2026.08.31, auf Produktion nachgeprüft |
 | 09 | Produktanalyse (Plausible/Umami oder PostHog) | P2 | roadmap | 02, B26, B13 | 2026-09-05 · aus `/sdd-betrieb` — Entscheidung offen, siehe `docs/datenschutz.md` BE-02 |
 | 08 | Warteliste für die mobile App (iOS-Beta / Android) | P1 | **deployed** | B14, B22, B24, 02, 04 | 2026-09-05 · live in v2026.09.05, auf Produktion nachgeprüft |
-| B01 | Registrierung & E-Mail-Bestätigung | P0 | **approved** | — | 2026-09-11 · QA⁴: BF-119 behoben und am Server belegt; fünf Befunde *mittel*, keiner blockierend |
+| B01 | Registrierung & E-Mail-Bestätigung | P0 | **deployed** | — | 2026-09-12 · live in `v2026.09.12.1`; BF-119 auf Produktion nachgeprüft (**422 statt 500**), dazu BF-131, BF-132, BF-135 |
 | B02 | Anmeldung mit Passwort | P0 | **deployed** | B01 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B03 | Passkey-Anmeldung & -Verwaltung | P0 | **deployed** | B01, B02 | 2026-08-29 · ENDLECH-6 live in v2026.08.29.1, auf Produktion belegt (302 statt 400) |
 | B04 | Profil, Avatar & eigene Einreichungen | P0 | **deployed** | B01, B11 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
@@ -1722,8 +1760,8 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | B11 | Restaurant vorschlagen (Wizard) | P0 | **deployed** | B01 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B12 | Startseite | P1 | **approved** | B05 | 2026-09-11 · QA² 15/15, BF-64 repariert — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf |
 | B13 | Statische Inhaltsseiten | P2 | **deployed** | — | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
-| B14 | Partner-Warteliste | P0 | **approved** | — | 2026-09-11 · QA²: BF-119 behoben und am laufenden Server belegt (422 statt 500); fünf neue Befunde *mittel/niedrig*, keiner blockierend |
-| B15 | Organisations-Wartelisten | P0 | **approved** | B14 | 2026-09-11 · QA²: BF-119 behoben und am Server belegt (422 statt 500); ein mittlerer, ein niedriger Befund, keiner blockierend |
+| B14 | Partner-Warteliste | P0 | **deployed** | — | 2026-09-12 · live in `v2026.09.12.1`; BF-119 auf Produktion nachgeprüft (**422 statt 500**), dazu BF-124 bis BF-127 |
+| B15 | Organisations-Wartelisten | P0 | **deployed** | B14 | 2026-09-12 · live in `v2026.09.12.1`; BF-119 auf Produktion nachgeprüft (**422 statt 500**), dazu BF-129 und BF-130 |
 | B16 | Transparenzseite `/open` | P1 | **deployed** | B18 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B17 | Offener Datensatz & Kennzahl-Endpunkte | P1 | **deployed** | B18 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B18 | Finanzposten & Kennzahl-Snapshots | P1 | **deployed** | B19 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
