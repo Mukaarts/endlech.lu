@@ -783,6 +783,7 @@ flash:
     profile_email_taken: "Diese E-Mail-Adresse wird inzwischen bereits verwendet."
     profile_email_changed: "Deine E-Mail-Adresse wurde geändert. Bitte melde dich mit der neuen Adresse an."
     profile_password_rate_limited: "Zu viele Versuche. Bitte warte 15 Minuten, bevor du das Passwort erneut änderst."
+    profile_delete_rate_limited: "Zu viele Löschversuche. Bitte warte 15 Minuten, bevor du es erneut versuchst."
     partner_waitlist_submitted: "Fast geschafft! Bitte bestätigen Sie den Link in Ihrer E-Mail."
     partner_email_failed: "Ihre Anmeldung ist gespeichert, aber die Bestätigungsmail konnte nicht versendet werden. Bitte melden Sie sich bei uns."
     partner_rate_limited: "Sie haben in kurzer Zeit mehrere Anmeldungen abgeschickt. Bitte versuchen Sie es in einer Stunde erneut."

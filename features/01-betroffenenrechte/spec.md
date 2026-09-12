@@ -125,6 +125,26 @@ es dieselbe Sackgasse betrifft und dieselbe Mechanik braucht (Token, Frist, Mail
 
 ## Offene Fragen
 
+- **OF-BF136** · Die Mindestdauer des Passwort-Resets steht als
+  `PasswordResetController::MINDESTDAUER_SEKUNDEN` auf **120 ms**. Der Wert ist mit
+  Abstand über den gemessenen Laufzeiten gewählt (31–36 ms bzw. 23–24 ms), nicht knapp
+  darüber — ein Grenzwert, den der langsamere Zweig unter Last reißt, stellt das Leck
+  wieder her. Ob 120 ms auf Dauer trägt, hängt daran, wie sich `flush()` und der
+  Mail-Dispatch unter Produktionslast verhalten; **auf Produktion wurde nicht
+  gemessen**. — Betreiber
+
+- **OF-BF136b** · Der Limiter `account_delete` lässt **drei** Versuche je 15 Minuten zu,
+  `password_change` fünf. Begründet mit der Unumkehrbarkeit der Löschung (Decision Log
+  #1: keine Karenzzeit). Wer sein eigenes Passwort dreimal falsch eingibt, hat es
+  vergessen und geht über `/passwort-vergessen`. Die Zahl ist eine Setzung, keine
+  Messung. — Betreiber
+
+- **OF-BF136c** · AK-07 (Passkeys verschwinden mit dem Konto) und AK-23 (ein fremder
+  Token trifft nur sein eigenes Konto) blieben in der QA vom 2026-09-11 **nicht
+  prüfbar** — der erste braucht einen virtuellen WebAuthn-Authenticator, der zweite zwei
+  gleichzeitig gültige Reset-Token. Beide sind damit bis heute unbelegt, nicht
+  widerlegt. — Betreiber
+
 Keine. Die Anforderungen sind rechtlich vorgegeben; die Fristen (eine Stunde für
 das Zurücksetzen, sieben Tage für Wartelisten-Bestätigungen) folgen dem, was im
 Projekt bereits gilt.

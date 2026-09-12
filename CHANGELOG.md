@@ -2,10 +2,57 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.11.2-blue)
+![Version](https://img.shields.io/badge/version-2026.09.12-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.12] – Betroffenenrechte abgesichert (BF-136, BF-137)
+
+⚠ **Dieser Release bringt auch `v2026.09.11.2` mit.** Jener wurde getaggt, aber nie
+ausgerollt — BF-119 (die strikte E-Mail-Prüfung an allen vier Eingängen) wirkt erst mit
+diesem Deploy auf Produktion.
+
+### Die Kontolöschung hat einen Deckel (BF-136)
+
+Die Löschung prüft das Passwort — und tat das bis heute **ohne jede Bremse**. Gemessen
+waren **20 Fehlversuche in Folge**, keiner abgewiesen. Dieselbe Geheimnisprüfung ist beim
+Passwortwechsel seit BF-20 gedeckelt; hier fehlte sie, und die Folge ist schwerer: Das
+Löschen ist unumkehrbar und kennt keine Karenzzeit.
+
+Neuer Limiter `account_delete`: **drei** Versuche je 15 Minuten, **am Konto** gezählt
+(bei Session-Hijacking wechselt die IP mühelos, das Konto nicht). Strenger als die fünf
+beim Passwortwechsel, weil eine Löschung nicht zurückgenommen werden kann.
+
+⚠ **Der Deckel sitzt hinter der CSRF-Prüfung**, nicht davor — sonst ließe ein Angreifer
+das Kontingent eines fremden Kontos leerlaufen und blockierte dessen Löschung. Am Server
+gegengeprüft: Nach sechs Versuchen mit ungültigem Token gehen weiterhin drei echte durch.
+
+⚠ **Verbraucht wird VOR der Prüfung**, anders als bei Registrierung und Wartelisten
+(BF-11). Dort ist ein Fehlversuch ein Tippfehler; hier **ist** er der Angriff.
+
+### Der Passwort-Reset verrät nicht mehr, ob eine Adresse existiert (BF-137)
+
+Die Antwort war schon immer identisch — die **Laufzeit** nicht: gemessen 31–36 ms für
+eine bekannte gegen 23–24 ms für eine unbekannte Adresse, zwei Bereiche **ohne
+Überlappung**. Eine einzige Messung genügte für die Frage „hat diese Person hier ein
+Konto?". Beide Zweige halten jetzt eine Mindestdauer; nachgemessen 141–146 gegen
+143–145 ms.
+
+⚠ Eine Mindestdauer statt nachgebauter Arbeit: Die Kosten stecken in `flush()` und im
+Mail-Dispatch, und beide lassen sich nicht folgenlos nachbauen. Der Preis ist eine
+Anfrage, die mindestens 120 ms dauert — bei fünf je Stunde und IP fällt das nicht auf.
+
+### Nebenbei belegt
+
+**AK-07 erstmals geprüft**: Ein Konto mit Passkey gelöscht — danach ist das Konto weg
+**und** der Passkey. Im ersten QA-Durchlauf war das „nicht prüfbar".
+
+**BF-138 offen** (*mittel*): Wirft der Mailversand im bekannten Zweig des Resets eine
+`RfcComplianceException`, entsteht ein 500er statt der getarnten 302 — und der Reset ist
+für dieses Konto unbenutzbar. Am 2026-09-12 auf Produktion geprüft: **0 betroffene
+Konten**, niemand ist heute ohne Rückweg. Der ungeschützte Zweig bleibt aber, bis er
+geklammert ist.
 
 ## [2026.09.11.2] – E-Mail-Prüfung an allen Eingängen (BF-119)
 

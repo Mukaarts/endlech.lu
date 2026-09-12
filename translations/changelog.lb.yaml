@@ -23,6 +23,9 @@ repo:
     link_label: "CHANGELOG.md op GitHub opmaachen"
 
 release:
+    v2026_09_12:
+        title: "Kont a Passwuert besser geschützt"
+        body: "Wien säi Kont läscht, muss säi Passwuert aginn — an dës Eingab kann elo net méi beliebeg dacks widderholl ginn. No dräi Feelversich gëtt et eng Paus vu 15 Minutten. Datselwecht gëllt fir „Passwuert vergiess“: D’Säit verréit elo net méi, ob et zu enger Adress e Kont gëtt."
     v2026_09_11_2:
         title: "Adresse mat Akzent ginn elo duerch"
         body: "Wien eng E-Mail-Adress mat engem Akzent oder Ëmlaut am Domain huet — zum Beispill op télécom.lu oder bäckerei.lu —, konnt sech bis elo weder umellen nach op eng Waardelëscht androen: D’Formulaire huet d’Adress refuséiert. Dat ass elo an der Rei. Gläichzäiteg préiwen d’Formulairen méi genee, sou datt eng net zoustellbar Adress guer net méi ugeholl gëtt."

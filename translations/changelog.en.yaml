@@ -23,6 +23,9 @@ repo:
     link_label: "Open CHANGELOG.md on GitHub"
 
 release:
+    v2026_09_12:
+        title: "Better protection for account and password"
+        body: "Deleting your account requires your password — and that entry can no longer be repeated indefinitely. After three failed attempts there is a 15-minute pause. The same applies to “forgot password”: the page no longer reveals whether an address has an account."
     v2026_09_11_2:
         title: "Addresses with accents now work"
         body: "If your email address has an accent or umlaut in the domain — say on télécom.lu or bäckerei.lu — you previously could not register or join a waiting list: the form rejected it. That is fixed. At the same time the forms check more thoroughly, so an undeliverable address is no longer accepted in the first place."

@@ -23,6 +23,9 @@ repo:
     link_label: "Ouvrir CHANGELOG.md sur GitHub"
 
 release:
+    v2026_09_12:
+        title: "Compte et mot de passe mieux protégés"
+        body: "Supprimer votre compte exige votre mot de passe — et cette saisie ne peut plus être répétée indéfiniment. Après trois tentatives infructueuses, une pause de 15 minutes s’applique. Il en va de même pour « mot de passe oublié » : la page ne révèle plus si une adresse correspond à un compte."
     v2026_09_11_2:
         title: "Les adresses avec accents fonctionnent"
         body: "Si votre adresse e-mail comporte un accent ou un tréma dans le domaine — par exemple sur télécom.lu ou bäckerei.lu —, vous ne pouviez jusqu’ici ni créer un compte ni vous inscrire sur une liste d’attente : le formulaire la refusait. C’est corrigé. Dans le même temps, les formulaires vérifient plus rigoureusement, afin qu’une adresse non distribuable ne soit plus acceptée."
