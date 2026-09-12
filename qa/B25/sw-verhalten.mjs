@@ -57,7 +57,10 @@ const self_ = {
 };
 
 // ── sw.js ausführen ────────────────────────────────────────────────────────
-const quelle = readFileSync(new URL('../../public/sw.js', import.meta.url), 'utf8');
+// Der Pfad ist überschreibbar: So lässt sich auch das **ausgelieferte** sw.js prüfen,
+// etwa nach einem Rollout (`node qa/B25/sw-verhalten.mjs /tmp/sw-live.js`). Ein grep über
+// den Quelltext taugt dafür nicht — er trifft die Kommentare mit (BF-125).
+const quelle = readFileSync(process.argv[2] ?? new URL('../../public/sw.js', import.meta.url), 'utf8');
 const fabrik = new Function('self', 'caches', 'fetch', 'URL', 'Promise', 'Error', quelle);
 fabrik(self_, caches, fetchFake, URL, Promise, Error);
 

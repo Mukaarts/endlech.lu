@@ -11,6 +11,35 @@ BF-119 (*hoch*), B10, B12 und B24 wegen eines `qa-report.md`, der noch das
 
 
 
+**2026-09-12 · `v2026.09.12.2` ausgerollt und nachgeprüft — die Befundliste ist leer.**
+Alle sieben Befunde der beiden letzten Prüfläufe sind behoben und live.
+
+| Nachprüfung | Ergebnis |
+|---|---|
+| Fußzeile | `v2026.09.12.2` |
+| `/health`, vier Sprachen | 200 |
+| `CACHE_VERSION` | `endlech-v3` (war `v2`) |
+| **Ausgeliefertes `sw.js` im Verhalten** | Avatar **nicht** gecacht, Restaurantfoto und Porträt schon, unbekannter Upload-Pfad **nicht**; `/api/v1`, `/de/api/cuisines`, `/lb/api/cuisines` alle unangetastet; `ok:false` nicht gecacht |
+| `offline.html` | `<html lang="lb">` (war `de`) |
+| Sprachumschalter | `min-h-[44px] md:min-h-0` im ausgelieferten HTML |
+| Stylesheet-Hash | live `app.5f795f1a.css` = lokal geprüfter Stand |
+| Keine Regression | sechs Sicherheits-Kopfzeilen, 404 für fremde ID, keine Fixtures, Inter-Schrift 200, Wortmarke ohne `<text>` |
+
+⚠ **Der Worker wurde im Verhalten geprüft, nicht per Suchbegriff.** Ein `grep` über das
+ausgelieferte `sw.js` traf zuerst die **Kommentare** mit — dort steht `/uploads/avatars/`
+ausdrücklich, weil der Kommentar erklärt, warum dieser Pfad nicht mehr gecacht wird. Das
+ist die Falle aus BF-125. Belastbar wurde es, indem `qa/B25/sw-verhalten.mjs` einen Pfad
+annimmt: `node qa/B25/sw-verhalten.mjs /tmp/sw-live.js` fährt die Handler des
+**ausgelieferten** Artefakts gegen nachgebaute Ereignisse.
+
+⚠ **Zwei Punkte waren von aussen nicht prüfbar** und stehen deshalb hier: das Polster auf
+einer **Verwaltungsseite** (BF-143) braucht eine Anmeldung, die hier nicht vorliegt —
+abgedeckt ist es durch `PwaTest::testBf143PolsterNurWoDieLeisteLiegt`. Und die
+**Kopfzeilenbreiten** (BF-80/BF-144) lassen sich gegen die Live-Seite nicht messen, weil
+eine lokal gespiegelte Seite die Schriften wegen CORS nicht laden darf und dann mit der
+Fallback-Schrift rechnet. Tragfähig ist stattdessen der Hashvergleich: Das live
+ausgelieferte Stylesheet ist byte-identisch mit dem lokal gemessenen Stand.
+
 **2026-09-12 · Die letzten zwei Bestandsfeatures geprüft: B25 und B26.** Damit sind
 **alle 26** durch die QA gegangen — die Erfassung vom 2026-08-23 ist abgeschlossen.
 
@@ -1807,8 +1836,8 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | B22 | Wartelisten-Verwaltung (Admin) | P1 | **deployed** | B19, B14, B15 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B23 | REST-API v1 (iOS-Backend) | P0 | **deployed** | B01, B05 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B24 | Mehrsprachigkeit | P1 | **approved** | — | 2026-09-11 · QA 16/16, BF-68 bis BF-72 behoben und in v2026.08.29 live — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf |
-| B25 | PWA & mobile Navigation | P1 | **approved** | — | 2026-09-12 · QA¹: 16 von 20 Kriterien bestanden, eines nicht prüfbar (Service-Worker-Registrierung im headless Chrome), sechs Befunde — **BF-140** (*mittel*, Profilbilder im Worker-Cache), BF-141 bis BF-145 (*niedrig*). Kein kritischer oder hoher Befund; ein Agentenfund widerlegt |
-| B26 | Cookie-Banner | P2 | **approved** | — | 2026-09-12 · QA¹: **alle 11 Kriterien bestanden**, vier Randfälle belegt, Kontraste 5,54–17,75 : 1. Ein Befund — **BF-146** (*niedrig*), und der betrifft die Spezifikation, nicht den Code: **kein Deployment nötig** |
+| B25 | PWA & mobile Navigation | P1 | **deployed** | — | 2026-09-12 · QA¹ mit sechs Befunden, alle behoben und mit `v2026.09.12.2` ausgeliefert. Auf Produktion nachgeprüft: `CACHE_VERSION=endlech-v3`, und das **ausgelieferte** `sw.js` gegen den Prüflauf gefahren — Avatar nicht gecacht, Restaurantfoto und Porträt schon, API-Wege mit und ohne Sprachpräfix unangetastet |
+| B26 | Cookie-Banner | P2 | **deployed** | — | 2026-09-12 · QA¹: **alle 11 Kriterien bestanden**, Kontraste 5,54–17,75 : 1. Der einzige Befund (BF-146) betraf die Spezifikation; **am Code wurde nichts geändert** — der Auditvermerk ist der Deploy, nicht ein Build |
 
 ## Was jedes Feature umfasst
 
