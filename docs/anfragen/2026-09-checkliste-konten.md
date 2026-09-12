@@ -85,24 +85,24 @@ Zwei Monitore, vollständige Vorgaben in `docs/datenschutz.md` unter BE-01:
       (Entscheidung 2026-09-12). ⚠ Folge: `/health` fragt die Datenbank nicht ab, ein
       Datenbankausfall bleibt in Kuma grün und fällt nur über Sentry auf, wenn jemand die
       Seite aufruft
-- [ ] **Push-Monitor** für den Messenger-Consumer, **360 s**, Retries 2 — Kuma erzeugt die
+- [x] **Push-Monitor** für den Messenger-Consumer, **360 s**, Retries 2 — Kuma erzeugt die
       Adresse. ⚠ Nicht 300 s: Der Puls teilt sich die Minute mit dem Brevo-Abgleich im
       selben Consumer und kommt dadurch Sekunden zu spät; bei exakt 300 s verpasste Kuma
       gelegentlich ein Fenster
-- [ ] ⚠⚠ Diese Adresse als `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify
+- [x] ⚠⚠ Diese Adresse als `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify
       eintragen, **nicht** auf der Anwendung. Zwei Ressourcen, zwei Variablenlisten; steht
       sie am falschen Ort, läuft der Puls nie und Kuma meldet Dauer-Alarm über einen
       gesunden Worker
-- [ ] ⚠ **Benachrichtigungskanal an jedem einzelnen Monitor anhaken.** Kuma hängt ihn nur
+- [x] ⚠ **Benachrichtigungskanal an jedem einzelnen Monitor anhaken.** Kuma hängt ihn nur
       automatisch an, wenn er als „Default enabled" angelegt wurde. Sonst wird der Monitor
       brav rot und **niemand erfährt es** — das ist hier der wahrscheinlichste Fehler
 - [ ] Zertifikatswarnung: Kuma warnt von sich aus 21/14/7 Tage vorher und erfüllt die
       Zusage damit; nachzusehen ist nur, dass sie an einem Kanal hängt
-- [ ] ⚠ **Jeden Alarm einmal auslösen.** HTTP: Ziel kurz verbiegen. Push: Worker kurz
+- [x] ⚠ **Jeden Alarm einmal auslösen.** HTTP: Ziel kurz verbiegen. Push: Worker kurz
       anhalten. Ein Alarm, der nie ausgelöst hat, hat nie funktioniert — bei Push doppelt,
       weil dort das *Ausbleiben* das Signal ist und ein falsch gesetzter Takt sich nicht
       von Ruhe unterscheidet
-- [ ] Ergebnis in `docs/datenschutz.md` unter BE-01 eintragen
+- [x] Ergebnis in `docs/datenschutz.md` unter BE-01 eintragen
 
 ⚠ **Die Reihenfolge ist hier nicht beliebig.** Der Puls ist Code und läuft erst nach
 einem Rollout (`main` → Release → `master` → Coolify). Ein aktiver Push-Monitor meldet

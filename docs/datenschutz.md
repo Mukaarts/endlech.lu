@@ -475,11 +475,11 @@ Stand 2026-09-12. Was hier fehlt, meldet seinen Ausfall nicht selbst.
 | Lebendigkeitsprüfung | **läuft** — `/health`, sprachfrei, bewusst **ohne** Datenbankabfrage | `src/Controller/Health/` |
 | **Messenger-Worker** | **überwacht seit 2026-09-05** — `app:messenger:watch` meldet einen Rückstau per Mail, täglich aus dem `marketing`-Zeitplan | siehe unten |
 | **Uptime von außen** | **läuft seit 2026-09-12** — Uptime Kuma auf einem **zweiten VPS**, zwei Prüfungen: `/health` und ein Puls des Messenger-Consumers. `/open.json` bewusst nicht (Entscheidung 2026-09-12) (BE-01) | siehe unten |
-| **Messenger-Consumer, Totalausfall** | **läuft seit 2026-09-12** — `app:worker:pulse` meldet alle fünf Minuten nach außen; bleibt der Puls aus, schlägt Kuma an | `src/Command/WorkerPulseCommand.php` |
+| **Messenger-Consumer, Totalausfall** | **läuft seit 2026-09-12, Alarm ausgelöst** — `app:worker:pulse` meldet alle fünf Minuten nach außen; bleibt der Puls aus, schlägt Kuma an | `src/Command/WorkerPulseCommand.php` |
 | Produktanalyse | **entschieden am 2026-09-12** — steht als Vorhaben `usage_analytics` in der Spalte „Angedacht" auf `/roadmap`, nicht mehr als Betriebslücke (BE-02) | `src/Roadmap/RoadmapRegistry.php` |
 | Sicherungen der Datenbank | **Rückweg prüfbar seit 2026-09-12**, die Sicherung selbst weiter ungeklärt: ob Coolify sichert und wie oft, ist nicht dokumentiert (BE-03) | `bin/sicherung-pruefen.sh` |
 
-### BE-01 · Uptime-Prüfung von außen — eingerichtet (2026-09-12)
+### BE-01 · Uptime-Prüfung von außen — eingerichtet und ausgelöst (2026-09-12)
 
 Überwacht wird mit **Uptime Kuma**, selbst betrieben auf einem **zweiten VPS**. Das ist
 der Punkt, an dem diese Lücke wirklich geschlossen ist: Ein Wächter auf demselben
@@ -526,7 +526,7 @@ die Anwendung tot ist.
 |---|---|---|
 | 1 `/health` | 2026-09-12, 60 s, Retries 2 | **ja, 2026-09-12** — Ziel auf eine nicht vorhandene Adresse gestellt, „down" und danach „up" beim Betreiber angekommen (Betreiber bestätigt) |
 | 2 `/open.json` | **bewusst nicht** (Betreiberentscheidung 2026-09-12) | — |
-| 3 Push | — | — |
+| 3 Push | 2026-09-12, 360 s, Retries 2; `APP_UPTIME_PUSH_URL` auf der Worker-Ressource, ausgeliefert mit `v2026.09.12.3` | **ja, 2026-09-12** — `app:worker:pulse` im Worker-Container meldete „Puls angekommen (HTTP 200)“; Monitor grün; Worker kurz angehalten, Alarm angekommen (Betreiber bestätigt) |
 
 #### Der Push-Monitor ist die eigentliche Neuigkeit
 
@@ -581,22 +581,22 @@ dasselbe Muster wie bei BF-45 (HAFAS-Schlüssel), einschließlich des Umstands, 
 
 #### Was beim Einrichten in Kuma noch zu tun ist
 
-- [ ] ⚠ **Benachrichtigungskanal an jedem einzelnen Monitor anhaken.** Kuma hängt einen
+- [x] ⚠ **Benachrichtigungskanal an jedem einzelnen Monitor anhaken.** Kuma hängt einen
       Kanal nur dann automatisch an neue Monitore, wenn er als „Default enabled" angelegt
       wurde. Sonst entsteht ein Monitor, der brav rot wird, und **niemand erfährt es** —
       ein Dashboard statt einer Überwachung. Das ist hier der wahrscheinlichste Fehler.
-- [ ] **Wiederholungen setzen** (Retries 2, Retry-Intervall 20–60 s). Ein einzelner
+- [x] **Wiederholungen setzen** (Retries 2, Retry-Intervall 20–60 s). Ein einzelner
       verlorener Antwortversuch zwischen zwei Rechenzentren ist ein Alltagsereignis; drei
       Fehlschläge in Folge sind es nicht.
 - [ ] **Zertifikatswarnung prüfen.** Kuma warnt von sich aus 21/14/7 Tage vorher und
       erfüllt die Zusage aus BE-01 damit bereits — nachzusehen ist nur, dass die
       Benachrichtigung überhaupt an einem Kanal hängt.
-- [ ] ⚠ **Jeden Alarm einmal auslösen.** Push-Monitor: den Worker kurz anhalten oder
+- [x] ⚠ **Jeden Alarm einmal auslösen.** Push-Monitor: den Worker kurz anhalten oder
       `APP_UPTIME_PUSH_URL` vorübergehend verbiegen. HTTP-Monitore: Ziel kurz auf eine
       falsche Adresse zeigen lassen. **Ein Alarm, der nie ausgelöst hat, hat nie
       funktioniert** — und bei Push ist das doppelt wahr, weil dort das *Ausbleiben* das
       Signal ist und sich ein falsch gesetzter Takt nicht anders äußert als Ruhe.
-- [ ] `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify eintragen (siehe oben).
+- [x] `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify eintragen (siehe oben).
 
 ⚠ **Die Reihenfolge ist hier nicht beliebig.** Der Puls ist Code und läuft erst nach
 einem Rollout (`main` → Release → `master` → Coolify). Ein aktiver Push-Monitor meldet
