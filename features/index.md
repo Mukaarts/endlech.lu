@@ -1771,7 +1771,7 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | B22 | Wartelisten-Verwaltung (Admin) | P1 | **deployed** | B19, B14, B15 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B23 | REST-API v1 (iOS-Backend) | P0 | **deployed** | B01, B05 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B24 | Mehrsprachigkeit | P1 | **approved** | — | 2026-09-11 · QA 16/16, BF-68 bis BF-72 behoben und in v2026.08.29 live — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf |
-| B25 | PWA & mobile Navigation | P1 | rekonstruiert | — | 2026-08-23 |
+| B25 | PWA & mobile Navigation | P1 | **approved** | — | 2026-09-12 · QA¹: 16 von 20 Kriterien bestanden, eines nicht prüfbar (Service-Worker-Registrierung im headless Chrome), sechs Befunde — **BF-140** (*mittel*, Profilbilder im Worker-Cache), BF-141 bis BF-145 (*niedrig*). Kein kritischer oder hoher Befund; ein Agentenfund widerlegt |
 | B26 | Cookie-Banner | P2 | rekonstruiert | — | 2026-08-23 |
 
 ## Was jedes Feature umfasst
