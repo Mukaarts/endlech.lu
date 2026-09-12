@@ -119,6 +119,15 @@ gearbeitet hat. Die Adresse entsteht aber erst mit dem Monitor. Deshalb:
    „Puls angekommen (HTTP 200)" ist der Nachweis, dass Adresse und Weg stimmen.
 6. Monitor 3 fortsetzen.
 
+**Der Aufruf von Hand in Schritt 5 ist einmalig, nicht Teil jedes Deploys.** Danach ruft
+der Zeitplan den Puls alle fünf Minuten selbst. Nach einem Rollout startet der Worker neu,
+und weil der Zeitplan `marketing` genau einen verpassten Lauf nachholt, geht der erste Puls
+in der Regel Sekunden nach dem Start hinaus; der kurze Container-Tausch liegt weit unter den
+bis zu 18 Minuten, die Kuma wartet. Von Hand gehört der Befehl nur noch in zwei Fälle:
+nach einer **geänderten Adresse** (Token-Reset, anderer Wächter) und zur **Fehlersuche**
+bei einem Alarm — antwortet er mit „Puls nicht zustellbar", lebt der Worker und nur der
+Weg ist versperrt.
+
 ⚠ **Offen und benannt: Wer bewacht den Wächter?** Stirbt der Kuma-VPS, kommen keine
 Alarme mehr, und das fällt nicht auf — dieselbe Bauartgrenze wie beim
 `app:messenger:watch`, eine Ebene höher.
