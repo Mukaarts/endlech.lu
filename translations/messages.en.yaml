@@ -378,7 +378,7 @@ legal:
     transit_title: "Nearby stops (Verkéiersverbond)"
     transit_text: "On restaurant detail pages we show public transport stops. For this we query the Verkéiersverbond interface — only the restaurant’s coordinates are transmitted. No visitor data: neither IP address nor identifier. We cache the response for 24 hours."
     transfer_title: "Transfers to third countries"
-    transfer_text: "Every service we engage directly is based in the European Union. Some of them, however, use sub-processors outside the EU — in the United States in particular. This concerns logging and resilience, not the content you entrust to us. These transfers are covered by the EU-US Data Privacy Framework or by the European Commission’s standard contractual clauses. The full lists are published by each provider in their data processing agreements."
+    transfer_text: "Every service we engage directly is based in the European Union. Some of them, however, use sub-processors outside the EU — in the United States in particular. This concerns technical services: delivery and resilience, analytics and user support. These transfers are covered by the EU-US Data Privacy Framework or by the European Commission’s standard contractual clauses. The full lists are published by each provider in their data processing agreements."
     rights_title: "Your rights"
     rights_intro: "You have the right at any time to:"
     rights_access: "access the data stored about you (Art. 15 GDPR)"

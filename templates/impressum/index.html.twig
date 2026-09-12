@@ -151,11 +151,23 @@
 
         {# Art. 13 Abs. 1 lit. f: Ein Hinweis auf die Drittlandsübermittlung
            fehlte vollständig. Alle unmittelbaren Empfänger sitzen in der EU —
-           ihre Unterauftragsverarbeiter aber nicht durchgängig (Brevo nutzt
-           Datadog in den USA, Hostinger und Brevo beide Cloudflare). Die
-           Übermittlung ist abgesichert, aber sie findet statt, und eine
-           Erklärung, die davon schweigt, ist unvollständig. Ergänzt am
-           2026-09-05 nach Lektüre beider Auftragsverarbeitungsverträge. #}
+           ihre Unterauftragsverarbeiter aber nicht durchgängig (Hostinger und
+           Brevo nutzen beide Cloudflare, Brevo zusätzlich Omni für Dashboards
+           und Zendesk für den Support). Die Übermittlung ist abgesichert, aber
+           sie findet statt, und eine Erklärung, die davon schweigt, ist
+           unvollständig. Ergänzt am 2026-09-05 nach Lektüre beider
+           Auftragsverarbeitungsverträge.
+
+           ⚠ **Am 2026-09-12 berichtigt.** Hier stand „Brevo nutzt Datadog in den
+           USA" und im Text „betrifft Protokollierung und Ausfallschutz, nicht die
+           Inhalte, die Sie uns anvertrauen". Beides gilt nicht mehr: Brevo hat sein
+           DPA neu gefasst, Datadog ist aus der Liste der Unterauftragsverarbeiter
+           verschwunden, und an seine Stelle ist **Omni** getreten — eine
+           Auswertungsschicht, die in der Infrastrukturgruppe steht und damit nicht
+           abwählbar ist. Die Zusage „nicht die Inhalte" liesse sich für sie nicht
+           belegen, und eine Zusage, die man nicht belegen kann, gehört nicht in eine
+           Datenschutzerklärung. Einzelheiten und der vollständige Abgleich stehen in
+           `docs/datenschutz.md`. #}
         <h3 class="text-base font-semibold text-gray-700 mb-2">{{ 'legal.transfer_title'|trans }}</h3>
         <p class="text-gray-600 leading-relaxed mb-4">
             {{ 'legal.transfer_text'|trans }}
