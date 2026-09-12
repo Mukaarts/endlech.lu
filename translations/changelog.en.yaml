@@ -23,6 +23,9 @@ repo:
     link_label: "Open CHANGELOG.md on GitHub"
 
 release:
+    v2026_09_12_1:
+        title: "A typeface of our own"
+        body: "Endlech.lu now has its own typeface. Until today every device showed the site in whatever font it happened to have; now it looks the same everywhere. The font sits on our own server — no request goes to a third party, and nothing about you is sent along. We also fixed a defect that let the page be dragged sideways on tablets and in narrow windows, with nothing there to drag. And anyone reading with a screen reader will find the sections in unbroken order."
     v2026_09_12:
         title: "Better protection for account and password"
         body: "Deleting your account requires your password — and that entry can no longer be repeated indefinitely. After three failed attempts there is a 15-minute pause. The same applies to “forgot password”: the page no longer reveals whether an address has an account."

@@ -1,9 +1,13 @@
 {
-  "build/app.css": "/build/app.ce081d78.css",
+  "build/app.css": "/build/app.ea57c818.css",
   "build/app.js": "/build/app.dee99f9a.js",
   "build/runtime.js": "/build/runtime.4f1ddb10.js",
   "build/596.59829983.js": "/build/596.59829983.js",
   "build/933.6e420a57.css": "/build/933.6e420a57.css",
   "build/933.74374f39.js": "/build/933.74374f39.js",
-  "build/351.5862e7c5.js": "/build/351.5862e7c5.js"
+  "build/351.5862e7c5.js": "/build/351.5862e7c5.js",
+  "build/fonts/Inter-SemiBold.woff2": "/build/fonts/Inter-SemiBold.4cc5b908.woff2",
+  "build/fonts/Inter-Medium.woff2": "/build/fonts/Inter-Medium.b3aed933.woff2",
+  "build/fonts/Inter-Bold.woff2": "/build/fonts/Inter-Bold.c9c3363e.woff2",
+  "build/fonts/Inter-Regular.woff2": "/build/fonts/Inter-Regular.a9527900.woff2"
 }

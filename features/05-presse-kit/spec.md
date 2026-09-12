@@ -376,6 +376,16 @@ zwei Nummern für dieselbe Prüfung machen den Testbericht doppeldeutig.
   eine fehlende Datei die Kachel ausblenden (ein Dateisystemzugriff je Bild), oder
   bleibt es dabei, dass VB-01 ohnehin vor der Auslieferung erfüllt sein muss?
   Bewusst nicht nebenbei entschieden — es wäre Verhalten ohne Kriterium.
+  — **Entschieden am 2026-09-12: keines von beiden, sondern ein Prüflauf.**
+  `PressRegistryTest::testJedeMaterialdateiLiegtUnterPublic` verlangt für jede Datei
+  der Materialliste, dass sie unter `public/` liegt und nicht leer ist. Gegen das
+  Ausblenden sprachen drei Dinge: Es kostete bei **jedem** Seitenaufruf vier
+  Dateisystemzugriffe für einen Fall, der nur durch einen Fehler im Repository
+  entsteht; eine ausgeblendete Kachel verbirgt den Mangel vor dem Besucher **und**
+  vor dem Betreiber; und die Dateien sind committet, ihre Existenz ist damit zur
+  Bauzeit entscheidbar. Dasselbe Muster wie `RouteDirectoryCollisionTest` (BF-100):
+  die Ursache prüfen, nicht das Verhalten abfangen. Damit ist auch **BF-95**
+  geschlossen.
 
 - **OF-10** · **Ein Paket unter 512 Byte wird als „0 kB" ausgewiesen.** Beim Beheben von
   BUG-05 am 2026-08-30 beobachtet: Die Größe entsteht aus `(sizeBytes / 1024)|round`, und

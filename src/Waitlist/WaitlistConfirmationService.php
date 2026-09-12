@@ -67,8 +67,29 @@ final class WaitlistConfirmationService
      * @param string $subjectKey     Übersetzungsschlüssel der Betreffzeile
      * @param array<string, mixed> $subjectParams
      *
-     * @return bool false, wenn der Versand scheiterte – der Eintrag ist dann
-     *              dennoch gespeichert
+     * @return bool ob die Nachricht **angenommen** wurde – der Eintrag ist auch
+     *              bei `false` gespeichert
+     *
+     * ⚠ **„Angenommen" ist nicht „zugestellt" (BF-124).** Seit dem 2026-09-02
+     * läuft `SendEmailMessage` über den `async`-Transport: `send()` legt die
+     * Nachricht in `messenger_messages` und kehrt zurück, ohne je eine
+     * `TransportExceptionInterface` zu werfen. Auf Produktion liefert diese
+     * Methode deshalb **immer `true`**, und der `if (!$sent)`-Zweig der drei
+     * Aufrufer ist unerreichbar — eine stille Regression, denn beim ersten
+     * Prüflauf von B14 war der Versand noch synchron, und AK-04 galt zu Recht als
+     * erfüllt. Nachgestellt mit gestopptem Mailpit: HTTP 302 ohne Warnung, Eintrag
+     * entsteht, Nachricht in `messenger_messages`.
+     *
+     * ⚠ **Der Zweig bleibt trotzdem stehen**, denn er trägt zweierlei: im Test-Env
+     * (dort ist der Versand `sync`) und in jeder Aufstellung ohne async-Routing.
+     * Wer ihn entfernt, nimmt der Reparatur von BF-135 die Grundlage.
+     *
+     * ⚠ **Ob eine Mail tatsächlich hinausgeht, beantwortet auf Produktion nur der
+     * Rückstau** — `messenger:stats` bzw. `app:messenger:watch`, das seit dem
+     * 2026-09-05 täglich meldet. Den Nutzer kann niemand mehr warnen: Zum
+     * Zeitpunkt der Antwort ist die Zustellung noch nicht passiert. Genau das
+     * steht als Einschränkung bei AK-04 (B14) und AK-12 (B01) in den
+     * Spezifikationen.
      */
     public function register(
         WaitlistEntryInterface $entry,
@@ -97,13 +118,16 @@ final class WaitlistConfirmationService
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
 
-        // ⚠ BF-10: `->locale()` ist Pflicht, sobald der Versand asynchron laufen
-        // kann. Der Worker hat keine Anfrage und damit keine Sprache — er nimmt
+        // ⚠ BF-10: `->locale()` ist Pflicht, weil der Versand asynchron läuft. Der
+        // Worker hat keine Anfrage und damit keine Sprache — er nimmt
         // `default_locale` (lb), und ein französischsprachiger Interessent bekäme
-        // seine Bestätigung auf Luxemburgisch. Auf Production fällt es heute nicht
-        // auf, weil dort synchron versendet wird (`sync://`); es kippt in dem
-        // Moment, in dem ein Messenger-Worker dazukommt — und genau der ist für die
-        // Monats-Snapshots vorgesehen (B18/AK-17).
+        // seine Bestätigung auf Luxemburgisch.
+        //
+        // ⚠ **Der Satz stand hier zwei Wochen lang falsch**: „Auf Production fällt
+        // es heute nicht auf, weil dort synchron versendet wird (`sync://`); es
+        // kippt in dem Moment, in dem ein Messenger-Worker dazukommt." Der Worker
+        // läuft seit dem 2026-09-02, und damit ist diese Zeile nicht mehr Vorsorge,
+        // sondern das Einzige, was die Sprache der Mail trägt (BF-124).
         //
         // Der Betreff wird ebenfalls in der Sprache des Eintrags übersetzt, nicht
         // in der der aktuellen Anfrage: Beides muss zusammenpassen.

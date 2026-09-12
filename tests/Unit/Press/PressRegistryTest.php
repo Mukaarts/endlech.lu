@@ -125,4 +125,43 @@ final class PressRegistryTest extends TestCase
 
         self::assertSame($sortiert, $daten, 'Die Meldungen stehen nicht mit der neuesten zuerst.');
     }
+
+    /**
+     * BF-95 / OF-09 · Jede Materialdatei muss unter `public/` liegen.
+     *
+     * ⚠ **Das ist die Antwort auf OF-09, und sie lautet: ein Prüflauf statt eines
+     * Fehlerzustands.** Die Frage war, ob eine fehlende Vorschaudatei ihre Kachel
+     * ausblenden soll. Dagegen sprechen drei Dinge: Es kostete bei **jedem**
+     * Seitenaufruf vier Dateisystemzugriffe für einen Fall, der nur durch einen
+     * Fehler im Repository entsteht; eine ausgeblendete Kachel verbirgt den Mangel
+     * vor dem Besucher **und** vor dem Betreiber; und die Dateien sind committet,
+     * ihre Existenz ist damit zur Bauzeit entscheidbar. Am 2026-08-30 liefen genau
+     * vier Bildanfragen in HTTP 404 und zeigten dem Leser das Bruchbild-Symbol des
+     * Browsers — dieser Lauf wäre damals rot gewesen.
+     *
+     * Dasselbe Muster wie `RouteDirectoryCollisionTest` (BF-100): die Ursache
+     * prüfen, nicht das Verhalten abfangen.
+     */
+    public function testJedeMaterialdateiLiegtUnterPublic(): void
+    {
+        $public = \dirname(__DIR__, 3).'/public/';
+
+        foreach ($this->registry->assets() as $asset) {
+            $pfad = $public.$asset->publicPath;
+
+            self::assertFileExists(
+                $pfad,
+                sprintf(
+                    'BF-95: „%s" steht in der Materialliste, fehlt aber unter public/ — '
+                    .'die Vorschaukachel zeigte dem Leser ein Bruchbild.',
+                    $asset->publicPath,
+                ),
+            );
+            self::assertGreaterThan(
+                0,
+                (int) filesize($pfad),
+                sprintf('„%s" ist leer.', $asset->publicPath),
+            );
+        }
+    }
 }

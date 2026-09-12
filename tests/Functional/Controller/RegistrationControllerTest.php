@@ -7,10 +7,6 @@ use App\Repository\UserRepository;
 use App\Tests\AbstractWebTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\Envelope;
-use Symfony\Component\Mailer\Exception\TransportException;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\RawMessage;
 
 final class RegistrationControllerTest extends AbstractWebTestCase
 {
@@ -62,26 +58,63 @@ final class RegistrationControllerTest extends AbstractWebTestCase
         self::assertEmailCount(0);
     }
 
+    /**
+     * AK-12 · Ein Versandfehler darf keinen Serverfehler erzeugen, und der Nutzer
+     * soll davon erfahren.
+     *
+     * ⚠ **Die Vorfassung erzeugte überhaupt keine Störung (BF-131).** Sie setzte
+     * einen werfenden Mailer über `$client->getContainer()->set(MailerInterface::class,
+     * …)` — und das erreicht den Dienst-Locator des Controllers nicht, weil der
+     * Mailer ein **Methodenargument** von `register()` ist. Gemessen: Der Ersatz
+     * warf, und es gingen trotzdem zwei Mails hinaus; geprüft wurde am Ende nur,
+     * dass eine ungestörte Registrierung weiterleitet. Gestört wird deshalb über
+     * einen unerreichbaren SMTP-Port.
+     *
+     * ⚠ **Was dieser Lauf NICHT belegt: das Verhalten auf Produktion.** Dort läuft
+     * `SendEmailMessage` über den `async`-Transport, `send()` stellt nur in die
+     * Warteschlange und wirft nie eine `TransportExceptionInterface` — die Warnung
+     * ist auf Produktion unerreichbar, und zwar strukturell: Ob zugestellt wurde,
+     * weiss der Request nicht mehr. Im Test-Env ist der Versand `sync`, deshalb
+     * greift der Zweig hier. Für den Betreiber übernimmt `app:messenger:watch` die
+     * Aufgabe; für den Nutzer gibt es auf diesem Weg keinen Ersatz (BF-124/BF-131,
+     * in `features/B01-…/spec.md` bei AK-12 festgehalten).
+     */
     public function testMailerFailureShowsWarningAndStillRedirects(): void
     {
-        $client = static::createClient();
-        $client->getContainer()->set(MailerInterface::class, new class implements MailerInterface {
-            public function send(RawMessage $message, ?Envelope $envelope = null): void
-            {
-                throw new TransportException('SMTP down');
+        $dsnVorher = $_ENV['MAILER_DSN'] ?? null;
+        $_ENV['MAILER_DSN'] = $_SERVER['MAILER_DSN'] = 'smtp://127.0.0.1:1';
+
+        try {
+            $client = static::createClient();
+
+            $crawler = $client->request('GET', self::LOCALE.'/register');
+            $client->submit($this->formWithField($crawler, 'registration[email]', [
+                'registration[name]' => 'Mailer Pech',
+                'registration[email]' => 'mailerfail_'.uniqid().'@endlech.lu',
+                'registration[plainPassword][first]' => 'supersecret',
+                'registration[plainPassword][second]' => 'supersecret',
+            ]));
+
+            // Trotz Mailer-Fehler kein 500er, sondern Redirect …
+            self::assertResponseRedirects();
+
+            // … und die Warnung steht wirklich da. Ohne diese Zusicherung bliebe der
+            // Lauf grün, wenn der Zweig stillschweigend Erfolg meldete.
+            self::assertSame(
+                ['warning'],
+                array_keys($client->getRequest()->getSession()->getFlashBag()->peekAll()),
+                'AK-12: Ein gescheiterter Versand gehört dem Nutzer gesagt.',
+            );
+        } finally {
+            // ⚠ Zurückstellen, nicht löschen: `.env.test` füllt `$_ENV` einmalig beim
+            // Bootstrap, nicht bei jedem Kernel — ein `unset()` liesse
+            // `%env(MAILER_DSN)%` undefiniert, und der nächste Aufruf endete mit 500.
+            if (null === $dsnVorher) {
+                unset($_ENV['MAILER_DSN'], $_SERVER['MAILER_DSN']);
+            } else {
+                $_ENV['MAILER_DSN'] = $_SERVER['MAILER_DSN'] = $dsnVorher;
             }
-        });
-
-        $crawler = $client->request('GET', self::LOCALE.'/register');
-        $client->submit($this->formWithField($crawler, 'registration[email]', [
-            'registration[name]' => 'Mailer Pech',
-            'registration[email]' => 'mailerfail_'.uniqid().'@endlech.lu',
-            'registration[plainPassword][first]' => 'supersecret',
-            'registration[plainPassword][second]' => 'supersecret',
-        ]));
-
-        // Trotz Mailer-Fehler kein 500er, sondern Redirect (mit Warnung).
-        self::assertResponseRedirects();
+        }
     }
 
     /**

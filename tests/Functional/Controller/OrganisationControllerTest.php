@@ -9,6 +9,8 @@ use App\Repository\OrganisationWaitlistEntryRepository;
 use App\Tests\AbstractWebTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 final class OrganisationControllerTest extends AbstractWebTestCase
 {
@@ -355,5 +357,57 @@ final class OrganisationControllerTest extends AbstractWebTestCase
         foreach (['communeName', 'estimatedVenues', 'timeframe', 'sponsorshipInterests', 'collaborationInterests'] as $feld) {
             self::assertStringContainsString('organisation_waitlist['.$feld.']', $html, "Feld {$feld} fehlt im Markup.");
         }
+    }
+
+    /**
+     * AK-14 / BF-129 · Bei erschöpftem Kontingent zeigt die Organisationsseite ihre
+     * **eigene** Meldung, nicht die der Partnerseite.
+     *
+     * ⚠ Der Schaden war klein und der Grund, ihn trotzdem zu beheben, liegt in der
+     * Zukunft: Der hinterlegte Text war in allen vier Sprachen neutral, ein Besucher
+     * las also nichts Falsches. Irreführend war der **Schlüsselname** — und der ist
+     * die Stelle, an der jemand den Text später anpasst. Wer ihn für die Partnerseite
+     * umschreibt, hätte stillschweigend auch diese Seite mitgeändert.
+     *
+     * ⚠ Erschöpft wird in einem Zug (Limit 10000 im Test-Env), und der Zähler wird
+     * **vor** den Zusicherungen zurückgesetzt: Er liegt im Cache-Pool und übersteht
+     * den DAMA-Rollback (BF-136, dieselbe Falle).
+     */
+    public function testBf129EigeneMeldungBeiErschoepftemKontingent(): void
+    {
+        $client = static::createClient();
+
+        $factory = $client->getContainer()->get('limiter.organisation_waitlist');
+        self::assertInstanceOf(RateLimiterFactoryInterface::class, $factory);
+
+        $kontingent = $factory->create('127.0.0.1');
+        $kontingent->reset();
+        $kontingent->consume(10_000);
+
+        $crawler = $client->request('GET', self::LOCALE.'/organisationen');
+        $client->submit($this->formWithField($crawler, 'organisation_waitlist[email]', [
+            'organisation_waitlist[type]' => 'association',
+            'organisation_waitlist[organisationName]' => 'Verein BF129',
+            'organisation_waitlist[contactName]' => 'Alex Muster',
+            'organisation_waitlist[email]' => 'bf129_'.uniqid().'@verein-test.lu',
+            'organisation_waitlist[consent]' => true,
+        ]));
+
+        $status = $client->getResponse()->getStatusCode();
+        $html = (string) $client->getResponse()->getContent();
+
+        $uebersetzer = $client->getContainer()->get('translator');
+        $eigene = $uebersetzer->trans('flash.organisation_rate_limited', [], null, 'de');
+        $fremde = $uebersetzer->trans('flash.partner_rate_limited', [], null, 'de');
+
+        $kontingent->reset();
+
+        self::assertSame(Response::HTTP_TOO_MANY_REQUESTS, $status, 'Vorbedingung: Der Deckel muss greifen.');
+        self::assertStringContainsString($eigene, $html, 'BF-129: Die Seite braucht ihre eigene Meldung.');
+        self::assertStringNotContainsString(
+            $fremde,
+            $html,
+            'BF-129: Die Meldung der Partnerseite darf hier nicht erscheinen — daran hing der Befund.',
+        );
     }
 }

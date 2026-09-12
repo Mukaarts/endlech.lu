@@ -142,6 +142,13 @@ final class AppWaitlistController extends AbstractController
         }
 
         if (!$versandGelungen) {
+            // ⚠ **Auf Produktion wird dieser Zweig nicht erreicht (BF-124).** Seit
+            // dem 2026-09-02 läuft der Versand über den `async`-Transport, und
+            // `send()` wirft dort keine `TransportExceptionInterface` mehr — was
+            // zurückkommt, heisst „in die Warteschlange gelegt", nicht „zugestellt".
+            // Der Zweig trägt im Test-Env (`sync`) und in jeder Aufstellung ohne
+            // async-Routing; entfernen wäre falsch, sich auf ihn verlassen auch.
+            //
             // Der Eintrag steht bereits – der Interessent soll nicht den
             // Eindruck bekommen, die Vormerkung sei verloren (AK-20).
             $this->addFlash('warning', $this->translator->trans('flash.app_waitlist_email_failed'));

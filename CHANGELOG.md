@@ -2,10 +2,84 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.12-blue)
+![Version](https://img.shields.io/badge/version-2026.09.12.1-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.12.1] – Sammelreparatur: 23 Befunde, eine Markenschrift
+
+⚠ **Dieser Release bringt `v2026.09.12` mit.** Jener wurde getaggt und nach `master`
+gemergt, aber nie ausgerollt — die Fußzeile stand bis heute auf `v2026.09.11.1`.
+Auf Produktion kommen also **fünf** zuvor offene Befunde gleichzeitig an: BF-119,
+BF-136, BF-137 aus dem Vorgänger, dazu alles von heute.
+
+### Sichtbar für Besucher
+
+- **Eigene Markenschrift: Inter 4.1** (SIL Open Font License), selbst gehostet, auf
+  Latin zugeschnitten — vier Schnitte, je rund 17 kB. Bisher zeigte jedes Gerät die
+  Seite in seiner Systemschrift. Kein Aufruf an ein CDN, also keine Übertragung der
+  Besucher-IP an Dritte (BF-99).
+- **Kein waagerechtes Scrollen mehr zwischen 768 und 1023 px.** Gemessen: 81 px
+  angemeldet, in Französisch 149 px — nach der Reparatur 0 px in vier Sprachen bei
+  768, 1024, 1280 und 1440 px (BF-80).
+- **Der Logo-Schriftzug im Kopf erscheint erst ab 1280 px**, „Über uns" erst ab
+  1024 px — dafür steht es jetzt in der Fußzeile, wo es ganz fehlte.
+- **Lückenlose Überschriftenkette auf jeder Seite** (WCAG 1.3.1): Die Fußzeile sprang
+  bisher von h2 auf h4, gemessen auf sieben von neun geprüften Seiten (BF-109).
+- **Berichtigte Datenschutzerklärung:** Der Satz zur Drittlandsübermittlung nannte
+  „Protokollierung" und versprach „nicht die Inhalte". Beides ließ sich nach der
+  Neufassung von Brevos Auftragsverarbeitungsvertrag nicht mehr belegen (BF-139).
+- **Wort-Bildmarken im Presse-Kit** tragen den Schriftzug als Pfad statt als Text —
+  sie sehen damit bei jedem Empfänger gleich aus (BF-99).
+
+### Sicherheit und Datenschutz
+
+- **BF-111** · Eine unveröffentlichte Idee ohne Verfasser war für jeden lesbar.
+- **BF-134** · `trusted_hosts` war leer: Mit gefälschtem `Host` entstand ein Konto,
+  dessen Bestätigungslink auf den Server des Angreifers zeigte. Jetzt HTTP 400.
+- **BF-138** · Der Passwort-Reset endete mit HTTP 500, wenn die gespeicherte Adresse
+  RFC 2822 verletzt — und übersprang dabei den Laufzeit-Angleich aus BF-137.
+- **BF-135** · Bei gestörtem Versand verriet die Registrierung über die Art der
+  Meldung, ob eine Adresse vergeben ist.
+- **BF-103** · Das externe Feedback-Board `endlech.userjot.com` ist abgeschaltet;
+  von außen nachgemessen.
+
+### Prüfläufe, die nichts geprüft haben
+
+- **BF-125** · Ein Lauf durchsuchte den Quelltext und traf nur noch einen Kommentar —
+  er bestätigte das Gegenteil des tatsächlichen Verhaltens.
+- **BF-131** · Der Mailer-Fehlertest erzeugte gar keine Störung: Der Ersatz im
+  Dienstbehälter erreicht den Locator des Controllers nicht.
+- **BF-127** · Zwei von drei Angriffsadressen wies schon der HTML5-Default ab.
+- **BF-124** · Die Warnung an den Nutzer ist seit dem async-Versand unerreichbar; der
+  Zweig bleibt, die Zusage ist berichtigt.
+
+### Spezifikationen gegen den Code abgeglichen
+
+- **BF-126, BF-130, BF-132, BF-133** · Vier Rekonstruktionen führten zusammen fünf
+  DSGVO-Mängel als offen, die längst behoben und ausgeliefert waren. Feature `01`
+  hatte kein `design.md`; es ist nachgetragen.
+
+### Kleinere Reparaturen
+
+- **BF-129** · Die Organisationsseite meldete das Limit über den Partner-Schlüssel.
+- **BF-82** · Ein Anbietername ohne Leerzeichen sprengte die Kartendarstellung.
+- **BF-90** · Eine wirksame Sperre war in der Wartelisten-Verwaltung nicht erkennbar.
+- **BF-110** · Die Fundstelle des Befundes war falsch; die Eigenschaft, auf die es
+  ankommt, ist jetzt durch einen Prüflauf festgeschrieben.
+- **BF-95** · Eine fehlende Vorschaudatei färbt jetzt die Prüfsuite rot, statt dem
+  Leser ein Bruchbild zu zeigen.
+- **BF-88** · Der AV-Vertrag war dokumentiert, nur nicht in der Befundliste gebucht.
+
+### Prüfläufe
+
+1097 Tests (Ausgangslage 1048), zweimal gelaufen. Neu unter anderem
+`HeadingOrderTest` (Überschriftenkette auf neun Seiten), `QueryParameterReflexionTest`,
+`MailVersandRoutingTest`, `Bf127AngriffsadressenTest`, `Bf138ResetRfcAdresseTest`,
+`Bf135RegisterVersandfehlerTest`.
+
+⚠ **Keine Migration.** Das Schema ist unverändert.
 
 ## [2026.09.12] – Betroffenenrechte abgesichert (BF-136, BF-137)
 

@@ -45,12 +45,20 @@
     {# === 2 · KURZFAZIT ==================================================== #}
     <section class="bg-white py-16">
         <div class="container mx-auto px-4 max-w-4xl">
+            {# ⚠ BF-82: `min-w-0` an beiden Karten. Ohne das wirkt `overflow-wrap:
+               break-word` (in `app.css` am `body`) hier **nicht**: Die Eigenschaft
+               bricht beim Rendern, ändert aber die min-content-Breite nicht — und ein
+               Grid-Item hat `min-width: auto`, wächst also weiter mit seinem längsten
+               unumbrechbaren Wort. Gemessen mit einem 48 Zeichen langen Anbieternamen:
+               182 px Überlauf, mit der Regel allein noch 74 px, erst mit `min-w-0`
+               null. Der Ausweg über `overflow-wrap: anywhere` ist keiner — das zerlegt
+               auch normale Wörter (BF-77). #}
             <div class="grid gap-6 md:grid-cols-2">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 min-w-0">
                     <h2 class="text-lg font-bold text-gray-900 mb-2">{{ 'fit.own_title'|trans({}, 'comparison') }}</h2>
                     <p class="text-gray-800 leading-relaxed">{{ (p ~ 'fit_own')|trans({}, 'comparison') }}</p>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 min-w-0">
                     <h2 class="text-lg font-bold text-gray-900 mb-2">{{ 'fit.theirs_title'|trans({'%brand%': page.competitor.brand}, 'comparison') }}</h2>
                     <p class="text-gray-800 leading-relaxed">{{ (p ~ 'fit_theirs')|trans({}, 'comparison') }}</p>
                 </div>

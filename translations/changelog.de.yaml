@@ -29,6 +29,9 @@ repo:
     link_label: "CHANGELOG.md auf GitHub öffnen"
 
 release:
+    v2026_09_12_1:
+        title: "Ein eigenes Schriftbild"
+        body: "Endlech.lu hat eine eigene Schrift bekommen. Bisher zeigte jedes Gerät die Seite in der Schrift, die es gerade zur Hand hatte — jetzt sieht sie überall gleich aus. Die Schrift liegt auf unserem eigenen Server; es geht dafür keine Anfrage an Dritte und keine Angabe über Sie. Behoben ist außerdem ein Fehler, der die Seite auf Tablets und in kleinen Fenstern waagerecht verschiebbar machte, obwohl es nichts zu verschieben gab. Und wer mit einem Screenreader liest, findet die Abschnitte jetzt in lückenloser Reihenfolge."
     v2026_09_12:
         title: "Konto und Passwort besser geschützt"
         body: "Wer sein Konto löscht, muss dafür sein Passwort eingeben — diese Eingabe lässt sich jetzt nicht mehr beliebig oft wiederholen. Nach drei Fehlversuchen gibt es eine Pause von 15 Minuten. Dasselbe gilt für „Passwort vergessen“: Die Seite verrät nun nicht mehr, ob es zu einer Adresse ein Konto gibt."

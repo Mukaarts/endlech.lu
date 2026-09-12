@@ -88,6 +88,46 @@ final class BoardControllerTest extends AbstractWebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
+    /**
+     * BF-111 — eine wartende Idee **ohne Verfasser** war für jeden lesbar.
+     *
+     * ⚠ `$this->getUser() !== $idea->getSubmittedBy()` allein trug den Fall nicht:
+     * Bei einem Gast ist `getUser()` `null`, bei einer verfasserlosen Idee
+     * `getSubmittedBy()` ebenfalls — und `null !== null` ist **false**. Nachgestellt
+     * vor der Reparatur: HTTP 200, Titel im `<title>`, Beschreibung vollständig.
+     *
+     * ⚠ **Warum der Fall real ist, obwohl `AccountDeleter` wartende Ideen vor dem
+     * Konto löscht:** Der Fremdschlüssel steht auf `SET NULL`. Jeder zweite
+     * Anlageweg — Bestandsimport, Verwaltung, Datenbankeingriff — erzeugt die
+     * Konstellation, und `testFremdeWartendeIdeeErgibt404` sah sie nicht, weil er
+     * ausschließlich mit Verfasser prüft.
+     */
+    public function testBf111WartendeIdeeOhneVerfasserErgibt404(): void
+    {
+        $client = static::createClient();
+        $idee = $this->idee($client, published: false, von: null, titel: 'Ohne Verfasser');
+        $pfad = self::LOCALE.'/community/ideen/'.$idee->getId().'-kartenansicht';
+
+        // Gast
+        $client->request('GET', $pfad);
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_NOT_FOUND,
+            'BF-111: Ohne Verfasser darf die wartende Idee für niemanden sichtbar sein.',
+        );
+
+        // Angemeldetes, fremdes Konto
+        $this->loginAs($client, 'admin@endlech.lu');
+        $client->request('GET', $pfad);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        // ⚠ Und der Inhalt darf auch nicht in der Fehlerseite auftauchen.
+        self::assertStringNotContainsString(
+            'Ohne Verfasser',
+            (string) $client->getResponse()->getContent(),
+            'Der Titel darf in der 404-Antwort nicht erscheinen.',
+        );
+    }
+
     /** AK-18: Der Verfasser selbst sieht seine wartende Idee. */
     public function testVerfasserSiehtEigeneWartendeIdee(): void
     {
