@@ -2,10 +2,80 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.12.2-blue)
+![Version](https://img.shields.io/badge/version-2026.09.12.3-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.12.3] – Betrieb und Nachsorge: Worker-Puls und Sicherungsprüfung (BE-01, BE-02, BE-03)
+
+Drei Lücken aus der Betriebsübersicht in `docs/datenschutz.md` bearbeitet. **Keine
+Änderung am Produkt außer einem Roadmap-Eintrag** — der Rest sind Werkzeuge und
+Unterlagen.
+
+⚠ **Zum Ausrollen, in dieser Reihenfolge:**
+
+1. In Kuma den Push-Monitor anlegen (360 s, Retries 2) und **pausieren**; Adresse bis
+   zum Token kopieren.
+2. `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify eintragen — nicht auf der
+   Anwendung. Steht sie am falschen Ort, läuft der Puls nie.
+3. **Beide** Ressourcen ausrollen. Der Puls läuft im Worker; ein Rollout nur der
+   Anwendung lässt ihn auf dem alten Stand.
+4. Im Worker-Container `php bin/console app:worker:pulse` — erwartet: „Puls angekommen
+   (HTTP 200)".
+5. Monitor in Kuma fortsetzen; einmal den Worker kurz anhalten und prüfen, ob der Alarm
+   ankommt.
+
+⚠ Keine Migration. Das Schema ist unverändert. Ohne `APP_UPTIME_PUSH_URL` bleibt der
+Puls lautlos aus — das Ausrollen ist also auch dann gefahrlos, wenn Schritt 2 noch fehlt.
+
+- **BE-01 · Uptime-Prüfung von außen** läuft über **Uptime Kuma auf einem zweiten VPS**
+  — nicht auf demselben Rechner, und das ist der Punkt: Ein Wächter neben dem Bewachten
+  stirbt mit ihm. Zwei Prüfungen: `/health` (läuft der PHP-Prozess) und ein Push-Monitor
+  für den Messenger-Consumer. Eine dritte auf `/open.json` (antwortet die Datenbank) ist
+  bewusst nicht eingerichtet — ein Datenbankausfall bleibt in Kuma damit grün und fällt
+  nur über Sentry auf. Konfiguration und Einrichtungs-Checkliste in `docs/datenschutz.md`.
+- **Neu: `app:worker:pulse`** schließt den Ausfall, der bisher niemandem auffiel. Der
+  Worker-Container war der **lautlose**: Nachrichten stapeln sich, die Anwendung meldet
+  weiter „erfolgreich", und keine Bestätigungsmail geht mehr hinaus — bemerkt wurde das,
+  wenn sich jemand beschwerte. `app:messenger:watch` half dort nicht, er läuft im selben
+  Consumer und schweigt mit ihm. ⚠ **Die Umkehrung ist der Trick:** Der Beobachtete ruft
+  alle fünf Minuten nach draußen, und **das Ausbleiben** des Rufs ist die Meldung.
+  ⚠⚠ `APP_UPTIME_PUSH_URL` gehört auf die **Worker**-Ressource in Coolify, nicht auf die
+  Anwendung — sonst läuft der Puls nie, und das Ergebnis ist ein Dauer-Alarm über einen
+  einwandfrei arbeitenden Worker.
+- **`SecretMaskingProcessor` maskiert jetzt auch pfadgetragene Geheimnisse.** Kumas
+  Push-Token steht im **Pfad** (`/api/push/<token>`), nicht als Query-Parameter — die
+  Parameterliste griff dort nicht, und die `=`-Abkürzung hätte eine Adresse ohne
+  Query-Teil unangetastet durchgelaufen lassen. Nötig, weil `monolog.yaml` den
+  `http_client`-Kanal in `prod` nicht ausschließt. Der zweite Weg aus BF-45, an einer
+  neuen Stelle — und diesmal wiegt er schwerer: Wer eine Push-Adresse hat, schaltet einen
+  Alarm **aus**, und ein abgeschalteter Alarm fällt niemandem auf.
+- **BE-02 · Produktanalyse** steht jetzt als Vorhaben `usage_analytics` in der Spalte
+  „Angedacht" auf `/roadmap`, in allen vier Sprachen. Der Begründungssatz nennt die
+  Bedingung, unter der es überhaupt gebaut würde („nur ein Weg ohne Cookies und ohne
+  Personendaten") — damit ist sie öffentlich zugesagt und nicht bloß intern notiert.
+- **BE-03 · Sicherungen.** Neu: `bin/sicherung-pruefen.sh` und `make sicherung-pruefen`
+  spielen eine Sicherung in einen eigens gestarteten MariaDB-Wegwerf-Container ein und
+  urteilen über sie — sieben Prüfungen, darauf ausgelegt, die *stillen* Fehlerfälle zu
+  fangen (ein Struktur-Dump ohne Daten spielt fehlerfrei ein und hinterlässt eine leere
+  Datenbank). In eine bestehende Datenbank schreibt das Skript nie. Zeugnis unter
+  `qa/sicherungen/`. ⚠ Offen bleibt die Frage, **ob** überhaupt gesichert wird — die
+  beantwortet nur die Oberfläche des Hosters, Frist 2026-09-30.
+
+**Dabei erstmals belegt:** Alle Migrationen laufen auf **MariaDB 10.5** durch. Das war
+bisher eine Annahme, die `CLAUDE.md` an mehreren Stellen voraussetzt.
+
+**Nachgelesen und richtiggestellt:** `docs/datenschutz.md` behauptete, ein grünes
+`/open.json` belege, dass die Datenbank antwortet — richtig, aber nicht aus dem
+angenommenen Grund. `platform()`, `impact()` und `finance()` liegen **eine Stunde im
+Cache**; was bei jedem Aufruf an die Datenbank geht, ist `findTrend(24)`. Der
+Datenbankbeweis ist die **200 selbst**, nicht der Inhalt — eine Prüfung auf
+`platform.restaurants` liest einen bis zu eine Stunde alten Wert.
+
+**Korrigiert:** `docs/datenschutz.md` nannte 22 Rate Limiter, gemessen sind es 21 — alle
+21 verdrahtet. Die Zeitplan-Tabelle in `CLAUDE.md` nannte eine von vier
+`marketing`-Aufgaben und war damit zwei Features hinterher.
 
 ## [2026.09.12.2] – Nachlese der letzten zwei Prüfläufe (BF-140 bis BF-146)
 

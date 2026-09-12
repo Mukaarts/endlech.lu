@@ -29,6 +29,13 @@ final readonly class ChangelogRegistry
     public function notes(): array
     {
         return [
+            // SILENT. Ein Gast bemerkt genau eine Sache: eine neue Karte in der Spalte
+            // „Angedacht" auf /roadmap. Die Roadmap ist selbst der Ort, an dem dieses
+            // Vorhaben mitgeteilt wird — ein Changelog-Eintrag „wir denken über
+            // Nutzungsmessung nach" sagte dasselbe ein zweites Mal und läse sich wie eine
+            // Ankündigung. Der Rest (Worker-Puls, Maskierung, Sicherungsprüfung) ist
+            // Betrieb und für Gäste unsichtbar. Dasselbe Muster wie bei `v2026.09.11.1`.
+            new ReleaseNote('2026.09.12.3', new \DateTimeImmutable('2026-09-12'), ReleaseVisibility::SILENT),
             // SILENT, und die Begründung ist eine Abwägung: Von den sieben Befunden
             // dieser Nachlese sieht ein Gast genau einen — der Sprachumschalter ist auf
             // dem Telefon 16 px höher (BF-144). Das ist kein Changelog-Eintrag wert, und

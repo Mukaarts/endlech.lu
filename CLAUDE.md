@@ -1190,6 +1190,93 @@ GitHub-Actions-Workflow `.github/workflows/ci.yml` (Trigger: **nur** `workflow_d
 
 Das `.github/`-Verzeichnis enthält außerdem Issue-Templates (Bug Reports, Feature Requests, Tasks).
 
+## Sicherungen prüfen (`bin/sicherung-pruefen.sh`, BE-03)
+
+`make sicherung-pruefen DATEI=…` spielt eine Datenbanksicherung in einen **eigens
+gestarteten Wegwerf-Container** ein und urteilt, ob sie brauchbar ist. Rückgabewert 0 oder
+1, Zeugnis unter `qa/sicherungen/`.
+
+⚠ **MariaDB, nicht das lokale MySQL 8.** Produktion fährt MariaDB; ein Einspielen in MySQL
+kann an Kollationen scheitern, die mit der Sicherung nichts zu tun haben — das Ergebnis
+wäre ein Fehlalarm über eine gesunde Sicherung.
+
+⚠ **Die Liste der erwarteten Tabellen steht im Skript.** Wer eine Migration mit neuer
+Tabelle schreibt, ergänzt sie dort — sonst gilt eine Sicherung als vollständig, in der
+die neue Tabelle fehlt. Eine Prüfung, die ihre Erwartung aus dem Prüfling ableitet, prüft
+gegen sich selbst.
+
+⚠ **`docker exec` dort ohne `-i` und mit `< /dev/null`.** `docker exec -i` **liest
+stdin** — steht der Aufruf in einer `while read`-Schleife, frisst er die Datei auf, aus
+der die Schleife liest. Beim Bauen genau so gemessen: Der Abgleich gegen die Quelle
+verglich **eine einzige** Tabelle und meldete danach „alle Zeilenzahlen stimmen überein".
+Eine Sicherung, in der 18 von 19 Tabellen fehlen konnten, wäre grün durchgegangen. Die
+Schleife liest seither über Dateikennung 3, und die Ausgabe nennt die Zahl der
+verglichenen Tabellen.
+
+⚠ **Am 2026-09-12 dabei erstmals belegt: Alle Migrationen laufen auf MariaDB 10.5 durch.**
+Das war bis dahin eine Annahme, die diese Datei an mehreren Stellen voraussetzt.
+
+## Puls an den externen Wächter (`app:worker:pulse`, BE-01)
+
+Überwacht wird seit dem 2026-09-12 mit **Uptime Kuma auf einem zweiten VPS** — zwei
+Prüfungen: `/health` und ein **Push-Monitor**, der den Messenger-Consumer beobachtet.
+⚠️ **`/open.json` wird bewusst nicht überwacht** (Entscheidung 2026-09-12): `/health`
+fragt die Datenbank nicht ab, ein Datenbankausfall bleibt in Kuma also grün und fällt
+nur über Sentry auf, wenn jemand die Seite aufruft. Die vollständige Konfiguration samt Einrichtungs-Checkliste steht in
+`docs/datenschutz.md` unter BE-01; hier nur, was beim Ändern schiefgeht.
+
+⚠️ **Der Consumer ruft nach draußen, statt befragt zu werden — das ist der ganze Punkt.**
+Ein Wächter, der abfragt, kann einen stehenden Prozess nicht von einem gesunden
+unterscheiden: Der Worker serviert kein HTTP, es gibt nichts zu fragen. `app:worker:pulse`
+läuft alle fünf Minuten im Zeitplan `marketing` und ruft eine Push-Adresse; **das
+Ausbleiben des Rufs ist die Meldung.** Damit ist der lautlose Worker-Ausfall zum ersten
+Mal von außen sichtbar.
+
+⚠️⚠️ **`APP_UPTIME_PUSH_URL` gehört auf die WORKER-Ressource in Coolify, nicht auf die
+Anwendung.** Zwei Ressourcen, zwei Variablenlisten — derselbe Fallstrick wie beim
+gemeinsamen `APP_SECRET`. Steht die Variable nur bei der Anwendung, läuft der Puls **nie**,
+und das Ergebnis ist ein Dauer-Alarm über einen einwandfrei arbeitenden Worker. Ein
+Wächter, der grundlos weckt, wird abgeschaltet — die Lücke wäre dann schlimmer offen als
+vorher.
+
+⚠️ **Der Befehl gibt NIE `FAILURE` zurück.** Der Zeitplan ruft ihn über
+`RunCommandMessage`; ein Fehlschlag würfe dort eine Ausnahme, und der `failed`-Transport
+füllte sich mit 288 Nachrichten am Tag. Dieselbe Überlegung wie beim belegten Schloss in
+`MarketingSyncCommand`. Ein unerreichbarer Wächter ist ohnehin kein Fehler dieser
+Anwendung: Er schlägt von sich aus Alarm, weil der Puls ausbleibt.
+
+⚠️ **`'timeout' => 5` ist Pflicht** — dieselbe Lehre wie bei `PublicTransportService`.
+Ohne eigene Vorgabe griffe `default_socket_timeout` (im Bestand mit 60 s gemessen), und
+ein hängender Wächter hielte den Consumer eine Minute alle fünf Minuten auf. Der
+`catch (\Throwable)` fängt den **Ausfall**, nicht die **Verzögerung**.
+
+⚠️ **Die Push-Adresse nie in ein Protokoll geben, auch nicht über eine Fehlermeldung.**
+Sie ist ein Geheimnis besonderer Art: Wer sie hat, schaltet einen Alarm **aus** — er kann
+dauerhaft „alles in Ordnung" melden, und ein abgeschalteter Alarm fällt niemandem auf.
+Symfonys Transport-Ausnahmen führen die vollständige URL in ihrem **Text**; geloggt werden
+deshalb nur Rechnername und Ausnahme**klasse**. `WorkerPulseCommandTest` hält das fest,
+und die Gegenprobe ist gefahren: Mit `getMessage()` statt `$fehler::class` wird der Lauf
+rot.
+
+⚠️ **`SecretMaskingProcessor` maskiert seit dem 2026-09-12 auch pfadgetragene
+Geheimnisse.** Kumas Token steht im **Pfad** (`/api/push/<token>`), nicht als
+Query-Parameter — die Parameterliste des Processors griff dort nicht, und die
+`=`-Abkürzung in `maskiere()` hätte eine Adresse ohne Query-Teil unangetastet
+durchgelaufen lassen. Die Pfad-Maskierung läuft deshalb **vor** dieser Abkürzung. Nötig
+ist das, weil `monolog.yaml` den `http_client`-Kanal in `prod` nicht ausschließt und der
+`fingers_crossed`-Handler bei jeder Warnung seinen ganzen Puffer nach `php://stderr`
+schreibt. Genau der zweite Weg aus BF-45.
+
+⚠️ **Kein `LockableTrait`**, abweichend von den beiden übrigen Zeitplan-Befehlen. Dort
+verhindert es eine doppelte *Handlung* mit Nebenwirkungen; hier gibt es keine — zwei
+Pulse sind dasselbe Signal zweimal, und eine Sperre wäre nur ein weiterer Weg, auf dem
+der Puls ausfällt.
+
+⚠️ **Ein Netzproblem zwischen den beiden Servern sieht aus wie ein toter Worker.** Die
+Warnung im Protokoll (`Puls an den externen Wächter nicht zustellbar`) ist der einzige
+Unterschied zwischen den beiden Fällen — erscheint sie, war der Worker am Leben und nur
+der Weg versperrt.
+
 ## Deployment (CD)
 
 **Ein Merge nach `master` ist die Voraussetzung für den Deploy — nicht der Deploy
@@ -1299,8 +1386,9 @@ läuft. Also nie, wenn es darauf ankommt. Beim Einrichten gemessen: Mit
 ⚠️ **Diese Überwachung erkennt keinen vollständigen Stillstand.** Sie läuft im
 selben Consumer wie das, was sie beobachtet — steht er, läuft auch sie nicht. Sie
 sieht einen **Rückstau** (Worker arbeitet, kommt nicht nach) und eine Altlast nach
-einem Neustart. Den Totalausfall sieht nur eine Prüfung von außen; die ist als
-**BE-01** in `docs/datenschutz.md` vorbereitet und noch nicht eingerichtet.
+einem Neustart. Den Totalausfall sieht nur eine Prüfung von außen — **die gibt es
+seit dem 2026-09-12**: `app:worker:pulse` (siehe unten). Die beiden ergänzen sich und
+ersetzen sich nicht: Puls = „der Consumer läuft", Watch = „er kommt nach".
 
 ⚠️ **Wer je wieder `sync://` setzt**, nimmt der Queue Retry und `failed`-Transport
 — und damit die einzige Sichtbarkeit, die es für gescheiterten Versand gibt. Bei
@@ -1339,6 +1427,16 @@ Doppelläufe.
 |---|---|---|---|
 | `metrics` | `15 3 1 * *` | `CaptureMetricSnapshot` | **ja**, jeder verpasste Termin¹ |
 | `marketing` | `*/5 * * * *` | `RunCommandMessage('app:marketing:sync')` | **nein**, genau ein Durchgang |
+| `marketing` | `40 3 * * *` | `RunCommandMessage('app:app-waitlist:cleanup')` | **nein** (Feature 08) |
+| `marketing` | `20 7 * * *` | `RunCommandMessage('app:messenger:watch')` | **nein** (Rückstau-Meldung) |
+| `marketing` | `*/5 * * * *` | `RunCommandMessage('app:worker:pulse')` | **nein** (BE-01, Puls nach außen) |
+
+⚠️ **Der Zeitplan `marketing` trägt vier Aufgaben, nicht eine.** Die Tabelle stand bis
+zum 2026-09-12 mit einer Zeile hier und war damit zwei Features hinterher. Sie sitzen
+alle im **selben** Zeitplan, weil `processOnlyLastMissedRun()` am Zeitplan hängt und nicht
+am Eintrag — und weil ein zweiter Zeitplan einen weiteren Transport im
+`messenger:consume`-Befehl kostete, an drei Orten, von denen einer in Coolify von Hand
+gepflegt wird.
 
 ¹ ⚠️ **Nachholen heißt hier „der Termin wird zugestellt", nicht „der damalige
 Monatswert kommt zurück".** `MetricSnapshotService::capture()` nimmt ohne Argument
@@ -1712,6 +1810,8 @@ aus gefälschten `X-Forwarded-For`-Headern. Der Wert gehört in die Umgebung.
 | `eslint.config.mjs`   | ESLint flat config (TypeScript rules)      |
 | `.nvmrc`              | Node-Version für lokal + beide Workflows   |
 | `Dockerfile`          | Produktions-Image, Stages `runtime` und `worker` |
+| `bin/sicherung-pruefen.sh` | BE-03: spielt eine Sicherung in einen Wegwerf-Container ein und urteilt |
+| `src/Command/WorkerPulseCommand.php` | BE-01: Puls an Uptime Kuma; sein Ausbleiben ist die Meldung |
 | `importmap.php`       | Symfony AssetMapper module mapping         |
 | `.editorconfig`       | Editor formatting rules                    |
 | `docs/`               | Datenmodell-, Design-System- und PRD-Referenz |

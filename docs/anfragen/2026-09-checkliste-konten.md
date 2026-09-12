@@ -59,31 +59,80 @@ Datenbank. Die lassen sich nicht rekonstruieren.
 - [ ] ⚠ **Liegt die Sicherung auf demselben Rechner wie die Datenbank?** Dann ist sie
       keine — ein Ausfall des Rechners nimmt beide mit
 - [ ] **Eine Sicherung einmal einspielen.** Ein Rückweg, den niemand gegangen ist, ist
-      eine Annahme, keine Sicherung
+      eine Annahme, keine Sicherung.
+      **Seit 2026-09-12 ist das ein Befehl:** Sicherung herunterladen, dann
+      `make sicherung-pruefen DATEI=~/Downloads/endlech-JJJJ-MM-TT.sql.gz`.
+      Rückgabewert 0 = brauchbar, 1 = nicht brauchbar; das Zeugnis landet in
+      `qa/sicherungen/`. Sieben Prüfungen inklusive der stillen Fälle (Struktur-Dump ohne
+      Daten, fehlende Fremdschlüssel, verlorene `consent_at`-Bedingung) — Einzelheiten in
+      `docs/datenschutz.md` unter BE-03
 - [ ] Ergebnis in `docs/datenschutz.md` unter BE-03 eintragen
 
 ---
 
-## 5 · Uptime-Prüfung einrichten (BE-01)
+## 5 · Uptime-Prüfung einrichten (BE-01) — Uptime Kuma, zweiter VPS
 
-- [ ] Konto bei UptimeRobot, Better Stack o. ä. anlegen
-- [ ] Prüfung 1: `https://endlech.lu/health` — alle 5 Minuten, erwartet 200
-- [ ] Prüfung 2: `https://endlech.lu/open.json` — alle 15 Minuten, erwartet 200
-      ⚠ Beide, nicht nur die erste: `/health` macht bewusst keine Datenbankabfrage und
-      meldet auch dann 200, wenn die Datenbank weg ist
-- [ ] Zertifikatswarnung 14 Tage vor Ablauf
-- [ ] Alarmadresse eintragen — dieselbe wie `app.contact_email`
-- [ ] **Alarm einmal auslösen** (Prüfung kurz auf eine falsche URL zeigen lassen) und
-      nachsehen, ob die Meldung ankommt. Ein Alarm, der nie ausgelöst hat, hat nie
-      funktioniert
+> **Eingerichtet am 2026-09-12.** Kein Konto nötig, kein Fremddienst, kein zusätzlicher
+> Auftragsverarbeiter: Der Wächter läuft selbst betrieben auf einem **zweiten VPS** —
+> nicht neben dem Bewachten, und das ist der Punkt. Die Klickwege für UptimeRobot und
+> Better Stack, die hier vorher standen, sind damit gegenstandslos.
+
+Zwei Monitore, vollständige Vorgaben in `docs/datenschutz.md` unter BE-01:
+
+- [x] **HTTP(s)** auf `https://endlech.lu/health`, 60 s, Retries 2 — **eingerichtet und
+      Alarm ausgelöst am 2026-09-12**, „down" und „up" angekommen
+- ~~**HTTP(s) – Json Query** auf `https://endlech.lu/open.json`~~ — **bewusst nicht**
+      (Entscheidung 2026-09-12). ⚠ Folge: `/health` fragt die Datenbank nicht ab, ein
+      Datenbankausfall bleibt in Kuma grün und fällt nur über Sentry auf, wenn jemand die
+      Seite aufruft
+- [ ] **Push-Monitor** für den Messenger-Consumer, **360 s**, Retries 2 — Kuma erzeugt die
+      Adresse. ⚠ Nicht 300 s: Der Puls teilt sich die Minute mit dem Brevo-Abgleich im
+      selben Consumer und kommt dadurch Sekunden zu spät; bei exakt 300 s verpasste Kuma
+      gelegentlich ein Fenster
+- [ ] ⚠⚠ Diese Adresse als `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify
+      eintragen, **nicht** auf der Anwendung. Zwei Ressourcen, zwei Variablenlisten; steht
+      sie am falschen Ort, läuft der Puls nie und Kuma meldet Dauer-Alarm über einen
+      gesunden Worker
+- [ ] ⚠ **Benachrichtigungskanal an jedem einzelnen Monitor anhaken.** Kuma hängt ihn nur
+      automatisch an, wenn er als „Default enabled" angelegt wurde. Sonst wird der Monitor
+      brav rot und **niemand erfährt es** — das ist hier der wahrscheinlichste Fehler
+- [ ] Zertifikatswarnung: Kuma warnt von sich aus 21/14/7 Tage vorher und erfüllt die
+      Zusage damit; nachzusehen ist nur, dass sie an einem Kanal hängt
+- [ ] ⚠ **Jeden Alarm einmal auslösen.** HTTP: Ziel kurz verbiegen. Push: Worker kurz
+      anhalten. Ein Alarm, der nie ausgelöst hat, hat nie funktioniert — bei Push doppelt,
+      weil dort das *Ausbleiben* das Signal ist und ein falsch gesetzter Takt sich nicht
+      von Ruhe unterscheidet
 - [ ] Ergebnis in `docs/datenschutz.md` unter BE-01 eintragen
+
+⚠ **Die Reihenfolge ist hier nicht beliebig.** Der Puls ist Code und läuft erst nach
+einem Rollout (`main` → Release → `master` → Coolify). Ein aktiver Push-Monitor meldet
+vorher vom ersten Takt an „ausgefallen" — zu Recht, denn es ruft niemand an. Das ist der
+Fehlalarm, mit dem eine neue Überwachung ihr Vertrauen verliert, bevor sie einmal
+gearbeitet hat. Die Adresse entsteht aber erst mit dem Monitor. Deshalb:
+
+1. Monitor 1 sofort anlegen — **erledigt**.
+2. Monitor 3 anlegen und **sofort pausieren**; die Push-Adresse kopieren.
+3. `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource eintragen.
+4. Ausrollen — **beide** Ressourcen. Der Puls läuft im Worker; wer nur die Anwendung neu
+   ausrollt, lässt den Worker auf dem alten Stand ohne Puls.
+5. `php bin/console app:worker:pulse` im Worker-Container einmal von Hand aufrufen:
+   „Puls angekommen (HTTP 200)" ist der Nachweis, dass Adresse und Weg stimmen.
+6. Monitor 3 fortsetzen.
+
+⚠ **Offen und benannt: Wer bewacht den Wächter?** Stirbt der Kuma-VPS, kommen keine
+Alarme mehr, und das fällt nicht auf — dieselbe Bauartgrenze wie beim
+`app:messenger:watch`, eine Ebene höher.
 
 ---
 
 ## Reihenfolge, wenn die Zeit knapp ist
 
 1. **Punkt 1** — läuft gegen bereits verschickte Mails, jeder Tag zählt
-2. **Punkt 4** — ein Datenverlust ist der einzige Schaden hier, der endgültig ist
-3. **Punkt 5** — bis dahin bemerkt einen Ausfall nur, wer sich beschwert
+2. **Punkt 4** — ein Datenverlust ist der einzige Schaden hier, der endgültig ist.
+   Der Prüfteil kostet jetzt einen Befehl; offen ist nur noch die Frage, **ob** gesichert
+   wird, und die beantwortet allein die Oberfläche des Hosters
+3. **Punkt 5** — die Alarmprobe ist der kleinste Handgriff auf dieser Liste und der
+   einzige, der die Zusage „der Weg funktioniert" von einer Behauptung in einen Nachweis
+   verwandelt
 4. **Punkte 2 und 3** — wichtig für die Rechenschaftslage, aber nichts läuft schief,
    solange sie offen sind
