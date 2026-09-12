@@ -2,6 +2,18 @@
 
 Status: `rekonstruiert` · Stand: 2026-08-23 · **Rückerfassung aus dem Bestand**
 
+> **Abgeglichen am 2026-09-12 (BF-130).** Sechs Stellen beschrieben einen überholten
+> Stand: AK-14 (zweite Hälfte), AK-15, AK-16 sowie FB-01, FB-03 und FB-06 — dazu FB-04
+> (BF-134). **FB-01 und FB-03 standen hier als DSGVO-Lücken** (Art. 7 Abs. 3, Art. 5
+> Abs. 1 lit. e), obwohl seit dem 2026-08-29 behoben und ausgeliefert; wer die
+> Datenschutzlage anhand dieser Datei beurteilte, kam zu einem falschen Ergebnis.
+> **FB-02 ist nicht betroffen und weiterhin offen.**
+>
+> ⚠ Diese Datei ist die **Rekonstruktion** eines Bestandsfeatures und veraltet mit jeder
+> Reparatur, die sie behebt. Drei der sechs Stellen hat erst der `code-reviewer`
+> gefunden — der prüfende Agent hatte nur die AK-Tabelle angesehen, nicht den
+> Fehlbestand und nicht `design.md`.
+
 ## Zweck
 
 Drei Zielgruppen mit je eigener Seite und eigener Bestätigungsmail: **Gemeinden**
@@ -80,13 +92,23 @@ verschmolzen.
 - **AK-14** ⚠ · Angenommen, das Rate-Limit greift auf der Organisationsseite, wenn die
   Meldung gelesen wird, dann steht dort `flash.partner_rate_limited` — eine
   Partner-Meldung auf der Organisationsseite.
-  *(So verhält sich der Code heute: `OrganisationController::submit()` verwendet
-  denselben Übersetzungsschlüssel wie `PartnerController`. Zugleich teilen sich beide
-  denselben Limiter-Service, siehe B14/AK-23.)*
+  *(So verhält sich der Code heute: `OrganisationController:93` verwendet denselben
+  Übersetzungsschlüssel wie `PartnerController`. Gilt weiterhin, offen als BF-129 —
+  ⚠ der Schaden ist kleiner als hier angenommen: Der hinterlegte **Text** ist in allen
+  vier Sprachen neutral („Sie haben in kurzer Zeit mehrere Anmeldungen abgeschickt"),
+  ein Besucher liest also nichts Falsches; irreführend ist allein der Schlüsselname.)*
+  ⚠ **Die zweite Hälfte ist überholt (BF-130):** ~~Zugleich teilen sich beide denselben
+  Limiter-Service, siehe B14/AK-23.~~ Seit BF-38 (live mit `v2026.08.29`) hat jede
+  Warteliste ihr eigenes Kontingent; am 2026-09-12 über Verhalten belegt.
 
-- **AK-15** ⚠ · Wie B14/AK-21 und B14/AK-22: **kein Ablauf des Bestätigungstokens** und
+- **AK-15** ~~⚠ · Wie B14/AK-21 und B14/AK-22: **kein Ablauf des Bestätigungstokens** und
   **kein Widerrufsweg**. Beides liegt im geteilten Service bzw. in der Entity und gilt
-  hier gleichermaßen.
+  hier gleichermaßen.~~ — **überholt, beides behoben (BF-36/BF-37), live seit
+  `v2026.08.29`.**
+  **Heute gilt:** Der Token verfällt sieben Tage nach `createdAt` (abgelaufener Link →
+  HTTP 410), und jede Mail trägt den Abmeldelink (`app_organisations_revoke`). Damit
+  ist Art. 7 Abs. 3 DSGVO erfüllt — die alte Fassung dieser Zeile führte die Lücke
+  weiter, obwohl sie zwei Wochen zuvor geschlossen worden war.
 
 ### Datenschutz und Missbrauchsschutz
 
@@ -95,6 +117,11 @@ verschmolzen.
   **Funktion im Haus**, E-Mail, Telefon, Website, Freitext, Einwilligungszeitpunkt,
   Sprache, Quelle — dazu typabhängig Gemeindename, geschätzte Zahl der Betriebe,
   Zeitrahmen bzw. Interessenlisten.
+  ⚠ **Zwei Felder fehlten in der Aufzählung (BF-130, wie B14/AK-17):**
+  `marketingConsentAt` (eigene Einwilligung für den Brevo-Verteiler, Feature 04) und
+  `selfConfirmedAt` (Zeitpunkt der Selbstbestätigung — er unterscheidet den
+  Doppel-Opt-in vom Weitersetzen durch die Verwaltung, BF-89). Eine Auskunft nach der
+  alten Liste wäre lückenhaft gewesen.
 - **AK-17** · Angenommen, die Interessenlisten werden betrachtet, wenn ihr Typ geprüft
   wird, dann sind es **JSON-Spalten mit Strings**, nicht mit Enum-Cases.
 - **AK-18** · Angenommen, `PRE_SUBMIT` läuft, wenn geprüft wird, welche Felder aufgebaut
@@ -119,13 +146,25 @@ verschmolzen.
 
 Alles aus B14 gilt hier gleichermaßen — der Unterbau ist derselbe:
 
-- **FB-01 · Kein Widerrufsweg** (B14/FB-01).
+- ~~**FB-01 · Kein Widerrufsweg** (B14/FB-01).~~ — **erledigt** (BF-37, live seit
+  `v2026.08.29`). ⚠ In der alten Fassung stand er als **DSGVO-Lücke nach Art. 7 Abs. 3**
+  — wer die Datenschutzlage anhand dieser Datei beurteilte, kam zu einem falschen
+  Ergebnis.
 - **FB-02 · Keine Löschfrist, keine Aufräumroutine.** `OrganisationWaitlistEntryRepository`
-  hat nicht einmal ein `findPendingOlderThan()`-Gegenstück.
-- **FB-03 · Kein Ablauf des Bestätigungstokens** (B14/FB-03).
-- **FB-04 · Kein `trusted_hosts`** (B01/FB-09).
+  hat nicht einmal ein `findPendingOlderThan()`-Gegenstück. ⚠ **Am 2026-09-12
+  nachgeprüft und weiterhin offen** (die Methodenliste des Repositories kennt es nach
+  wie vor nicht); der Aufräumlauf aus Feature `08` greift nur auf die App-Warteliste.
+  Ausdrücklich **nicht** von BF-130 betroffen.
+- ~~**FB-03 · Kein Ablauf des Bestätigungstokens** (B14/FB-03).~~ — **erledigt**
+  (BF-36, live seit `v2026.08.29`): sieben Tage, gemessen an `createdAt`. ⚠ Stand hier
+  ebenfalls als DSGVO-Lücke (Art. 5 Abs. 1 lit. e).
+- ~~**FB-04 · Kein `trusted_hosts`** (B01/FB-09).~~ — **erledigt am 2026-09-12**
+  (BF-134): feste Liste in `framework.trusted_hosts`, Angriff antwortet mit HTTP 400.
 - **FB-05 · Eigener Übersetzungsschlüssel für das Rate-Limit fehlt.** Siehe AK-14.
-- **FB-06 · Kein eigenes Kontingent.** Siehe B14/AK-23.
+  ⚠ Weiterhin offen (BF-129, *niedrig*) — der angezeigte Text ist neutral, falsch ist
+  nur der Schlüsselname.
+- ~~**FB-06 · Kein eigenes Kontingent.** Siehe B14/AK-23.~~ — **erledigt** (BF-38, live
+  seit `v2026.08.29`): `limiter.organisation_waitlist`.
 
 ## Offene Fragen
 

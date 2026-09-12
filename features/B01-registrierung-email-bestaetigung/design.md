@@ -139,7 +139,7 @@ Klartextpasswort aus dem Hasher-Aufruf — in einen Stacktrace geraten.
 | 3 | Erst speichern, dann senden | umgekehrt, oder Transaktion um beides | ein Transportfehler darf die Anmeldung nicht verschlucken — dieselbe Reihenfolge wie in `WaitlistConfirmationService` (B14/B15) |
 | 4 | Keine automatische Anmeldung nach der Registrierung | `userAuthenticator->authenticateUser()` | Grund nicht erkennbar |
 | 5 | `plainPassword` unmapped | Feld auf der Entity | das Klartextpasswort hängt nie an einem persistenten Objekt |
-| 6 | Mails asynchron über Messenger | synchron | in `.env` so vorgesehen — ⚠ **auf Produktion aber `MESSENGER_TRANSPORT_DSN=sync://`**, dort läuft der Versand also im Request. Das macht AK-12 auf Produktion tatsächlich erreichbar |
+| 6 | Mails asynchron über Messenger | synchron | ⚠ **Berichtigt am 2026-09-12 (BF-132).** Die Vorfassung behauptete: „auf Produktion aber `MESSENGER_TRANSPORT_DSN=sync://`, dort läuft der Versand also im Request. Das macht AK-12 auf Produktion tatsächlich erreichbar“ — richtig bis zum 2026-09-02, seither nicht mehr: Der Versand läuft über den `async`-Transport, abgearbeitet von der Worker-Ressource. **Damit ist AK-12 auf Produktion unerreichbar** (BF-124/BF-131), und `->locale()` an der Mail ist keine Vorsorge mehr, sondern das Einzige, was ihre Sprache trägt (BF-10) |
 
 ## Abdeckung der Akzeptanzkriterien
 
@@ -156,7 +156,7 @@ Klartextpasswort aus dem Hasher-Aufruf — in einen Stacktrace geraten.
 | AK-09 | `EmailVerificationController::verify()` | |
 | AK-10 | `User::isVerificationTokenExpired()` | |
 | AK-11 | `UserRepository::findByVerificationToken()` liefert `null` | deckt auch den eingelösten Token ab, weil er auf `null` gesetzt wurde |
-| AK-12 | `try`/`catch (TransportExceptionInterface)` in `register()` | greift nur bei synchronem Versand — auf Produktion gegeben |
+| AK-12 | `try`/`catch (TransportExceptionInterface)` in `register()` | greift nur bei synchronem Versand — **auf Produktion seit dem 2026-09-02 nicht mehr gegeben** (BF-124/BF-131). Der Zweig bleibt, weil er im Test-Env und in jeder Aufstellung ohne async-Routing trägt; belegt ist er dort durch `RegistrationControllerTest::testMailerFailureShowsWarningAndStillRedirects`, der seit dem 2026-09-12 tatsächlich eine Störung erzeugt. Der Bestandszweig (vergebene Adresse) meldet seit BF-135 dasselbe |
 | AK-13 ⚠ | **Abwesenheit** eines `user_checker` in `security.yaml` | das Kriterium beschreibt eine Lücke, siehe FB-03 |
 | AK-14 ⚠ | `#[UniqueEntity]` auf `App\Entity\User` | |
 | AK-15 ⚠ | Routenreihenfolge in `EmailVerificationController` | nachweisbar über `router:match` |

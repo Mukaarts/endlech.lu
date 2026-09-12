@@ -1,6 +1,6 @@
 # Features
 
-Stand: 2026-09-11 · Stack-Profil: `symfony-doctrine` · Artefaktpfad: `docs/`
+Stand: 2026-09-12 · Stack-Profil: `symfony-doctrine` · Artefaktpfad: `docs/`
 
 Stand der Rückerfassung: **alle 26 Features rekonstruiert** (2026-08-23).
 Stand der Auslieferung: **17 Bestandsfeatures auf `deployed`** (2026-09-11) — sie waren
@@ -1734,6 +1734,7 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 
 | ID | Umfang | Wo es lebt |
 |---|---|---|
+| 01 | Konto löschen mit Passwort und Deckel, Datenexport als JSON, Passwort zurücksetzen mit Frist und angeglichener Laufzeit, Widerruf der Einwilligung über den Abmeldelink | `ProfileController` (`/profile/daten`, `/profile/loeschen`), `PasswordResetController`, `App\Account\` (`AccountDeleter`, `AccountDataExporter`), `WaitlistConfirmationService::revoke()`; ⚠ **am 2026-09-12 nachgetragen (BF-133)** — die Zeile fehlte, weil der Bau nie gebucht wurde |
 | 02 | Tastatur und Fokus, Wahrnehmbarkeit, Formulare, Zielgrößen, Sprache und Struktur, Mobil und App-Hülle, Verwaltung, Barrierefreiheitserklärung, Rückmeldeweg | projektweit; neu: Erklärungsseite `/barrierefreiheit` samt Meldeformular |
 | 03 | Fußzeilenbereich „Vergleiche“, Übersichtsseite, drei Vergleichsseiten mit Kurzfazit, Merkmalstabelle, Gegenposition und häufigen Fragen | neu: `/vergleich` und `/vergleich/{slug}`; berührt Fußzeile und Kopfbereich der App-Hülle |
 | 04 | Einwilligungs-Checkbox in drei Formularen, Abgleich der Kontakte in beide Richtungen, Löschkaskade bei Widerruf und Kontolöschung, Bestandsübertragung mit Trockenlauf, Sync-Stand in der Wartelisten-Verwaltung | berührt Partner-, Organisations- und Registrierformular sowie `/admin/warteliste`; neu: `docs/datenschutz.md` und der Werbe-Empfänger im Datenschutzabschnitt von `/legal` |

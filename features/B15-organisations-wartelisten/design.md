@@ -72,7 +72,7 @@ Identisch zu B14: Der Token ist das einzige Geheimnis, es gibt keine öffentlich
 
 | Endpunkt | Limit | Wo |
 |---|---|---|
-| `app_organisations_submit` | 5/Stunde je IP | `limiter.partner_waitlist` — ⚠ **geteilt mit B14** |
+| `app_organisations_submit` | 5/Stunde je IP | `limiter.organisation_waitlist` — ⚠ **Berichtigt am 2026-09-12 (BF-130).** Hier stand `limiter.partner_waitlist` — „geteilt mit B14“; das ist seit BF-38 (`v2026.08.29`) falsch. Der Meldungsschlüssel ist weiterhin der von B14 (BF-129, *niedrig*) — das ist der Rest, der von der geteilten Vergangenheit übrig ist |
 | dito | Honeypot `companyWebsite` | Controller |
 | Feldebene | `PRE_SUBMIT` + `validation_groups` | verhindert Feld-Unterschieben (AK-07/AK-08) |
 
