@@ -2,10 +2,21 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.12.1-blue)
+![Version](https://img.shields.io/badge/version-2026.09.12.2-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.12.2] – Nachlese der letzten zwei Prüfläufe (BF-140 bis BF-146)
+
+Alle sieben Befunde aus der QA von **B25** (PWA und mobile Navigation) und **B26**
+(Cookie-Banner) sind behoben. Damit hat kein Feature dieses Projekts einen offenen
+Befund mehr, und alle 26 Bestandsfeatures sind geprüft.
+
+⚠ **`CACHE_VERSION` steht auf `endlech-v3`.** Wiederkehrende Besucher holen die
+App-Shell und die gebauten Dateien einmal neu — das ist Teil der Reparatur von BF-140
+und nicht zu vermeiden: Die neue Positivliste verhindert **neue** Cache-Einträge, die
+bereits gespeicherten verschwinden erst, wenn `activate` den alten Cache löscht.
 
 ### Behoben
 

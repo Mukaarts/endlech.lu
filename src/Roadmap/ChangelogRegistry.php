@@ -29,6 +29,15 @@ final readonly class ChangelogRegistry
     public function notes(): array
     {
         return [
+            // SILENT, und die Begründung ist eine Abwägung: Von den sieben Befunden
+            // dieser Nachlese sieht ein Gast genau einen — der Sprachumschalter ist auf
+            // dem Telefon 16 px höher (BF-144). Das ist kein Changelog-Eintrag wert, und
+            // ein Eintrag „wir haben einen Knopf vergrössert" verwässert eine Liste, in
+            // der sonst Adressen mit Akzent und Betreiberwechsel stehen. Der gewichtigste
+            // Posten (BF-140, ein Profilbild im Cache des eigenen Browsers) ist
+            // unsichtbar, und die Reparatur ändert für den Nutzer nichts, was er
+            // wahrnimmt. Dasselbe Muster wie bei `v2026.09.11.1`.
+            new ReleaseNote('2026.09.12.2', new \DateTimeImmutable('2026-09-12'), ReleaseVisibility::SILENT),
             // Ein Gast merkt von dieser Sammelreparatur zweierlei, und beides
             // gehört gesagt: Die Seite trägt eine andere Schrift, und auf
             // Tablets liess sie sich bisher waagerecht verschieben. Der grosse
