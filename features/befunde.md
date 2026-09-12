@@ -336,6 +336,28 @@ sondern vergessen.
   nur die AK-Tabelle liest, findet die Hälfte nicht — `spec.md` hat drei weitere
   Abschnitte, `design.md` eigene Tabellen.
 
+- **Eine eingesetzte Störung muss nachweisen, dass sie ankommt (BF-131, BF-135).**
+  `testMailerFailureShowsWarningAndStillRedirects` setzte über
+  `$client->getContainer()->set(MailerInterface::class, …)` einen Mailer, der bei jedem
+  Aufruf wirft — und **zwei Mails gingen trotzdem hinaus**. Der Grund: Der Mailer ist ein
+  **Methodenargument** des Controllers und wird aus dessen Dienst-Locator geholt, den das
+  Überschreiben im Test-Behälter nicht erreicht. Der Lauf prüfte am Ende nur, dass eine
+  ungestörte Registrierung weiterleitet, und trug zwei Wochen den Namen einer Prüfung,
+  die er nicht war. **Regel: Wer eine Störung einsetzt, prüft zuerst die Störung** — hier
+  über den Zähler der versandten Mails. Was tatsächlich trägt, ist ein unerreichbarer
+  Port (`MAILER_DSN=smtp://127.0.0.1:1`), und der Wert gehört im `tearDown()`
+  **zurückgestellt**, nicht gelöscht: `.env.test` füllt `$_ENV` einmalig beim Bootstrap,
+  ein `unset()` lässt `%env()%` undefiniert und der nächste Aufruf endet mit 500.
+
+- **Ein Element, das schrumpfen darf, versteckt den Überlauf, den es verursacht
+  (BF-80).** Der Kopfzeilen-Befund war mit 36 px (abgemeldet) und 81 px (angemeldet)
+  erfasst. Nach `shrink-0` am Logo zeigte dieselbe Messung in **Französisch 149 px** —
+  vorher hatte das Logo nachgegeben und war auf 30 px zusammengedrückt, ein Viertel
+  seiner Breite. **Regel: Bei einem Layoutbefund erst festnageln, was nicht nachgeben
+  darf, dann messen** — und **in allen vier Sprachen**, denn Französisch braucht
+  regelmässig 15–20 % mehr Platz. Dieselbe Falle wie bei den Wortgrenzen der
+  Pressetexte (Feature 05).
+
 - **Ein Prüflauf, der Quelltext als Zeichenkette durchsucht, prüft den Kommentar mit
   (BF-125).** `testAk23…` suchte `limiter.partner_waitlist` im `OrganisationController`.
   Nach der Reparatur BF-38 steht der Ausdruck dort nur noch in dem Kommentar, der die
