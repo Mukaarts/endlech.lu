@@ -35,6 +35,17 @@ parameters:
     app.contact_email: '%env(string:default:app.contact_email_fallback:CONTACT_EMAIL)%'
     app.contact_email_fallback: 'info@endlech.lu'
 
+    # Push-Adresse des externen Wächters (BE-01, Uptime Kuma auf einem zweiten VPS).
+    # Der Messenger-Consumer ruft sie alle fünf Minuten; bleibt der Ruf aus, schlägt
+    # der Wächter an. Das ist der einzige Weg, auf dem ein **stehender** Consumer von
+    # außen sichtbar wird — `app:messenger:watch` läuft im selben Prozess.
+    #
+    # ⚠ Leer heißt lautlos aus, wie bei SENTRY_DSN und MOBILITEIT_API_KEY. Der echte
+    # Wert gehört in die Umgebung und NICHT hierher: Das Repository ist öffentlich, und
+    # wer die Adresse hat, kann dem Wächter dauerhaft „alles in Ordnung" melden — also
+    # den Alarm abschalten, nicht bloß mitlesen.
+    app.uptime_push_url: '%env(string:default::APP_UPTIME_PUSH_URL)%'
+
     # --- Betreiberangaben (Impressum /legal und Faktenblatt /presse) ---
     #
     # Seit dem 2026-09-05: **DAUMEDIA S.A.R.L.-S**, eingetragen im RCS Luxembourg

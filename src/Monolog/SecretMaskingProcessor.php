@@ -35,6 +35,26 @@ final class SecretMaskingProcessor
      */
     private const PARAMETER = ['accessId', 'token', 'apikey', 'api_key', 'access_token', 'password'];
 
+    /**
+     * Pfade, deren nächstes Segment das Geheimnis IST — nicht ein Query-Parameter.
+     *
+     * ⚠ **Der Anlass ist Uptime Kuma (BE-01, 2026-09-12).** Seine Push-Adresse lautet
+     * `https://<wächter>/api/push/<token>`: Das Geheimnis steht im **Pfad**, und
+     * {@see self::PARAMETER} greift dort nicht, weil es kein `=` gibt. Wer die Adresse
+     * hat, kann dem Wächter beliebig lange „alles in Ordnung" melden — er schaltet
+     * damit nicht eine Prüfung ein, sondern einen Alarm aus. Das ist schlimmer als ein
+     * gelesener API-Schlüssel: Ein abgeschalteter Alarm fällt niemandem auf.
+     *
+     * Derselbe zweite Weg wie bei BF-45: `App\Command\WorkerPulseCommand` gibt die
+     * Adresse nirgends weiter, aber Symfonys `http_client`-Kanal protokolliert jede
+     * Anfrage samt vollständiger URL — und `monolog.yaml` schließt den Kanal in `prod`
+     * **nicht** aus. Bei jeder Warnung schreibt der `fingers_crossed`-Handler seinen
+     * ganzen Puffer nach `php://stderr` und damit in das Protokoll des Hosters.
+     *
+     * Ausdrückliche Liste statt Heuristik, aus demselben Grund wie oben.
+     */
+    private const GEHEIME_PFADE = ['/api/push/'];
+
     public function __invoke(LogRecord $record): LogRecord
     {
         return $record->with(
@@ -45,6 +65,11 @@ final class SecretMaskingProcessor
 
     private function maskiere(string $text): string
     {
+        // ⚠ Zuerst und ohne die `=`-Abkürzung darunter: Eine Push-Adresse ohne
+        // Query-Teil enthält kein einziges `=` und wäre sonst unangetastet
+        // durchgelaufen.
+        $text = $this->maskierePfade($text);
+
         if (!str_contains($text, '=')) {
             return $text;
         }
@@ -54,6 +79,29 @@ final class SecretMaskingProcessor
             static fn (array $t): string => $t[1].'=<maskiert>',
             $text,
         ) ?? $text;
+    }
+
+    /**
+     * Ersetzt das Segment hinter einem Pfad aus {@see self::GEHEIME_PFADE}.
+     *
+     * Der Rest der Adresse bleibt lesbar — man soll noch erkennen, welcher Wächter
+     * gemeint war, nur nicht mehr, mit welchem Token.
+     */
+    private function maskierePfade(string $text): string
+    {
+        foreach (self::GEHEIME_PFADE as $pfad) {
+            if (!str_contains($text, $pfad)) {
+                continue;
+            }
+
+            $text = preg_replace(
+                '#('.preg_quote($pfad, '#').')[A-Za-z0-9_-]+#',
+                '$1<maskiert>',
+                $text,
+            ) ?? $text;
+        }
+
+        return $text;
     }
 
     /**

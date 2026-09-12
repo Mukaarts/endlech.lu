@@ -465,48 +465,183 @@ war.
 
 ## Betriebsüberwachung
 
-Stand 2026-09-05. Was hier fehlt, meldet seinen Ausfall nicht selbst.
+Stand 2026-09-12. Was hier fehlt, meldet seinen Ausfall nicht selbst.
 
 | Bereich | Zustand | Wo |
 |---|---|---|
 | Fehler-Tracking | **läuft** — Sentry, EU-Region (`ingest.de.sentry.io`), nur `prod`, `send_default_pii: false`. DSN in Coolify gesetzt (Betreiber bestätigt 2026-09-05) | `config/packages/sentry.yaml` |
-| Rate Limits | **läuft** — 22 Limiter, jeder verdrahtet und mit `when@test`-Override; `LimiterCoverageTest` färbt rot, sobald einer davon fehlt | `config/packages/framework.yaml` |
+| Rate Limits | **läuft** — 21 Limiter, jeder verdrahtet und mit `when@test`-Override; `LimiterCoverageTest` färbt rot, sobald einer davon fehlt | `config/packages/framework.yaml` |
 | Protokollierung | **läuft** — `prod` schreibt nach `stderr`, `!doctrine` und `!request` ausgeschlossen, damit keine Bestätigungstoken im Hoster-Log landen (BF-23) | `config/packages/monolog.yaml` |
 | Lebendigkeitsprüfung | **läuft** — `/health`, sprachfrei, bewusst **ohne** Datenbankabfrage | `src/Controller/Health/` |
 | **Messenger-Worker** | **überwacht seit 2026-09-05** — `app:messenger:watch` meldet einen Rückstau per Mail, täglich aus dem `marketing`-Zeitplan | siehe unten |
-| **Uptime von außen** | ⚠ **fehlt** — vorbereitet, aber kein Wächter eingerichtet (BE-01) | — |
-| Produktanalyse | ⚠ **fehlt** — als Feature auf der Roadmap, nicht als Betriebsmaßnahme (BE-02) | — |
-| Sicherungen der Datenbank | ⚠ **ungeprüft** — ob Coolify sichert und wie oft, ist nicht dokumentiert (BE-03) | — |
+| **Uptime von außen** | **läuft seit 2026-09-12** — Uptime Kuma auf einem **zweiten VPS**, zwei Prüfungen: `/health` und ein Puls des Messenger-Consumers. `/open.json` bewusst nicht (Entscheidung 2026-09-12) (BE-01) | siehe unten |
+| **Messenger-Consumer, Totalausfall** | **läuft seit 2026-09-12** — `app:worker:pulse` meldet alle fünf Minuten nach außen; bleibt der Puls aus, schlägt Kuma an | `src/Command/WorkerPulseCommand.php` |
+| Produktanalyse | **entschieden am 2026-09-12** — steht als Vorhaben `usage_analytics` in der Spalte „Angedacht" auf `/roadmap`, nicht mehr als Betriebslücke (BE-02) | `src/Roadmap/RoadmapRegistry.php` |
+| Sicherungen der Datenbank | **Rückweg prüfbar seit 2026-09-12**, die Sicherung selbst weiter ungeklärt: ob Coolify sichert und wie oft, ist nicht dokumentiert (BE-03) | `bin/sicherung-pruefen.sh` |
 
-### BE-01 · Uptime-Prüfung von außen — vorbereitet, noch einzurichten
+### BE-01 · Uptime-Prüfung von außen — eingerichtet (2026-09-12)
 
-Ein Konto kann dieser Durchgang nicht anlegen. Die Angaben stehen fertig; einzutragen
-sind sie bei UptimeRobot, Better Stack oder einem gleichwertigen Dienst.
+Überwacht wird mit **Uptime Kuma**, selbst betrieben auf einem **zweiten VPS**. Das ist
+der Punkt, an dem diese Lücke wirklich geschlossen ist: Ein Wächter auf demselben
+Rechner teilt dessen Schicksal — stirbt der Hostinger-VPS, stirbt der Wächter mit ihm,
+und genau dieser Fall ist der einzige, den sonst niemand meldet.
+
+**Die Prüfungen, und welche Frage jede beantwortet:**
+
+| # | Kuma-Typ | Ziel | Takt | Erwartung | Beantwortet |
+|---|---|---|---|---|---|
+| 1 | HTTP(s) | `https://endlech.lu/health` | 60 s | 200 | Läuft der PHP-Prozess? |
+| ~~2~~ | ~~HTTP(s) – Json Query~~ | ~~`https://endlech.lu/open.json`~~ | — | **nicht eingerichtet, Entscheidung 2026-09-12** | ~~Antwortet die Datenbank?~~ — bleibt unbeantwortet |
+| 3 | **Push** | von Kuma erzeugte Adresse | 360 s, Retries 2 | ein Puls alle 5 Min | Läuft der Messenger-Consumer? |
+
+⚠ **Monitor 2 ist bewusst nicht eingerichtet** (Betreiberentscheidung vom 2026-09-12).
+Die Folge gehört benannt: `/health` macht **keine** Datenbankabfrage — hinge sie daran,
+nähme ein kurzer Ausfall der Datenbank den Container mit, und der Neustart hülfe nichts,
+weil die Ursache außerhalb liegt. Ein grünes `/health` sagt deshalb nichts darüber, ob
+die Datenbank antwortet. **Ein Datenbankausfall bleibt in Kuma grün.** Auffallen würde er
+indirekt über Sentry: Jede Seite, die die Datenbank braucht, wirft dann eine Ausnahme,
+die gemeldet wird — allerdings nur, **wenn jemand die Seite aufruft** und in Sentry eine
+Alarmregel eingerichtet ist.
+
+Falls die Prüfung später doch kommt, gilt, was am 2026-09-12 nachgelesen wurde:
+
+⚠ **So beweist `/open.json` die Datenbank — anders, als man denkt.** Am 2026-09-12
+im Code nachgelesen: `OpenStatsService::platform()`, `impact()` und `finance()` liegen
+**eine Stunde im Cache** (Pool `cache.open_stats`, Filesystem). Was bei *jedem* Aufruf an
+die Datenbank geht, ist `MetricSnapshotRepository::findTrend(24)` — ohne Cache. Steht die
+Datenbank, wirft dieser Aufruf, und der Endpunkt antwortet mit 500. **Der Datenbankbeweis
+ist also die 200 selbst.** Die Json-Query-Prüfung liest dagegen einen bis zu eine Stunde
+alten Cachewert; sie ist Absicherung gegen „200 mit kaputtem Rumpf", nicht gegen eine
+stehende Datenbank. Wer das verwechselt, hält eine Prüfung für stärker, als sie ist.
+
+⚠ **`/open.json` sendet `cache-control: max-age=3600, public`.** Kuma ignoriert das
+(eigener Client ohne Cache), und weder Caddy noch Coolifys Proxy cachen von sich aus —
+derzeit unkritisch. **Wer aber je ein CDN davorsetzt, verliert diese Prüfung
+lautlos:** Der Wächter bekäme dann eine Stunde lang eine gespeicherte 200, während
+die Anwendung tot ist.
+
+**Stand der Einrichtung:**
+
+| # | Eingerichtet | Alarm ausgelöst |
+|---|---|---|
+| 1 `/health` | 2026-09-12, 60 s, Retries 2 | **ja, 2026-09-12** — Ziel auf eine nicht vorhandene Adresse gestellt, „down" und danach „up" beim Betreiber angekommen (Betreiber bestätigt) |
+| 2 `/open.json` | **bewusst nicht** (Betreiberentscheidung 2026-09-12) | — |
+| 3 Push | — | — |
+
+#### Der Push-Monitor ist die eigentliche Neuigkeit
+
+Der Ausfall des Messenger-Consumers war bis hierhin der **lautlose**: Nachrichten stapeln
+sich in `messenger_messages`, die Anwendung meldet weiter „erfolgreich", und niemand
+bekommt mehr eine Bestätigungsmail (Registrierung, Double-Opt-In aller drei Wartelisten,
+E-Mail-Wechsel), kein Monats-Snapshot entsteht, kein Brevo-Abgleich läuft. Der vorhandene
+Wächter `app:messenger:watch` hilft dort nicht — er läuft **im selben Consumer**, den er
+beobachtet, und schweigt mit ihm.
+
+⚠ **Die Umkehrung ist der ganze Trick.** Ein Wächter, der etwas *abfragt*, kann einen
+stehenden Prozess nicht von einem gesunden unterscheiden; der Consumer serviert kein
+HTTP, es gibt nichts zu fragen. Hier ruft deshalb der Beobachtete an:
+`app:worker:pulse` läuft alle fünf Minuten aus dem Zeitplan `marketing` und ruft eine
+Push-Adresse von Kuma. **Bleibt der Anruf aus, ist das die Aussage.**
 
 | | |
 |---|---|
-| **Endpunkt 1** | `https://endlech.lu/health` — alle 5 Minuten, erwartet **200** |
-| **Endpunkt 2** | `https://endlech.lu/open.json` — alle 15 Minuten, erwartet **200** und gültiges JSON |
-| **Zertifikat** | Ablaufwarnung 14 Tage vorher |
-| **Alarmweg** | dieselbe Adresse wie `app.contact_email`; der Weg gehört **einmal ausgelöst**, bevor man sich auf ihn verlässt |
+| **Befehl** | `app:worker:pulse`, Zeitplan `marketing`, `*/5 * * * *`; `--dry-run` sagt nur, ob ein Ziel eingerichtet ist |
+| **Adresse** | `APP_UPTIME_PUSH_URL`, Form `https://<wächter>/api/push/<token>`. Leer heißt lautlos aus — wie `SENTRY_DSN` und `MOBILITEIT_API_KEY` |
+| **Grenze** | Eine **Lebendigkeits**-, keine Fortschrittsprüfung: „der Consumer läuft", nicht „er arbeitet den Rückstau ab". Letzteres bleibt Sache von `app:messenger:watch`. Beide zusammen decken den Fall ab, keiner allein |
 
-⚠ **Zwei Endpunkte, und das ist der Punkt.** `/health` beantwortet bewusst nur „läuft
-der PHP-Prozess" — es macht **keine** Datenbankabfrage, damit ein kurzer Ausfall der
-Datenbank nicht den Container mitreißt (der Neustart hülfe dort nichts, die Ursache
-liegt außerhalb). Genau deshalb sagt ein grünes `/health` **nichts** darüber, ob die
-Anwendung funktioniert. `/open.json` schließt die Lücke: Es liest Restaurants, Finanzen
-und seit Feature 08 die App-Warteliste — wer damit 200 und gültiges JSON bekommt, weiß,
-dass die Datenbank antwortet.
+⚠⚠ **Die Variable gehört auf die WORKER-Ressource in Coolify, nicht auf die Anwendung.**
+Das sind zwei Ressourcen mit je eigener Variablenliste (derselbe Fallstrick wie beim
+gemeinsamen `APP_SECRET`). Steht sie nur bei der Anwendung, läuft der Puls **nie** — und
+das Ergebnis ist ein Dauer-Alarm über einen Worker, der einwandfrei arbeitet. Ein Wächter,
+der grundlos weckt, wird abgeschaltet; damit wäre die Lücke schlimmer wieder offen als
+vorher.
 
-⚠ **Diese Prüfung ist die einzige, die einen vollständig stehenden Container bemerkt.**
-Die Warteschlangen-Überwachung läuft im selben Prozess wie das, was sie überwacht: Steht
-der Consumer, läuft auch sie nicht. Beide zusammen decken den Fall ab, keine allein.
+⚠ **Ein Netzproblem zwischen den beiden Servern sieht aus wie ein toter Worker.** Kuma
+meldet dann „ausgefallen", obwohl der Consumer arbeitet. Dafür schreibt der Befehl eine
+Warnung ins Protokoll (`Puls an den externen Wächter nicht zustellbar`): Erscheint sie,
+war der Worker am Leben und nur der Weg versperrt. Sie ist der **einzige** Unterschied
+zwischen den beiden Fällen — deshalb wird sie geschrieben, obwohl der Alarm ohne sie
+ohnehin zustande käme.
 
-### BE-02 · Produktanalyse — als Feature, nicht als Betriebsmaßnahme
+⚠ **Der Befehl gibt nie `FAILURE` zurück.** Der Zeitplan ruft ihn über
+`RunCommandMessage`; ein Fehlschlag würfe dort eine Ausnahme, und der `failed`-Transport
+füllte sich mit 288 Nachrichten am Tag. Dieselbe Überlegung wie beim belegten Schloss in
+`MarketingSyncCommand`.
+
+⚠ **Die Push-Adresse ist ein Geheimnis besonderer Art: Wer sie hat, schaltet einen Alarm
+AUS.** Er kann Kuma dauerhaft „alles in Ordnung" melden, und ein abgeschalteter Alarm
+fällt niemandem auf. Deshalb steht sie nur in der Umgebung (das Repository ist
+öffentlich), und deshalb protokolliert der Befehl ausschließlich Rechnername und
+Ausnahme**klasse** — Symfonys Transport-Ausnahmen führen die vollständige URL in ihrem
+**Text**. Den zweiten Weg deckt `App\Monolog\SecretMaskingProcessor` ab, der seit dem
+2026-09-12 auch pfadgetragene Geheimnisse maskiert: Das Token steht bei Kuma im **Pfad**
+(`/api/push/<token>`), und die Parameterliste des Processors griff dort nicht. Genau
+dasselbe Muster wie bei BF-45 (HAFAS-Schlüssel), einschließlich des Umstands, dass
+`monolog.yaml` den `http_client`-Kanal in `prod` **nicht** ausschließt.
+
+#### Was beim Einrichten in Kuma noch zu tun ist
+
+- [ ] ⚠ **Benachrichtigungskanal an jedem einzelnen Monitor anhaken.** Kuma hängt einen
+      Kanal nur dann automatisch an neue Monitore, wenn er als „Default enabled" angelegt
+      wurde. Sonst entsteht ein Monitor, der brav rot wird, und **niemand erfährt es** —
+      ein Dashboard statt einer Überwachung. Das ist hier der wahrscheinlichste Fehler.
+- [ ] **Wiederholungen setzen** (Retries 2, Retry-Intervall 20–60 s). Ein einzelner
+      verlorener Antwortversuch zwischen zwei Rechenzentren ist ein Alltagsereignis; drei
+      Fehlschläge in Folge sind es nicht.
+- [ ] **Zertifikatswarnung prüfen.** Kuma warnt von sich aus 21/14/7 Tage vorher und
+      erfüllt die Zusage aus BE-01 damit bereits — nachzusehen ist nur, dass die
+      Benachrichtigung überhaupt an einem Kanal hängt.
+- [ ] ⚠ **Jeden Alarm einmal auslösen.** Push-Monitor: den Worker kurz anhalten oder
+      `APP_UPTIME_PUSH_URL` vorübergehend verbiegen. HTTP-Monitore: Ziel kurz auf eine
+      falsche Adresse zeigen lassen. **Ein Alarm, der nie ausgelöst hat, hat nie
+      funktioniert** — und bei Push ist das doppelt wahr, weil dort das *Ausbleiben* das
+      Signal ist und sich ein falsch gesetzter Takt nicht anders äußert als Ruhe.
+- [ ] `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify eintragen (siehe oben).
+
+⚠ **Die Reihenfolge ist hier nicht beliebig.** Der Puls ist Code und läuft erst nach
+einem Rollout (`main` → Release → `master` → Coolify). Ein aktiver Push-Monitor meldet
+vorher vom ersten Takt an „ausgefallen" — zu Recht, denn es ruft niemand an. Das ist der
+Fehlalarm, mit dem eine neue Überwachung ihr Vertrauen verliert, bevor sie einmal
+gearbeitet hat. Die Adresse entsteht aber erst mit dem Monitor. Deshalb:
+
+1. Monitor 1 sofort anlegen — **erledigt und ausgelöst am 2026-09-12**.
+2. Monitor 3 anlegen und **sofort pausieren**; die Push-Adresse kopieren.
+3. `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource eintragen.
+4. Ausrollen — **beide** Ressourcen. Der Puls läuft im Worker; wer nur die Anwendung neu
+   ausrollt, lässt den Worker auf dem alten Stand ohne Puls.
+5. `php bin/console app:worker:pulse` im Worker-Container einmal von Hand aufrufen:
+   „Puls angekommen (HTTP 200)" ist der Nachweis, dass Adresse und Weg stimmen.
+6. Monitor 3 fortsetzen.
+
+⚠ **Gemessen am 2026-09-12: zwei Rechner, aber derselbe Anbieter.** endlech.lu und Kuma
+laufen auf zwei verschiedenen VPS, beide bei **Hostinger, AS47583** (per DNS und ASN-Abfrage
+bestimmt; Rechnername und Adresse des Wächters stehen hier bewusst nicht — das Repository
+ist öffentlich, und wer weiß, wo die Überwachung steht, kann gezielt sie lahmlegen). Der Ausfall *eines* VPS ist damit
+abgedeckt, ein Ausfall bei Hostinger selbst (Netz, Rechenzentrum) nimmt beide mit, und
+dann meldet niemand etwas. Ob beide im selben Rechenzentrum stehen, ist nicht bekannt.
+Seltener Fall, aber benannt: Wer ihn abdecken will, stellt den Wächter zu einem anderen
+Anbieter.
+
+⚠ **Die offene Restfrage: Wer bewacht den Wächter?** Stirbt der Kuma-VPS, kommen keine
+Alarme mehr, und das fällt nicht auf — dieselbe Bauartgrenze wie beim
+`app:messenger:watch`, nur eine Ebene höher. Kuma selbst bietet dafür keine Lösung. Die
+billigen Wege: eine zweite, sehr kleine Prüfung anderswo auf die Kuma-Oberfläche, oder
+ein wöchentlicher Blick. Nicht entschieden, aber benannt.
+
+### BE-02 · Produktanalyse — am 2026-09-12 auf die Roadmap gesetzt
 
 Ein Analyse-Skript im Frontend ist eine **Produktänderung**: Es berührt die App-Hülle,
 den Datenschutzabschnitt in `/legal` und — je nach Wahl — das Einwilligungsbanner. Es
 gehört deshalb als Feature auf die Roadmap und nicht in einen Betriebsdurchgang.
+
+**Erledigt:** Das Vorhaben steht seit dem 2026-09-12 als `usage_analytics` in der Spalte
+„Angedacht" auf `/roadmap`, in allen vier Sprachen, mit dem Begründungssatz „Infrage
+kommt nur ein Weg ohne Cookies und ohne Personendaten — sonst bleibt es ungebaut". Damit
+ist die Bedingung, unter der es überhaupt gebaut würde, **öffentlich zugesagt** und nicht
+nur hier notiert. Ein Datum steht nicht daran; `RoadmapItem` hat kein Datumsfeld.
+
+Die Vorarbeit unten bleibt stehen — sie ist die Entscheidungsgrundlage für den Tag, an
+dem das Vorhaben aus „Angedacht" herauswandert.
 
 Vorarbeit, damit die Entscheidung später keine Recherche mehr braucht:
 
@@ -523,11 +658,52 @@ eine Produktentscheidung und keine technische.
 ⚠ **Bei ereignisbasierter Analyse gehören keine Personendaten in Ereignisnamen oder
 -eigenschaften.** Eine Nutzer-ID ist in Ordnung, eine E-Mail-Adresse nicht.
 
-### BE-03 · Sicherungen der Datenbank — ungeprüft
+### BE-03 · Sicherungen der Datenbank — der Rückweg ist seit 2026-09-12 prüfbar
 
 Ob Coolify die Datenbank sichert, in welchem Takt und wie lange die Sicherungen liegen,
 ist nirgends dokumentiert. **Das gehört gemessen, nicht angenommen**: eine Sicherung
 wiederherstellen, bevor sie gebraucht wird.
+
+**Dafür gibt es seit dem 2026-09-12 ein Werkzeug statt eines Vorsatzes:**
+
+```bash
+make sicherung-pruefen DATEI=~/Downloads/endlech-2026-09-12.sql.gz
+```
+
+`bin/sicherung-pruefen.sh` spielt die Datei in einen **eigens gestarteten
+Wegwerf-Container** ein (MariaDB, dieselbe Maschine wie Produktion — ein Einspielen in
+das lokale MySQL 8 kann an Kollationen scheitern, die mit der Sicherung nichts zu tun
+haben, und das wäre ein Fehlalarm über eine gesunde Sicherung). Der Container wird
+danach gelöscht, auch bei Abbruch. **In eine bestehende Datenbank schreibt das Skript
+nie** — ein Prüfwerkzeug, das Produktion überschreiben könnte, ist ein Risiko und keine
+Prüfung. Das Urteil landet als Zeugnis unter `qa/sicherungen/`.
+
+Sieben Prüfungen, und sie sind so gewählt, dass die *stillen* Fehlerfälle auffallen:
+
+| Prüfung | Der Fehlerfall, der sonst durchgeht |
+|---|---|
+| Archiv unbeschädigt (`gzip -t`) | Eine abgebrochene Übertragung sieht wie eine Sicherung aus |
+| Mindestens ein `INSERT` | **Ein Struktur-Dump spielt fehlerfrei ein und hinterlässt eine leere Datenbank.** Beim Bauen nachgestellt: Ohne diese Prüfung wäre das Urteil grün |
+| Alle 19 erwarteten Tabellen | Die Liste steht im Skript, nicht im Prüfling — eine Prüfung, die ihre Erwartung aus dem Prüfling ableitet, prüft gegen sich selbst |
+| Mindestens 10 Fremdschlüssel | Ein Dump ohne Beziehungen spielt Zeilen ein und ist keine wiederherstellbare Datenbank: Die Anwendung verlässt sich auf `ON DELETE CASCADE` (Konto löschen, Bilder, Öffnungszeiten) |
+| Schemastand gegen die letzte Migration | Eine einspielbare Sicherung eines **älteren** Schemas ist brauchbar, braucht danach aber `doctrine:migrations:migrate`. Wer das nicht weiß, sucht den Fehler in der Anwendung |
+| `consent_at` ist NOT NULL | ⚠ Geprüft wird die **Spaltendefinition**, nicht der Inhalt: `consent_at` ist im Schema `NOT NULL`, eine Zählung von NULL-Werten könnte also nie anschlagen und wäre ein Prüfschritt, der strukturell immer grün ist. Aussagekräftig ist, ob die Sicherung die Bedingung mitgebracht hat |
+| Zeilenzahlen je Tabelle, mit `--quelle` gegen das Original | `COUNT(*)`, nicht `information_schema.TABLE_ROWS` — letzteres ist bei InnoDB eine Schätzung und als Abgleich wertlos. Die Ausgabe nennt, **wie viele** Tabellen verglichen wurden; „alle stimmen überein" klingt auch bei einer einzigen richtig |
+
+**Am 2026-09-12 damit gemessen** (gegen eine aus den Migrationen erzeugte Datenbank, da
+Produktion nicht von außen erreichbar ist):
+
+- Alle Migrationen laufen auf **MariaDB 10.5** durch — das war bisher eine Annahme, die
+  `CLAUDE.md` an mehreren Stellen voraussetzt, ohne sie je geprüft zu haben.
+- Eine gezogene Sicherung (44 kB, gepackt 7,7 kB) spielt fehlerfrei ein: 19 von 19
+  Tabellen, 14 Fremdschlüssel, Schemastand `Version20260904120000` = Stand des Codes.
+- Der Abgleich gegen die Quelle findet nachgestellte Abweichungen: drei nachträglich
+  eingefügte Zeilen wurden als `app_waitlist_entry: Quelle 2, Sicherung 0 (unersetzlich!)`
+  und `cuisine: Quelle 21, Sicherung 20` gemeldet, Rückgabewert 1.
+
+⚠ **Was das Skript NICHT beantwortet: ob überhaupt gesichert wird.** Es prüft eine Datei,
+die ihm jemand gibt — es kann nicht wissen, ob sie von gestern ist oder aus dem Frühjahr.
+Genau das bleibt der offene Teil von BE-03, und die Frist dafür steht unverändert.
 
 ⚠ Seit Feature 08 liegen dort E-Mail-Adressen Dritter mit Einwilligungszeitpunkt — die
 lassen sich nicht rekonstruieren. Bei den Restaurantdaten wäre ein Verlust ärgerlich,
@@ -536,5 +712,6 @@ hier ist er endgültig.
 | | |
 |---|---|
 | **Zu klären** | Zwei Ebenen, und sie werden leicht verwechselt: **Hostinger** kann den VPS als Ganzes sichern (Snapshot), **Coolify** kann die Datenbank sichern. Sichert eines von beidem? In welchem Takt, wie lange aufbewahrt, und liegt die Sicherung auf demselben Rechner wie die Datenbank? |
-| **Zu prüfen** | Eine Sicherung einmal einspielen — ein Rückweg, den niemand gegangen ist, ist eine Annahme |
+| **Zu prüfen** | Eine Sicherung einmal einspielen — ein Rückweg, den niemand gegangen ist, ist eine Annahme. Der Weg dafür steht jetzt: `make sicherung-pruefen DATEI=…` |
+| **Woher die Datei** | Entweder aus Coolify (Datenbank-Ressource → „Backups" → herunterladen), oder von Hand auf dem VPS: `docker exec <db-container> mariadb-dump -u… -p… --single-transaction --quick --databases endlech \| gzip > endlech-$(date +%F).sql.gz` und herunterkopieren. ⚠ **Nicht** über eine von außen erreichbare Adresse — die Datenbank ist bewusst nicht öffentlich, und das soll sie bleiben |
 | **Frist** | 2026-09-30 |

@@ -12,8 +12,10 @@ use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
- * Wiederkehrende Hausarbeit ohne Nachholen: der Brevo-Kontaktabgleich alle fünf
- * Minuten und die tägliche Aufräumung der App-Warteliste.
+ * Wiederkehrende Hausarbeit ohne Nachholen — vier Aufgaben: der Brevo-Kontaktabgleich
+ * alle fünf Minuten, die tägliche Aufräumung der App-Warteliste, die tägliche
+ * Überwachung der Warteschlange und der Puls an den externen Wächter alle fünf
+ * Minuten (BE-01).
  *
  * ⚠ **Der Name des Zeitplans ist enger als sein Inhalt.** Die Aufräumung
  * (Feature 08) hat mit Marketing nichts zu tun und sitzt trotzdem hier: Beide
@@ -120,6 +122,33 @@ final class MarketingScheduleProvider implements ScheduleProviderInterface
                 RecurringMessage::cron(
                     '20 7 * * *',
                     new RunCommandMessage('app:messenger:watch --no-interaction'),
+                    new \DateTimeZone('Europe/Luxembourg'),
+                ),
+            )
+            ->add(
+                // Puls an den Wächter außerhalb dieses Servers (BE-01, 2026-09-12).
+                //
+                // ⚠ **Das ist die Antwort auf den Vorbehalt genau darüber.** Der
+                // Eintrag von 07:20 kann einen stehenden Consumer nicht melden, weil
+                // er in ihm läuft. Dieser hier dreht die Richtung: Er ruft nach
+                // draußen, und **das Ausbleiben** des Rufs ist die Meldung. Steht der
+                // Consumer, bleibt der Puls aus, und Uptime Kuma schlägt an — der
+                // einzige Weg, auf dem der lautlose Ausfall auffällt, ohne dass sich
+                // jemand über eine fehlende Bestätigungsmail beschwert.
+                //
+                // Fünf Minuten, damit der Wächter mit einem Takt von fünf Minuten
+                // plus Wiederholungen arbeiten kann, ohne bei einem einzelnen
+                // verpassten Puls zu wecken.
+                //
+                // ⚠ **Ein vierter Eintrag, kein zweiter Zeitplan** — siehe den
+                // Klassenkommentar: Ein eigener Zeitplan kostete einen dritten
+                // Transport im Consumer-Befehl an drei Orten, einer davon von Hand
+                // in Coolify. `processOnlyLastMissedRun(true)` passt ohnehin: Ein
+                // nachgeholter Puls von vor vierzig Minuten sagt nichts, der eine
+                // aktuelle sagt alles.
+                RecurringMessage::cron(
+                    '*/5 * * * *',
+                    new RunCommandMessage('app:worker:pulse --no-interaction'),
                     new \DateTimeZone('Europe/Luxembourg'),
                 ),
             );

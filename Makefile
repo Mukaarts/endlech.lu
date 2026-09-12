@@ -1,4 +1,4 @@
-.PHONY: help init start stop restart db migration fixtures db-reset cc assets fix lint test test-db-setup
+.PHONY: help init start stop restart db migration fixtures db-reset cc assets fix lint test test-db-setup press-kit sicherung-pruefen
 
 # Standard-Hilfe: Zeigt alle Befehle an, wenn du nur "make" tippst
 help: ## Zeigt diese Hilfe an
@@ -67,6 +67,12 @@ cc: ## Cache leeren (Wichtig nach Config-Änderungen)
 
 press-kit: ## Packt das Presse-Paket neu (public/presse/*.zip – gehört in den Commit)
 	php bin/console app:press:package
+
+sicherung-pruefen: ## BE-03: Spielt eine Sicherung in einen Wegwerf-Container ein und prüft sie (DATEI=... nötig)
+ifndef DATEI
+	$(error DATEI fehlt. Aufruf: make sicherung-pruefen DATEI=~/Downloads/endlech.sql.gz)
+endif
+	bin/sicherung-pruefen.sh --datei "$(DATEI)"
 
 assets: ## Baut die Assets für Production (Minifiziert)
 	npm run build
