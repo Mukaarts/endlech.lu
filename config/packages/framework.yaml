@@ -63,6 +63,22 @@ framework:
             policy: 'sliding_window'
             limit: 5
             interval: '15 minutes'
+        # Kontolöschung (BF-136): Dieselbe Geheimnisprüfung wie beim Passwortwechsel
+        # — und dieselbe Begründung, am KONTO zu zählen statt an der IP: Der Angriff
+        # ist das Raten des Passworts aus einer gekaperten Sitzung heraus, und dort
+        # wechselt die IP mühelos, das Konto nicht.
+        #
+        # ⚠ Strenger als `password_change` (3 statt 5), weil die Folge unumkehrbar
+        # ist: Ein falsch geratener Passwortwechsel lässt sich zurücknehmen, eine
+        # Löschung nicht — `spec.md` von Feature 01 hält im Decision Log
+        # ausdrücklich fest, dass es keine Karenzzeit gibt. Wer sein eigenes Passwort
+        # dreimal falsch eingibt, hat es vergessen und geht über `/passwort-vergessen`.
+        #
+        # ⚠ Gemessen vor der Reparatur: **20 Fehlversuche in Folge, keine Bremse.**
+        account_delete:
+            policy: 'sliding_window'
+            limit: 3
+            interval: '15 minutes'
         # Passkey-Challenge (BF-18): Die Endpunkte des Bundles liegen sprachfrei und
         # fielen dadurch weder unter die Web- noch unter die API-Regeln. Jede Anfrage
         # legt eine Challenge in der Sitzung ab und prüft ein Geheimnis — beides
@@ -210,6 +226,10 @@ when@test:
                 limit: 10000
                 interval: '1 hour'
             password_change:
+                policy: 'sliding_window'
+                limit: 10000
+                interval: '15 minutes'
+            account_delete:
                 policy: 'sliding_window'
                 limit: 10000
                 interval: '15 minutes'

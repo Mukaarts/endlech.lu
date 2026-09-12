@@ -783,6 +783,7 @@ flash:
     profile_email_taken: "Dës E-Mail-Adress gëtt mëttlerweil scho benotzt."
     profile_email_changed: "Deng E-Mail-Adress gouf geännert. Mell dech w.e.g. mat der neier Adress un."
     profile_password_rate_limited: "Ze vill Versich. Waart w.e.g. 15 Minutten, ier du d’Passwuert nach eng Kéier änners."
+    profile_delete_rate_limited: "Ze vill Läschversich. Waart w.e.g. 15 Minutten, ier s du et nach eng Kéier probéiers."
     partner_waitlist_submitted: "Bal fäerdeg! Bestätegt w.e.g. de Link an Ärer E-Mail."
     partner_email_failed: "Är Umeldung ass gespäichert, mee d'Bestätegungsmail konnt net verschéckt ginn. Mellt Iech w.e.g. bei eis."
     partner_rate_limited: "Dir hutt a kuerzer Zäit méi Umeldunge geschéckt. Probéiert w.e.g. an enger Stonn nach eng Kéier."

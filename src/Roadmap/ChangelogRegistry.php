@@ -29,6 +29,11 @@ final readonly class ChangelogRegistry
     public function notes(): array
     {
         return [
+            // Betrifft zwei Wege, die ein Nutzer selbst geht: das Löschen des
+            // eigenen Kontos und das Zurücksetzen des Passworts. Beide sind
+            // jetzt gegen Missbrauch gedeckelt — das gehört gesagt, weil es
+            // erklärt, warum dort auf einmal eine Wartezeit auftauchen kann.
+            new ReleaseNote('2026.09.12', new \DateTimeImmutable('2026-09-12'), ReleaseVisibility::SHOWN),
             // Eine Fehlerbehebung, die ein Gast sehr wohl merkt: Adressen mit
             // Akzent oder Umlaut in der Domain wurden bisher abgewiesen und
             // gehen jetzt durch. Deshalb SHOWN — der 500er allein wäre still

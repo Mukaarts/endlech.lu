@@ -38,6 +38,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class PasswordResetController extends AbstractController
 {
+    /** Mindestlaufzeit beider Zweige der Anfrage, siehe gleicheLaufzeitAn() (BF-137). */
+    private const MINDESTDAUER_SEKUNDEN = 0.12;
+
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly UserRepository $users,
@@ -74,6 +77,8 @@ final class PasswordResetController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $limiter->consume();
 
+            $begonnen = microtime(true);
+
             $email = strtolower(trim((string) $form->get('email')->getData()));
             $user = $this->users->findOneBy(['email' => $email]);
 
@@ -84,7 +89,10 @@ final class PasswordResetController extends AbstractController
             }
 
             // ⚠ Dieselbe Antwort in beiden Zweigen. Der Unterschied darf sich weder
-            // im Text noch im Statuscode zeigen.
+            // im Text noch im Statuscode zeigen — und seit BF-137 auch nicht in der
+            // LAUFZEIT.
+            $this->gleicheLaufzeitAn($begonnen);
+
             $this->addFlash('success', $this->translator->trans('flash.password_reset_sent'));
 
             return $this->redirectToRoute('app_login');
@@ -158,6 +166,38 @@ final class PasswordResetController extends AbstractController
             $mailer->send($mail);
         } catch (TransportExceptionInterface) {
             // Der Token steht; ein Zustellproblem darf die Antwort nicht verraten.
+        }
+    }
+
+    /**
+     * Hält beide Zweige der Anfrage auf derselben Mindestlaufzeit (BF-137).
+     *
+     * ⚠ **Die gleiche Antwort genügt nicht.** Der Text und der Statuscode waren
+     * schon immer identisch, die Dauer nicht: Bei bekannter Adresse entstehen Token,
+     * `flush()` und ein Mail-Dispatch, bei unbekannter passiert nichts. Gemessen
+     * wurden **31–36 ms gegen 23–24 ms** — zwei Wertebereiche, die sich **nicht
+     * überlappen**. Eine einzige Messung genügte damit für die Frage „hat diese
+     * Person hier ein Konto?".
+     *
+     * ⚠ **Warum eine Mindestdauer und nicht dieselbe Arbeit im leeren Zweig.** Der
+     * naheliegende Weg wäre, auch ohne Konto einen Token zu erzeugen und zu
+     * verwerfen — so löst die Registrierung dasselbe Problem (BF-09, Hash in beiden
+     * Zweigen). Hier trüge er nicht: Die Kosten stecken in `flush()` und im
+     * Mail-Dispatch, und beide lassen sich nicht folgenlos nachbauen. Eine
+     * Untergrenze deckt dagegen auch den Fall ab, dass die Datenbank unter Last
+     * langsamer antwortet.
+     *
+     * ⚠ **Die 120 ms sind mit Abstand gewählt**, nicht knapp über dem Messwert: Ein
+     * Grenzwert, den der langsamere Zweig gelegentlich reißt, stellt das Leck unter
+     * Last wieder her. Der Preis ist eine Anfrage, die mindestens 120 ms dauert —
+     * bei fünf Anfragen je Stunde und IP fällt das niemandem auf.
+     */
+    private function gleicheLaufzeitAn(float $begonnen): void
+    {
+        $verbleibend = self::MINDESTDAUER_SEKUNDEN - (microtime(true) - $begonnen);
+
+        if ($verbleibend > 0) {
+            usleep((int) ($verbleibend * 1_000_000));
         }
     }
 }

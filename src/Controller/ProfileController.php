@@ -52,6 +52,13 @@ final class ProfileController extends AbstractController
         // wechselt die IP mühelos, das Konto nicht.
         #[Autowire(service: 'limiter.email_change')]
         private readonly RateLimiterFactoryInterface $emailChangeLimiter,
+        // ⚠ BF-136: Am KONTO gezählt, nicht an der IP — dieselbe Begründung wie
+        // beim Passwortwechsel: Der Angriff ist das Raten des Passworts aus einer
+        // gekaperten Sitzung heraus, und dort wechselt die IP mühelos, das Konto
+        // nicht. Gemessen vor der Reparatur: 20 Fehlversuche in Folge, keine Bremse.
+        #[Autowire(service: 'limiter.account_delete')]
+        private readonly RateLimiterFactoryInterface $accountDeleteLimiter,
+
         // Feature 01: Der Export liest den halben Bestand eines Kontos zusammen.
         #[Autowire(service: 'limiter.account_export')]
         private readonly RateLimiterFactoryInterface $exportLimiter,
@@ -219,6 +226,22 @@ final class ProfileController extends AbstractController
 
         if (!$this->isCsrfTokenValid('delete-account', $request->request->getString('_token'))) {
             $this->addFlash('error', $this->translator->trans('flash.invalid_csrf'));
+
+            return $this->redirectToRoute('app_profile');
+        }
+
+        // ⚠ BF-136: Verbrauch VOR der Prüfung — wie beim Passwortwechsel und anders
+        // als bei Registrierung und Wartelisten (BF-11). Dort ist ein Fehlversuch ein
+        // Tippfehler; hier IST der Fehlversuch der Angriff, und genau ihn soll der
+        // Deckel zählen. Nicht „vereinheitlichen".
+        //
+        // ⚠ Der Deckel sitzt hinter der CSRF-Prüfung: Ein Angreifer ohne gültiges
+        // Token soll das Kontingent des Opfers nicht von außen leerlaufen lassen
+        // können — das wäre ein Denial-of-Service gegen die eigene Löschfunktion.
+        $limit = $this->accountDeleteLimiter->create($user->getUserIdentifier())->consume(1);
+
+        if (!$limit->isAccepted()) {
+            $this->addFlash('error', $this->translator->trans('flash.profile_delete_rate_limited'));
 
             return $this->redirectToRoute('app_profile');
         }

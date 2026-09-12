@@ -783,6 +783,7 @@ flash:
     profile_email_taken: "This email address is already in use."
     profile_email_changed: "Your email address has been changed. Please sign in with the new address."
     profile_password_rate_limited: "Too many attempts. Please wait 15 minutes before changing your password again."
+    profile_delete_rate_limited: "Too many deletion attempts. Please wait 15 minutes before trying again."
     partner_waitlist_submitted: "Almost done! Please confirm the link in your email."
     partner_email_failed: "Your registration is saved, but the confirmation email could not be sent. Please get in touch with us."
     partner_rate_limited: "You have submitted several registrations in a short time. Please try again in an hour."
