@@ -11,6 +11,42 @@ BF-119 (*hoch*), B10, B12 und B24 wegen eines `qa-report.md`, der noch das
 
 
 
+**2026-09-12 · Die letzten zwei Bestandsfeatures geprüft: B25 und B26.** Damit sind
+**alle 26** durch die QA gegangen — die Erfassung vom 2026-08-23 ist abgeschlossen.
+
+| | B25 · PWA und mobile Navigation | B26 · Cookie-Banner |
+|---|---|---|
+| Kriterien | 16 von 20 bestanden, 3 durchgefallen, **1 nicht prüfbar** | **11 von 11 bestanden** |
+| Randfälle | 4 von 4 | 4 von 4 (EC-04 teilweise) |
+| Befunde | 6 — **BF-140 am selben Tag geklärt, auf *niedrig* berichtigt und behoben**, BF-141 bis BF-145 (*niedrig*) | 1 — BF-146 (*niedrig*), an der Spec |
+| Neue Tests | `PwaTest` (8) plus `qa/B25/sw-verhalten.mjs` | `CookieBannerTest` (4) |
+| Deployment | nötig für BF-140 | **nicht nötig** — der Code ist unverändert |
+
+⚠ **Was bei B25 nicht prüfbar war und warum das im Bericht steht:** Die Registrierung des
+Service Workers schliesst im headless Chrome dieser Umgebung nicht ab — der Promise von
+`register()` bleibt ohne `then` und ohne `catch`. „Im Code geprüft" ist nach der QA-Regel
+kein Nachweis, also steht AK-03 als **nicht prüfbar** da. Das Verhalten der Handler ist
+dafür ausgeführt belegt: `qa/B25/sw-verhalten.mjs` lädt `public/sw.js` und ruft sie mit
+nachgebauten Ereignissen auf, elf Messungen samt drei Angriffen.
+
+⚠ **Drei eigene Messfehler sind in den Berichten dokumentiert**, weil sie sich wiederholen
+werden: ein Kontrastwert von 262 (gegen eine transparente Fläche gerechnet), Werte von
+1,00 (Tailwind v4 liefert `oklch()`, das ein eigener Parser nicht versteht — tragfähig
+wurde es erst über ein `<canvas>`), und ein Cache-Vergiftungstest, der „bei 404 gecacht"
+meldete, weil der nachgebaute `fetch` immer `ok: true` lieferte.
+
+⚠ **Ein Fund des `code-reviewer` ist widerlegt und steht mit Begründung im B25-Bericht:**
+Twigs Auto-Escaping zerstöre `aria-current="page"`. Dreifach geprüft — gerendertes HTML,
+Browserabfrage, eigener Test — und der Grund gefunden: Twig lässt konstante Ausdrücke
+unangetastet.
+
+⚠ **Vierte Ausprägung derselben Drift.** BF-142 (B25) und BF-146 (B26) sind wieder
+überholte Spezifikationen, diesmal bei Features, die **nie** durch die QA gegangen waren.
+B25 nennt fehlende Wege zum Abmelden und zur Sprachwahl „den zentralen Befund" — beide
+sind vorhanden, gemessen 387 × 44 px und 55 × 28 px. B26 widerspricht sich selbst: FB-05
+behauptet eine fehlende Fokusführung, die OF-02 drei Zeilen weiter als umgesetzt
+vermerkt. Das Muster steht in `features/befunde.md`.
+
 **2026-09-12 · `v2026.09.12.1` ausgerollt und auf Produktion nachgeprüft.** Die
 Sammelreparatur mit **23 Befunden** ist live, und mit ihr die drei aus `v2026.09.12`,
 das getaggt aber nie ausgerollt worden war — die Fußzeile stand acht Tage auf
@@ -1771,8 +1807,8 @@ AK-49 verlangt ausdrücklich den *Aufruf* des Aufräumlaufs, nicht bloß seine E
 | B22 | Wartelisten-Verwaltung (Admin) | P1 | **deployed** | B19, B14, B15 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B23 | REST-API v1 (iOS-Backend) | P0 | **deployed** | B01, B05 | 2026-09-11 · war live, auditiert; Reparaturen in v2026.08.29 |
 | B24 | Mehrsprachigkeit | P1 | **approved** | — | 2026-09-11 · QA 16/16, BF-68 bis BF-72 behoben und in v2026.08.29 live — ⚠ `qa-report.md` trägt noch „Production-ready: nein" aus dem 1. Durchlauf |
-| B25 | PWA & mobile Navigation | P1 | rekonstruiert | — | 2026-08-23 |
-| B26 | Cookie-Banner | P2 | rekonstruiert | — | 2026-08-23 |
+| B25 | PWA & mobile Navigation | P1 | **approved** | — | 2026-09-12 · QA¹: 16 von 20 Kriterien bestanden, eines nicht prüfbar (Service-Worker-Registrierung im headless Chrome), sechs Befunde — **BF-140** (*mittel*, Profilbilder im Worker-Cache), BF-141 bis BF-145 (*niedrig*). Kein kritischer oder hoher Befund; ein Agentenfund widerlegt |
+| B26 | Cookie-Banner | P2 | **approved** | — | 2026-09-12 · QA¹: **alle 11 Kriterien bestanden**, vier Randfälle belegt, Kontraste 5,54–17,75 : 1. Ein Befund — **BF-146** (*niedrig*), und der betrifft die Spezifikation, nicht den Code: **kein Deployment nötig** |
 
 ## Was jedes Feature umfasst
 

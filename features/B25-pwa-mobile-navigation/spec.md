@@ -80,13 +80,27 @@ Wischgesten, Push-Benachrichtigungen, vollständiger Sieben-Seiten-Mobil-Audit.
   Build-Schritt, der den Wert aus `app.version` oder einem Hash ableitet. Der Wert steht
   seit der Einführung auf `v1`.)*
 
-- **AK-17** ⚠ · Angenommen, ein Nutzer ist auf einem Telefon angemeldet, wenn er sich
-  abmelden oder die Sprache wechseln will, dann findet er keinen Weg dafür.
-  *(Die Bottom-Navigation ersetzt die auf kleinen Bildschirmen ausgeblendete
-  Kopfnavigation — aber nur teilweise: Abmelden, Sprachwahl, „Restaurant vorschlagen"
-  und das Menü „Mitmachen" haben dort kein Gegenstück. Vollständig beschrieben in
-  `docs/app-shell.md#bekannte-lücken`, Punkte 1–3. Für ein Feature, dessen erklärter
-  Zweck die Bedienbarkeit auf dem Telefon ist, ist das der zentrale Befund.)*
+- **AK-17** ~~⚠ · Angenommen, ein Nutzer ist auf einem Telefon angemeldet, wenn er sich
+  abmelden oder die Sprache wechseln will, dann findet er keinen Weg dafür.~~
+  — **überholt, berichtigt am 2026-09-12 nach Messung (BF-142).**
+
+  **Heute gilt:** Angenommen, ein Nutzer ist auf einem Telefon angemeldet, wenn er sich
+  abmelden oder die Sprache wechseln will, dann findet er beides — das Abmelden auf der
+  Profilseite (gemessen **387 × 44 px**; das zweite Logout-Formular der Seite trägt kein
+  `hidden md:`, und die Profilseite steht in der Leiste), die Sprachwahl im Kopfbereich
+  (gemessen 55 × 44 px, seit BF-72 auch auf Mobil, seit BF-144 in Zielgrösse).
+  „Restaurant vorschlagen", das Partnerprogramm und die Organisationsseiten stehen in
+  der Fussleiste, „Über uns" in der Leiste **und** seit dem 2026-09-12 zusätzlich in der
+  Fussleiste.
+
+  ⚠ **Was tatsächlich kein Gegenstück hat:** das Menü „Mitmachen" als Ganzes — die
+  Unterseiten der Organisationen (`gemeinden`, `unternehmen`, `vereine`) sind nur über
+  die Fussleiste und die Übersichtsseite erreichbar, nicht aus der Leiste.
+
+  ⚠ **Warum das hier steht und nicht stillschweigend geändert wurde:** Die alte Fassung
+  nannte den Punkt „den zentralen Befund" des Features, und OF-01 fragt nach einem
+  Menüfeld als Ersatz. Wer beides heute liest, baut eine Lösung für ein Problem, das zum
+  grössten Teil nicht mehr besteht.
 
 - **AK-18** ⚠ · Angenommen, ein Nutzer ist offline und ruft eine Seite auf, die er
   vorher besucht hat, wenn der Worker eingreift, dann bekommt er trotzdem
@@ -118,8 +132,11 @@ Wischgesten, Push-Benachrichtigungen, vollständiger Sieben-Seiten-Mobil-Audit.
 
 ## Fehlbestand
 
-- **FB-01 · Unvollständiger Navigationsersatz auf Mobil.** Siehe AK-17 — der
-  gewichtigste Befund.
+- **FB-01 · Unvollständiger Navigationsersatz auf Mobil.** Siehe AK-17.
+  ⚠ **Am 2026-09-12 auf den gemessenen Stand gebracht (BF-142):** Von den vier ursprünglich
+  genannten Lücken sind drei geschlossen — Abmelden (Profilseite), Sprachwahl (Kopf),
+  „Restaurant vorschlagen" (Fussleiste). Offen ist das Menü „Mitmachen" samt den
+  Organisations-Unterseiten. ~~Der gewichtigste Befund.~~
 - **FB-02 · `CACHE_VERSION` wird von Hand gepflegt.** Siehe AK-16.
 - **FB-03 · Kein Offline-Zugriff auf besuchte Seiten.** Siehe AK-18.
 - **FB-04 · Kein Hinweis auf eine neue Version.** `skipWaiting()` plus
@@ -135,6 +152,10 @@ Wischgesten, Push-Benachrichtigungen, vollständiger Sieben-Seiten-Mobil-Audit.
 - **OF-01** · Wie soll der Navigationsersatz auf Mobil aussehen (AK-17)? Vier Felder
   sind belegt; ein Menüfeld statt „Über uns" könnte Abmelden, Sprache, Vorschlagen und
   Mitmachen aufnehmen. — Betreiber
+  ⚠ **Die Frage ist kleiner geworden (2026-09-12, BF-142):** Abmelden, Sprache und
+  Vorschlagen sind erreichbar, gemessen. Bliebe ein Menüfeld, träge es allein
+  „Mitmachen" — und kostete dafür „Über uns", das in der Leiste eines der vier Felder
+  hält. Ob sich das lohnt, ist damit eine andere Frage als die ursprüngliche.
 - **OF-02** · Soll `CACHE_VERSION` aus `app.version` abgeleitet werden (FB-02)? Der
   Parameter wird bei jedem Release ohnehin gepflegt. — Betreiber
 

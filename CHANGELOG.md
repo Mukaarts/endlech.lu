@@ -2,10 +2,46 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.12.1-blue)
+![Version](https://img.shields.io/badge/version-2026.09.12.2-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
+
+## [2026.09.12.2] – Nachlese der letzten zwei Prüfläufe (BF-140 bis BF-146)
+
+Alle sieben Befunde aus der QA von **B25** (PWA und mobile Navigation) und **B26**
+(Cookie-Banner) sind behoben. Damit hat kein Feature dieses Projekts einen offenen
+Befund mehr, und alle 26 Bestandsfeatures sind geprüft.
+
+⚠ **`CACHE_VERSION` steht auf `endlech-v3`.** Wiederkehrende Besucher holen die
+App-Shell und die gebauten Dateien einmal neu — das ist Teil der Reparatur von BF-140
+und nicht zu vermeiden: Die neue Positivliste verhindert **neue** Cache-Einträge, die
+bereits gespeicherten verschwinden erst, wenn `activate` den alten Cache löscht.
+
+### Behoben
+
+- **BF-141** · Der Service Worker lässt jetzt auch den locale-präfixierten API-Weg
+  unangetastet (`/de/api/cuisines`). Die Ausnahme prüfte nur `/api/`, und der ältere
+  Küchen-Endpunkt liegt unter `/{_locale}` — er landete damit im cache-first-Zweig.
+- **BF-143** · Das Polster für die mobile Leiste entsteht nur noch, wo die Leiste auch
+  liegt. Im Verwaltungsbereich blieben sonst 64 px leerer Streifen unter dem Inhalt.
+- **BF-144** · Der Sprachumschalter ist auf dem Telefon **44 px** hoch statt 28 — er war
+  das kleinste Ziel im mobilen Kopfbereich, und seit BF-72 ist er ausdrücklich dafür
+  gedacht.
+- **BF-145** · Die Offline-Seite trägt `lang="lb"`. Ihr Text ist luxemburgisch; mit
+  `lang="de"` wandte ein Screenreader deutsche Ausspracheregeln darauf an (WCAG 3.1.1).
+- **BF-142, BF-146** · Zwei Spezifikationen auf den gemessenen Stand gebracht. B25 nannte
+  fehlende Wege zum Abmelden und zur Sprachwahl „den zentralen Befund" — beide sind
+  vorhanden; B26 behauptete eine fehlende Fokusführung, die drei Absätze weiter als
+  umgesetzt vermerkt war.
+- **BF-140** · Der Service Worker cacht Bilder jetzt über eine **Positivliste**
+  (`/icons/`, `/images/`, `/uploads/restaurants/`, `/uploads/team/`) statt über
+  `destination === 'image'`. Vorher landete auch das **eigene Profilbild** im Cache und
+  blieb dort nach dem Abmelden liegen — auf einem geteilten Gerät ein personenbezogenes
+  Datum ohne Zweck. `CACHE_VERSION` steht deshalb auf `endlech-v3`: Die Liste verhindert
+  neue Einträge, die bereits gecachten verschwinden erst mit dem Löschen des alten
+  Caches. ⚠ Die Positivliste nimmt auch einen **künftigen** Upload-Pfad nicht
+  automatisch mit — eine Ausnahme für `/uploads/avatars/` hätte das getan.
 
 ## [2026.09.12.1] – Sammelreparatur: 23 Befunde, eine Markenschrift
 
