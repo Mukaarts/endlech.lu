@@ -743,16 +743,22 @@ durch T01–T30 bzw. durch den Verifikationsblock nach jeder Ebene. Eine Sammela
 
 ⚠ **Drei Aufgaben liegen außerhalb des Quelltexts:** T33 (`docs/datenschutz.md`),
 T34 (`docs/prd.md`) und **T36 — die Abschaltung bei userjot**, der einzige Schritt, den
-kein Prüflauf sehen kann.
+kein Prüflauf sehen kann. ⚠ **T36 ist am 2026-09-12 erledigt und von außen nachgemessen**
+— siehe unten; „kein Prüflauf kann es sehen" heißt nicht „es lässt sich nicht messen".
 
 **2026-08-30 · Feature `06` gebaut.** 35 von 36 Aufgaben, **791 Tests grün** (3340
 Zusicherungen; Ausgangslage 742). 49 neue Tests, keine neue Abhängigkeit, keine Änderung
 unter `assets/`.
 
-⚠ **Eine Aufgabe ist NICHT erledigt: T36 / AK-81** — die Abschaltung von
-`endlech.userjot.com` geschieht beim Anbieter, außerhalb des Repositorys. Der
-Fußzeilenverweis zeigt bereits aufs eigene Board; solange userjot aber Einreichungen
-annimmt, laufen Beiträge dorthin, die niemand liest. **Vor dem Deploy zu erledigen.**
+⚠ ~~**Eine Aufgabe ist NICHT erledigt: T36 / AK-81**~~ — **am 2026-09-12 erledigt.**
+Die Abschaltung von `endlech.userjot.com` geschah beim Anbieter, außerhalb des
+Repositorys; nachgeprüft wurde sie von außen: **HTTP 500** auf der Startseite und auf
+allen geprüften Einreichpfaden, dreimal reproduziert. Der 500er ist der Nachweis und
+nicht bloß ein Ausfall — eine frei erfundene Subdomain antwortet **identisch**, während
+`userjot.com` selbst mit 200 antwortet. Damit ist **AK-81** belegt und **BF-103**
+geschlossen. ⚠ Die Reihenfolge wurde eingehalten (Betreiberentscheidung 2026-08-30):
+erst der Deploy des eigenen Boards (`v2026.08.31`, live mit HTTP 200), dann die
+Abschaltung — es gab keinen Augenblick ohne Rückmeldeweg.
 
 **Dreimal dieselbe Planabweichung — und sie gehört in den nächsten Aufgabenplan:**
 Konfiguration und Katalogeinträge gehören in dieselbe Ebene wie das Artefakt, das sie
