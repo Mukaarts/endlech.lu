@@ -2,16 +2,32 @@
 
 Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
-![Version](https://img.shields.io/badge/version-2026.09.12.2-blue)
+![Version](https://img.shields.io/badge/version-2026.09.12.3-blue)
 ![Status](https://img.shields.io/badge/status-beta-green)
 
 ## [Unreleased]
 
-### Betrieb und Nachsorge (BE-01, BE-02, BE-03)
+## [2026.09.12.3] – Betrieb und Nachsorge: Worker-Puls und Sicherungsprüfung (BE-01, BE-02, BE-03)
 
 Drei Lücken aus der Betriebsübersicht in `docs/datenschutz.md` bearbeitet. **Keine
 Änderung am Produkt außer einem Roadmap-Eintrag** — der Rest sind Werkzeuge und
 Unterlagen.
+
+⚠ **Zum Ausrollen, in dieser Reihenfolge:**
+
+1. In Kuma den Push-Monitor anlegen (360 s, Retries 2) und **pausieren**; Adresse bis
+   zum Token kopieren.
+2. `APP_UPTIME_PUSH_URL` auf der **Worker**-Ressource in Coolify eintragen — nicht auf der
+   Anwendung. Steht sie am falschen Ort, läuft der Puls nie.
+3. **Beide** Ressourcen ausrollen. Der Puls läuft im Worker; ein Rollout nur der
+   Anwendung lässt ihn auf dem alten Stand.
+4. Im Worker-Container `php bin/console app:worker:pulse` — erwartet: „Puls angekommen
+   (HTTP 200)".
+5. Monitor in Kuma fortsetzen; einmal den Worker kurz anhalten und prüfen, ob der Alarm
+   ankommt.
+
+⚠ Keine Migration. Das Schema ist unverändert. Ohne `APP_UPTIME_PUSH_URL` bleibt der
+Puls lautlos aus — das Ausrollen ist also auch dann gefahrlos, wenn Schritt 2 noch fehlt.
 
 - **BE-01 · Uptime-Prüfung von außen** läuft über **Uptime Kuma auf einem zweiten VPS**
   — nicht auf demselben Rechner, und das ist der Punkt: Ein Wächter neben dem Bewachten
