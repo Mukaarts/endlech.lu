@@ -82,7 +82,16 @@ self.addEventListener('fetch', (event) => {
     const url = new URL(request.url);
 
     // Nur GET-Requests behandeln; API-Daten immer frisch lassen.
-    if (request.method !== 'GET' || url.pathname.startsWith('/api/')) {
+    //
+    // ⚠ BF-141: Das Muster erlaubt **ein** Sprachsegment vor `/api/`. Der Grund ist eine
+    // Altlast im Routing: `/api/v1` und `/open` sind locale-frei, der ältere
+    // `CuisineApiController` liegt dagegen weiterhin unter `/{_locale}/api/cuisines`
+    // (so auch in `CLAUDE.md` vermerkt). Ein `startsWith('/api/')` traf ihn deshalb
+    // nicht, und die Anfrage landete im cache-first-Zweig weiter unten. Gemessen:
+    // `locale_api_eingegriffen=JA`. Schaden entstand keiner — gecacht wurde die Antwort
+    // nie, weil dieser Zweig nur Bilder aufnimmt —, aber die Zusage aus AK-09 galt nur
+    // für die Hälfte der API-Wege.
+    if (request.method !== 'GET' || /^\/(?:[a-z]{2}\/)?api\//.test(url.pathname)) {
         return;
     }
 

@@ -219,7 +219,14 @@
 
 {# === HAUPTINHALT (Hier wird index.html.twig reingeladen) === #}
 {# pb-16 md:pb-0: auf Mobil Platz für die fixe Bottom-Nav schaffen #}
-<main id="hauptinhalt" tabindex="-1" class="flex-grow pb-16 md:pb-0 print:pb-0 scroll-mt-24">
+{# ⚠ BF-143: Das Polster hängt an derselben Bedingung wie die Leiste selbst. Vorher
+   trug `<main>` `pb-16` auf **jeder** Route — auch im Verwaltungsbereich, wo die Leiste
+   bewusst nicht erscheint (B25/AK-13). Gemessen auf `/de/admin` bei 500 px:
+   `bottomnav=FEHLT` und trotzdem `main.paddingBottom=64px`, also ein leerer Streifen
+   unter dem Inhalt. Dieselbe Prüfung entscheidet weiter unten über das Einbinden der
+   Leiste und über den Fußzeilenlink des Cookie-Banners. #}
+{% set _ohne_bottom_nav = app.request.attributes.get('_route') starts with 'admin_' %}
+<main id="hauptinhalt" tabindex="-1" class="flex-grow {{ _ohne_bottom_nav ? '' : 'pb-16 md:pb-0' }} print:pb-0 scroll-mt-24">
     {% block body %}{% endblock %}
 </main>
 

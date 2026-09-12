@@ -176,4 +176,51 @@ final class PwaTest extends AbstractWebTestCase
             self::assertTrue(true);
         }
     }
+
+    /**
+     * BF-143 · Das Polster für die Leiste entsteht nur, wo die Leiste auch liegt.
+     *
+     * Vorher trug `<main>` `pb-16` auf jeder Route — auch im Verwaltungsbereich, wo
+     * die Leiste bewusst fehlt (AK-13). Gemessen waren das 64 px leerer Streifen
+     * unter dem Inhalt.
+     */
+    public function testBf143PolsterNurWoDieLeisteLiegt(): void
+    {
+        $client = static::createClient();
+        $this->loginAs($client, 'admin@endlech.lu');
+
+        $crawler = $client->request('GET', self::LOCALE.'/admin');
+        $klassen = (string) $crawler->filter('main')->attr('class');
+
+        self::assertStringNotContainsString('pb-16', $klassen, 'BF-143: Ohne Leiste kein Polster.');
+        self::assertCount(0, $crawler->filter('nav.fixed.bottom-0'), 'Vorbedingung: Hier gibt es keine Leiste.');
+
+        // Gegenprobe: auf einer öffentlichen Seite bleibt beides.
+        $crawler = $client->request('GET', self::LOCALE.'/profile');
+        self::assertStringContainsString('pb-16', (string) $crawler->filter('main')->attr('class'));
+        self::assertCount(1, $crawler->filter('nav.fixed.bottom-0'));
+    }
+
+    /**
+     * BF-145 · Die Offline-Seite ist als luxemburgisch ausgezeichnet.
+     *
+     * Ihr Text ist luxemburgisch („Keng Internetverbindung"), und
+     * `translation.yaml` setzt `default_locale: lb`. Mit `lang="de"` wandte ein
+     * Screenreader deutsche Ausspracheregeln darauf an (WCAG 3.1.1).
+     */
+    public function testBf145OfflineSeiteIstAlsLuxemburgischAusgezeichnet(): void
+    {
+        $inhalt = (string) file_get_contents(\dirname(__DIR__, 2).'/public/offline.html');
+
+        self::assertMatchesRegularExpression(
+            '/<html[^>]*\slang="lb"/',
+            $inhalt,
+            'BF-145: Die Sprachauszeichnung muss zum Inhalt passen.',
+        );
+        self::assertStringContainsString(
+            'Keng Internetverbindung',
+            $inhalt,
+            'Vorbedingung: Wer den Text übersetzt, zieht das lang-Attribut mit.',
+        );
+    }
 }

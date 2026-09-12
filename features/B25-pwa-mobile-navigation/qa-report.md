@@ -297,3 +297,22 @@ Geräte nicht erreicht, um die es geht.
 ⚠ **AK-16 ist damit zum zweiten Mal an einem Tag eingetreten** — `CACHE_VERSION` musste
 erneut von Hand gezogen werden (v1 → v2 für BF-99, v2 → v3 für BF-140). OF-02 (Ableitung
 aus `app.version`) hat damit zwei Belege statt einer Vermutung.
+
+---
+
+## Nachtrag vom 2026-09-12 · BF-141 bis BF-145 behoben
+
+Alle fünf verbliebenen Befunde dieses Berichts sind behoben, jeder mit Gegenprobe:
+
+| Befund | Gemessen nach der Reparatur |
+|---|---|
+| **BF-141** | `/api/v1 → nein`, `/de/api/cuisines → nein`, `/lb/api/cuisines → nein`; Rückbau auf `startsWith('/api/')` färbt den locale-Weg wieder auf `JA`. ⚠ `/open.json` greift der Worker weiterhin ab — richtig, der Endpunkt trägt ausdrücklich `public, max-age=3600` |
+| **BF-142** | AK-17, FB-01 und OF-01 tragen den gemessenen Stand; der alte Wortlaut bleibt durchgestrichen stehen |
+| **BF-143** | `/de/admin` bei 500 px → `main.paddingBottom=0px` (vorher 64), `/de/` weiterhin 64. Festgeschrieben in `PwaTest::testBf143PolsterNurWoDieLeisteLiegt` |
+| **BF-144** | Sprachumschalter **55 × 44 px** (vorher 55 × 28). ⚠ Gegengeprüft, dass die Kopfzeile nicht wieder überläuft: 0 px bei 768 und 1024 px, Französisch und Deutsch |
+| **BF-145** | `<html lang="lb">`, festgeschrieben in `PwaTest::testBf145OfflineSeiteIstAlsLuxemburgischAusgezeichnet` — der Lauf prüft das Attribut **und** den luxemburgischen Text, damit die Übersetzung künftig an das Attribut erinnert |
+
+Der Prüflauf `qa/B25/sw-verhalten.mjs` deckt jetzt 15 Messungen ab; neu sind die vier
+API-Wege (BF-141) und die fünf Bildpfade (BF-140). Tests: **1109 grün**.
+
+**Damit hat dieses Feature keinen offenen Befund mehr.**

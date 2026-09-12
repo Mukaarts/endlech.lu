@@ -72,8 +72,14 @@ Fußzeile lässt sie sich erneut aufrufen.
   Personenbeziehbares.
 - **AK-11** · Angenommen, die Seite wird geladen, wenn nach Fremdressourcen gesucht
   wird, dann gibt es **keine** — kein Analysewerkzeug, keine Schriftarten von außen,
-  keine CDN-Skripte. (Der Feedback-Link in der Fußzeile führt zu `endlech.userjot.com`,
-  lädt aber nichts nach.)
+  keine CDN-Skripte. ~~(Der Feedback-Link in der Fußzeile führt zu
+  `endlech.userjot.com`, lädt aber nichts nach.)~~ **Berichtigt am 2026-09-12 (BF-146):**
+  Der Fußzeilenverweis zeigt seit dem 2026-08-30 auf das eigene Ideen-Board
+  (`/community/ideen`), und `endlech.userjot.com` ist seit dem 2026-09-12 abgeschaltet
+  (BF-103, von aussen nachgemessen).
+  ⚠ **Die Zusage gilt auch nach BF-99 weiter**, obwohl die Seite seither eine eigene
+  Schrift lädt: Inter liegt unter `/build/fonts/` auf dem eigenen Server. Gemessen über
+  `performance.getEntriesByType('resource')`: `fremde_ressourcen=[]`.
 
 ## Edge Cases
 
@@ -96,8 +102,21 @@ Fußzeile lässt sie sich erneut aufrufen.
   Ja/Nein-Wahl unzureichend.
 - **FB-04 · Kein Ablauf der Entscheidung bei Änderung der Datenschutzerklärung.** Eine
   Fassungsnummer im Cookie wäre der übliche Weg.
-- **FB-05 · Keine Fokusführung.** Beim Erscheinen wandert der Fokus nicht ins Banner;
-  ein Tastaturnutzer erreicht es erst nach der gesamten Seite.
+- **FB-05** ~~**· Keine Fokusführung.** Beim Erscheinen wandert der Fokus nicht ins Banner;
+  ein Tastaturnutzer erreicht es erst nach der gesamten Seite.~~ — **überholt, berichtigt
+  am 2026-09-12 nach Messung (BF-146).**
+
+  **Heute gilt, und es ist eine Entscheidung, kein Mangel:** Beim Klick auf
+  „Cookie-Einstellungen" wandert der Fokus **ins Banner** (gemessen: `nach reopen:
+  fokus=DIV [im Banner]`; das Banner trägt `tabindex="-1"`). Beim **automatischen**
+  Erscheinen bleibt er aussen — begründet in `cookie_consent_controller.ts:50-56`: Sonst
+  zöge der Fokus den ersten Tab in das Banner, und der Skip-Link „Zum Inhalt springen"
+  wäre nicht mehr das erste Tab-Ziel (BF-74, WCAG 2.4.1). Gemessen ist er es.
+
+  ⚠ **Diese Zeile widersprach OF-02 drei Absätze weiter**, wo die Umsetzung seit dem
+  2026-08-25 vermerkt ist. Sie stehenzulassen wäre die Einladung gewesen, eine
+  Fokusführung „nachzurüsten", die absichtlich so ist — und dabei BF-74 wieder
+  aufzureissen.
 
 ## Offene Fragen
 

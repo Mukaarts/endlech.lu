@@ -150,3 +150,20 @@ ist unverändert. BF-146 gehört in den nächsten Dokumentationsdurchgang, zusam
 BF-142 (dieselbe Klasse bei B25).
 
 Status: `rekonstruiert` → **`approved`**.
+
+---
+
+## Nachtrag vom 2026-09-12 · BF-146 behoben
+
+Beide Stellen der Spezifikation sind berichtigt:
+
+- **FB-05** sagt jetzt, was gemessen wurde: Beim nutzergetriggerten Öffnen wandert der
+  Fokus ins Banner, beim automatischen Erscheinen bewusst nicht — mit Verweis auf BF-74
+  und darauf, dass der Skip-Link das erste Tab-Ziel bleiben muss. Der alte Wortlaut steht
+  durchgestrichen daneben, weil er drei Absätze über OF-02 stand, das die Umsetzung schon
+  am 2026-08-25 vermerkte.
+- **Die Klammer in AK-11** nennt statt `endlech.userjot.com` das eigene Ideen-Board und
+  hält fest, dass die Zusage „keine Fremdressourcen" auch nach BF-99 gilt: Inter liegt
+  unter `/build/fonts/`, gemessen `fremde_ressourcen=[]`.
+
+**Damit hat dieses Feature keinen offenen Befund mehr.**

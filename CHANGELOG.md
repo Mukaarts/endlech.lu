@@ -9,6 +9,20 @@ Alle Änderungen an **Endlech.lu** werden in dieser Datei dokumentiert.
 
 ### Behoben
 
+- **BF-141** · Der Service Worker lässt jetzt auch den locale-präfixierten API-Weg
+  unangetastet (`/de/api/cuisines`). Die Ausnahme prüfte nur `/api/`, und der ältere
+  Küchen-Endpunkt liegt unter `/{_locale}` — er landete damit im cache-first-Zweig.
+- **BF-143** · Das Polster für die mobile Leiste entsteht nur noch, wo die Leiste auch
+  liegt. Im Verwaltungsbereich blieben sonst 64 px leerer Streifen unter dem Inhalt.
+- **BF-144** · Der Sprachumschalter ist auf dem Telefon **44 px** hoch statt 28 — er war
+  das kleinste Ziel im mobilen Kopfbereich, und seit BF-72 ist er ausdrücklich dafür
+  gedacht.
+- **BF-145** · Die Offline-Seite trägt `lang="lb"`. Ihr Text ist luxemburgisch; mit
+  `lang="de"` wandte ein Screenreader deutsche Ausspracheregeln darauf an (WCAG 3.1.1).
+- **BF-142, BF-146** · Zwei Spezifikationen auf den gemessenen Stand gebracht. B25 nannte
+  fehlende Wege zum Abmelden und zur Sprachwahl „den zentralen Befund" — beide sind
+  vorhanden; B26 behauptete eine fehlende Fokusführung, die drei Absätze weiter als
+  umgesetzt vermerkt war.
 - **BF-140** · Der Service Worker cacht Bilder jetzt über eine **Positivliste**
   (`/icons/`, `/images/`, `/uploads/restaurants/`, `/uploads/team/`) statt über
   `destination === 'image'`. Vorher landete auch das **eigene Profilbild** im Cache und

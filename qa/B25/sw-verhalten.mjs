@@ -171,12 +171,20 @@ const anfrage = (url, { method = 'GET', mode = 'no-cors', destination = '' } = {
 
 console.log(ergebnis.join('\n'));
 
-// ── Angriff 1 · Der locale-präfixierte API-Weg (/de/api/cuisines) ──────────
+// ── Angriff 1 · API-Wege, mit und ohne Sprachpräfix (BF-141) ───────────────
 {
-    const e = ereignis(anfrage('https://endlech.lu/de/api/cuisines/search?q=pizza'));
-    handler.fetch(e);
-    console.log(`ANGRIFF-1\tlocale_api_eingegriffen=${e.ergebnis !== undefined ? 'JA' : 'nein'}`);
-    if (e.ergebnis !== undefined) { await e.ergebnis.catch(() => {}); }
+    const faelle = [
+        ['/api/v1', 'https://endlech.lu/api/v1/restaurants'],
+        ['/de/api/cuisines', 'https://endlech.lu/de/api/cuisines/search?q=pizza'],
+        ['/lb/api/cuisines', 'https://endlech.lu/lb/api/cuisines/search?q=pizza'],
+        ['/open.json (kein API-Pfad)', 'https://endlech.lu/open.json'],
+    ];
+    for (const [name, url] of faelle) {
+        const e = ereignis(anfrage(url));
+        handler.fetch(e);
+        console.log(`ANGRIFF-1\t${name}: eingegriffen=${e.ergebnis !== undefined ? 'JA' : 'nein'}`);
+        if (e.ergebnis !== undefined) { await e.ergebnis.catch(() => {}); }
+    }
 }
 
 // ── Angriff 2 · Welche Bilder landen im Cache? (BF-140) ────────────────────
