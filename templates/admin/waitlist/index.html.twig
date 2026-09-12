@@ -201,6 +201,15 @@
                                             <span class="font-normal">· {{ row.marketing.syncedAt|date('d.m.Y') }}</span>
                                         {% endif -%}
                                     </span>
+                                    {# ⚠ BF-90: Eine wirksame Sperre daneben. „Übertragen" ist
+                                       nach einer Abmeldung richtig — der Zustand sagt, was Brevo
+                                       noch schuldet, und das ist nichts —, liest sich aber wie
+                                       ein aktiv bespielter Kontakt. #}
+                                    {%- if row.marketing.isBlocked %}
+                                        <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                                            {{ 'marketing.admin.blocked'|trans }}
+                                        </span>
+                                    {% endif -%}
                                 {%- elseif row.marketingConsentAt -%}
                                     {# Eingewilligt, aber noch keine Zeile im
                                        Auftragsbuch: Die Bestätigung steht aus. #}

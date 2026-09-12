@@ -90,7 +90,16 @@ final class OrganisationController extends AbstractController
         $limiter = ActionLimiter::for($this->waitlistLimiter, $request->getClientIp());
 
         if (!$limiter->isAllowed()) {
-            $this->addFlash('error', $this->translator->trans('flash.partner_rate_limited'));
+            // ⚠ BF-129: eigener Schlüssel, nicht der von B14. Der hinterlegte Text war
+            // in allen vier Sprachen neutral, ein Besucher las also nichts Falsches —
+            // irreführend war der Schlüsselname, und der ist die Stelle, an der jemand
+            // den Text später ändert. Wer ihn für die Partnerseite anpasst, hätte
+            // stillschweigend auch die Organisationsseite mitgeändert.
+            //
+            // Der Wortlaut nennt jetzt die **Verbindung** statt „Sie": Hinter einer
+            // Gemeindeverwaltung teilen viele Menschen eine Adresse, und genau dort
+            // trifft der Deckel jemanden, der selbst nichts abgeschickt hat (BF-38).
+            $this->addFlash('error', $this->translator->trans('flash.organisation_rate_limited'));
 
             return $this->renderLandingPage($form, Response::HTTP_TOO_MANY_REQUESTS);
         }

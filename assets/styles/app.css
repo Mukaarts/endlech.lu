@@ -166,3 +166,23 @@
         break-inside: avoid;
     }
 }
+
+/* BF-82 · Ein einzelnes Wort darf die Seite nicht waagerecht scrollen lassen.
+   Gemessen auf einer Vergleichsseite mit einem 48 Zeichen langen Anbieternamen
+   ohne Leerzeichen: 182 px Überlauf, und die überstehenden Elemente waren
+   Überschrift und Fliesstext des Eignungsblocks — nicht die Beschriftung, an der
+   man zuerst sucht.
+
+   ⚠ Die Regel steht am `body` und nicht an einzelnen Stellen, weil `overflow-wrap`
+   vererbt wird und der Fall projektweit auftritt: Restaurantnamen, Ideen-Titel im
+   Board und Organisationsnamen auf den Wartelisten sind **nutzergeneriert**. Dort
+   ist ein überlanges Wort ohne Leerzeichen keine Vorsorge, sondern eine Eingabe,
+   die jemand machen kann.
+
+   ⚠ `break-word` und ausdrücklich **nicht** `anywhere` oder `break-all`: Es greift
+   nur, wenn ein Wort allein schon zu breit ist, und lässt normale Zeilen
+   unangetastet. `anywhere` zerlegt auch gewöhnliche Wörter mitten im Wort
+   („Stuf-enlo-ser Eing-ang") — genau deshalb ist es bei BF-77 verworfen worden. */
+body {
+    overflow-wrap: break-word;
+}

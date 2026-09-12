@@ -31,11 +31,24 @@
         {% if marketingContact %}
             <div>
                 <dt class="text-gray-500 mb-0.5">{{ 'marketing.admin.column'|trans }}</dt>
-                <dd>
+                <dd class="flex flex-wrap items-center gap-1.5">
                     {# Das Abzeichen trägt Farbe UND Text — Farbe trägt nie allein. #}
                     <span class="{{ marketingContact.syncState.badgeClasses }} text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
                         {{ marketingContact.syncState.transKey|trans }}
                     </span>
+                    {# ⚠ BF-90: Eine wirksame Sperre gehört daneben. Der Zustand sagt, was
+                       Brevo noch **schuldet** — nach einer Abmeldung oder einer im
+                       Brevo-Konto gelöschten Karteikarte schuldet er nichts, und die Zeile
+                       bleibt zu Recht auf „Übertragen". Wer nur das Abzeichen liest, hält
+                       den Kontakt aber für aktiv bespielt. Die Zeile selbst **muss**
+                       stehen bleiben: Sie ist die Sperre, ohne die der nächste Lauf die
+                       Adresse in fünf Minuten neu einträgt (AK-12). #}
+                    {% if marketingContact.isBlocked %}
+                        <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap"
+                              title="{{ marketingContact.revokedAt ? marketingContact.revokedAt|date('d.m.Y H:i') : '' }}">
+                            {{ 'marketing.admin.blocked'|trans }}
+                        </span>
+                    {% endif %}
                 </dd>
             </div>
 
