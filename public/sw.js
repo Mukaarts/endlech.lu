@@ -17,7 +17,12 @@
 // Besucher sähe sonst die alte Logo-Vorschau neben dem neuen Presse-Paket (das
 // selbst nie gecacht wird, weil es kein `image` ist). AK-17 bräche damit im
 // Browser, wo kein Prüflauf hinsieht.
-const CACHE_VERSION = 'endlech-v1';
+// ⚠ Auf `v2` erhöht am 2026-09-12 (BF-99): Die beiden Wort-Bildmarken unter
+// `public/presse-kit/` tragen den Schriftzug jetzt als Pfade in Inter statt als
+// `<text>` in der Systemschrift. Ohne diese Zahl sähe ein wiederkehrender Besucher
+// die alte Vorschau neben dem neuen Paket — genau der Fall, vor dem der Hinweis
+// darüber warnt.
+const CACHE_VERSION = 'endlech-v2';
 const OFFLINE_URL = '/offline.html';
 
 const APP_SHELL = [
