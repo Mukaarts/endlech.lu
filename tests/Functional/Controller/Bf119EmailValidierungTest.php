@@ -29,15 +29,30 @@ use Symfony\Component\HttpFoundation\Response;
 final class Bf119EmailValidierungTest extends AbstractWebTestCase
 {
     /**
-     * Adressen, die der HTML5-Default durchließ und `Mime\Address` ablehnt.
+     * Adressen, die der HTML5-Default durchlässt und `Mime\Address` ablehnt.
+     *
+     * ⚠ **Nur solche Adressen sichern die Reparatur ab (BF-127).** Die erste
+     * Fassung führte auch `a"b(c)d@example.lu` und `jemand@@example.lu` — beide
+     * weist schon der **Default** ab, sie lösten den Befund also nie aus und
+     * blieben auch bei entferntem STRICT grün. Belegt von zwei Seiten: gegen den
+     * Validator im HTML5-Modus gemessen, und in der Rückbau-Gegenprobe wurde
+     * **1 von 3** Datensätzen rot. Ersetzt wurden sie durch drei Formen, die der
+     * Default durchlässt (doppelter, führender und abschliessender Punkt im
+     * Local-Part).
+     *
+     * ⚠ **`Bf127AngriffsadressenTest` prüft diese Liste selbst** — jeder Eintrag
+     * muss vom Default angenommen und von `Mime\Address` abgelehnt werden. Ohne
+     * diesen Lauf kann der nächste gut gemeinte Datensatz wieder wirkungslos
+     * einschlafen, ohne dass es jemandem auffällt.
      *
      * @return iterable<string, array{string}>
      */
     public static function rfcWidrigeAdressen(): iterable
     {
         yield 'Pfad im Local-Part' => ['../../etc/passwd@example.lu'];
-        yield 'Klammern im Local-Part' => ['a"b(c)d@example.lu'];
-        yield 'doppeltes At' => ['jemand@@example.lu'];
+        yield 'doppelter Punkt im Local-Part' => ['anna..muster@example.lu'];
+        yield 'führender Punkt im Local-Part' => ['.anna@example.lu'];
+        yield 'abschliessender Punkt im Local-Part' => ['anna.@example.lu'];
     }
 
     /**
